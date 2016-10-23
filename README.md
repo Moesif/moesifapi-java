@@ -1,7 +1,7 @@
 MoesifApi Lib for Java
 ======================
 
-[![](https://jitpack.io/v/Moesif/Moesif-API-Java.svg)](https://jitpack.io/#Moesif/moesifapi-java)
+[![](https://jitpack.io/v/Moesif/moesifapi-java.svg)](https://jitpack.io/#Moesif/moesifapi-java)
 
 
 __Check out Moesif's
