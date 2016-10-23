@@ -1,7 +1,7 @@
 MoesifApi Lib for Java
 ======================
 
-[![](https://jitpack.io/v/Moesif/moesifapi-java.svg)](https://jitpack.io/#Moesif/moesifapi-java)
+[![](https://jitpack.io/v/com.moesif/moesifapi-java.svg)](https://jitpack.io/#com.moesif/moesifapi-java)
 
 
 __Check out Moesif's
@@ -29,11 +29,11 @@ How to Install:
 
 
     Step 2. Add the dependency
-	<dependency>
-	    <groupId>com.github.Moesif</groupId>
-	    <artifactId>moesifapi-java</artifactId>
-	    <version>1.0.1</version>
-	</dependency>
+    <dependency>
+  	    <groupId>com.moesif</groupId>
+  	    <artifactId>moesifapi-java</artifactId>
+  	    <version>1.0.2</version>
+  	</dependency>
 
 How to Use:
 ===========
