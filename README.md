@@ -18,7 +18,7 @@ file. Therefore, you will need internet access to resolve this dependency.
 How to Install:
 ===============
 
-    Step 1. Add the JitPack repository to your build file
+  Step 1. Add the JitPack repository to your build file
 
 	<repositories>
 		<repository>
@@ -29,6 +29,7 @@ How to Install:
 
 
     Step 2. Add the dependency
+
     <dependency>
   	    <groupId>com.moesif</groupId>
   	    <artifactId>moesifapi-java</artifactId>
