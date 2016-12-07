@@ -5,7 +5,7 @@ MoesifApi Lib for Java
 
 
 __Check out Moesif's
-[Java developer documentation](https://www.moesif.com/developer-documentation) to learn more__
+[Java developer documentation](https://www.moesif.com/developer-documentation/?java) to learn more__
 
 How To Configure:
 =================
