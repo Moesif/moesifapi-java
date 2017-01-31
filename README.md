@@ -1,22 +1,21 @@
-MoesifApi Lib for Java
-======================
+# MoesifApi Lib for Java
+
 
 [![](https://jitpack.io/v/com.moesif/moesifapi-java.svg)](https://jitpack.io/#com.moesif/moesifapi-java)
 
 
-__Check out Moesif's
-[Java developer documentation](https://www.moesif.com/developer-documentation/?java) to learn more__
+__Check out Moesif's [Developer Documentation](https://www.moesif.com/docs) and [Java API Reference](https://www.moesif.com/docs/api?java) to learn more__
 
-How To Configure:
-=================
-The generated client class accepts the configuration parameters in its constructors.
 
-The generated code uses a java library namely UniRest. The reference to this
+## How To Configure:
+
+
+The code uses a java library namely UniRest. The reference to this
 library is already added as a maven dependency in the generated pom.xml
 file. Therefore, you will need internet access to resolve this dependency.
 
-How to Install:
-===============
+## How to Install:
+
 
   Step 1. Add the JitPack repository to your build file
 
@@ -36,8 +35,8 @@ How to Install:
   	    <version>1.0.2</version>
   	</dependency>
 
-How to Use:
-===========
+## How to Use:
+
     (See ApiControllerTest for usage examples)
 
 ```java
@@ -144,8 +143,8 @@ How to Use:
 
 ```
 
-How to build and install manually (Advanced users):
-=============
+## How to build and install manually (Advanced users):
+
 
     1. Extract the zip file to a new folder named JavaSDK.
     2. Open a command prompt and navigate to the JavaSDK/MoesifApi folder.
@@ -160,8 +159,8 @@ How to build and install manually (Advanced users):
             <scope>compile</scope>
         </dependency>
 
-How to build via Eclipse:
-=============
+## How to build via Eclipse:
+
 
 For build process do the following:
 
@@ -170,8 +169,8 @@ For build process do the following:
     3. In "Select root directory", provide path to the unzipped archive for the generated code.
     4. Click "Finish" and ensure that "Project -> Build Automatically" option is enabled in the menu.
 
-How to Test via Eclipse:
-===========
+## How to Test via Eclipse:
+
 The generated code and the server can be tested using automatically generated test cases.
 Junit is used as the testing framework and test runner.
 
@@ -180,8 +179,7 @@ For test process do the following:
     1. Select the project MoesifApi from the package explorer.
     2. Select "Run -> Run as -> Junit Test" or use "Alt + Shift + X" followed by "T" to run the Tests.
 
-How to Export jar:
-===========
+## How to Export jar:
 
 Export the compiled classes as a java libray (jar). The exported jar can be used as library.
 See the following links for more information on this topic.
