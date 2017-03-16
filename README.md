@@ -86,7 +86,7 @@ EventRequestModel eventReq = new EventRequestModel();
 eventReq.setTime(new Date());
 eventReq.setUri("https://api.acmeinc.com/items/reviews/");
 eventReq.setVerb("PATCH");
-eventReq.setApiVersion("1.1.0");
+eventReq.setApiVersion("1.1.2");
 eventReq.setIpAddress("61.48.220.123");
 eventReq.setHeaders(reqHeaders);
 eventReq.setBody(reqBody);
@@ -188,7 +188,7 @@ EventRequestModel eventReq = new EventRequestModel();
 eventReq.setTime(new Date());
 eventReq.setUri("https://api.acmeinc.com/items/reviews/");
 eventReq.setVerb("PATCH");
-eventReq.setApiVersion("1.1.0");
+eventReq.setApiVersion("1.1.2");
 eventReq.setIpAddress("61.48.220.123");
 eventReq.setHeaders(reqHeaders);
 eventReq.setBody(reqBody);
@@ -393,7 +393,7 @@ api.updateUsersBatch(userList, callBack);
         <dependency>
             <groupId>MoesifApi</groupId>
             <artifactId>MoesifApi</artifactId>
-            <version>1.1.0</version>
+            <version>1.1.2</version>
             <scope>compile</scope>
         </dependency>
 
