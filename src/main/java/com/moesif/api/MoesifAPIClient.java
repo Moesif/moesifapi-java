@@ -10,11 +10,11 @@ import com.moesif.api.http.client.HttpClient;
 
 public class MoesifAPIClient {
     /**
-     * Singleton access to Api controller
-     * @return	Returns the ApiController instance 
+     * Singleton access to API controller
+     * @return	Returns the APIController instance
      */
-    public ApiController getApi() {
-        return ApiController.getInstance();
+    public APIController getAPI() {
+        return APIController.getInstance();
     }
 
     /**

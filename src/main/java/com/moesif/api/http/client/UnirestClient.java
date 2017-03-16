@@ -8,6 +8,8 @@ package com.moesif.api.http.client;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mashape.unirest.http.options.*;
 
+import com.moesif.api.APIHelper;
+import com.moesif.api.MoesifAPIClient;
 import com.moesif.api.http.client.HttpContext;
 import com.moesif.api.http.request.HttpBodyRequest;
 import com.moesif.api.http.request.HttpMethod;
@@ -26,6 +28,7 @@ public class UnirestClient implements HttpClient {
      */
     private static Object synRoot = new Object();
     private static HttpClient sharedInstance = null;
+    private static String version = APIHelper.getVersion();
 
     /**
      * Singleton access to the shared instance
@@ -182,7 +185,9 @@ public class UnirestClient implements HttpClient {
 
         //set request headers        
         uniRequest.headers(request.getHeaders());
-        
+
+        uniRequest.header("User-Agent", "moesifapi-java/" + UnirestClient.version);
+
         //set json header if needed
         if(request instanceof HttpBodyRequest) {
             uniRequest.header("content-type", "application/json; charset=UTF-8");

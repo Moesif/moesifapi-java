@@ -20,7 +20,7 @@ import com.moesif.api.http.response.HttpStringResponse;
 import com.moesif.api.http.client.APICallBack;
 import com.moesif.api.controllers.syncwrapper.APICallBackCatcher;
 
-public class HealthController extends BaseController {    
+public class HealthController extends BaseController implements IHealthController {
     //private static variables for the singleton pattern
     private static Object syncObject = new Object();
     private static HealthController instance = null;

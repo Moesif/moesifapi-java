@@ -7,12 +7,17 @@ package com.moesif.api;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InvalidObjectException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.net.URLEncoder;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,6 +34,12 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 
 import com.moesif.api.exceptions.APIException;
 import com.mashape.unirest.http.Unirest;
+import org.w3c.dom.Document;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+
 public class APIHelper {
     /* used for async execution of API calls using a thread pool */
     private static ExecutorService scheduler = null;
@@ -293,6 +304,84 @@ public class APIHelper {
             }
         }
         return formFields;
+    }
+
+    /**
+     * Get the current version of the moesifapi-java artifact
+     * @return  Version string
+     */
+    public synchronized static String getVersion() {
+
+        String mavenPackage = "com.moesif";
+        String mavenArtifact = "moesifapi-java";
+
+        // Try to get version number from pom.xml (available in Eclipse)
+        try {
+            String className = MoesifAPIClient.class.getName();
+            String classfileName = "/" + className.replace('.', '/') + ".class";
+            URL classfileResource = MoesifAPIClient.class.getResource(classfileName);
+            if (classfileResource != null) {
+                Path absolutePackagePath = Paths.get(classfileResource.toURI())
+                        .getParent();
+                int packagePathSegments = className.length()
+                        - className.replace(".", "").length();
+                // Remove package segments from path, plus two more levels
+                // for "target/classes", which is the standard location for
+                // classes in Eclipse.
+                Path path = absolutePackagePath;
+                for (int i = 0, segmentsToRemove = packagePathSegments + 2;
+                     i < segmentsToRemove; i++) {
+                    path = path.getParent();
+                }
+                Path pom = path.resolve("pom.xml");
+                InputStream is = Files.newInputStream(pom);
+                Document doc = DocumentBuilderFactory.newInstance()
+                        .newDocumentBuilder().parse(is);
+                doc.getDocumentElement().normalize();
+                String version = (String) XPathFactory.newInstance()
+                        .newXPath().compile("/project/version")
+                        .evaluate(doc, XPathConstants.STRING);
+                if (version != null) {
+                    version = version.trim();
+                    if (!version.isEmpty()) {
+                        return version;
+                    }
+                }
+
+            }
+        } catch (Exception e) {
+            // Ignore
+        }
+
+        // Try to get version number from maven properties in jar's META-INF
+        try {
+            InputStream is = MoesifAPIClient.class
+                    .getResourceAsStream("/META-INF/maven/" + mavenPackage + "/"
+                        + mavenArtifact + "/pom.properties");
+
+            if (is != null) {
+                Properties p = new Properties();
+                p.load(is);
+                String version = p.getProperty("version", "").trim();
+                if (!version.isEmpty()) {
+                    return version;
+                }
+            }
+        } catch (Exception e) {
+            // Ignore
+        }
+
+        // Fallback to using Java API to get version from MANIFEST.MF
+        String version = null;
+        Package pkg = MoesifAPIClient.class.getPackage();
+        if (pkg != null) {
+            version = pkg.getImplementationVersion();
+            if (version == null) {
+                version = pkg.getSpecificationVersion();
+            }
+        }
+        version = version == null ? "" : version.trim();
+        return version.isEmpty() ? "unknown" : version;
     }
 
     /**

@@ -19,6 +19,7 @@ public class EventResponseModel
     private int status;
     private Object headers;
     private Object body;
+    private String transferEncoding;
     private String ipAddress;
     /** GETTER
      * Time when response received
@@ -83,6 +84,22 @@ public class EventResponseModel
     @JsonSetter("body")
     public void setBody (Object value) { 
         this.body = value;
+    }
+
+    /** GETTER
+     * Transfer Encoding of the body such as "base64", null value implies "json" transfer encoding
+     */
+    @JsonGetter("transfer_encoding")
+    public String getTransferEncoding ( ) {
+        return this.transferEncoding;
+    }
+
+    /** SETTER
+     * Transfer Encoding of the body such as "base64", null value implies "json" transfer encoding
+     */
+    @JsonSetter("transfer_encoding")
+    public void setTransferEncoding (String value) {
+        this.transferEncoding = value;
     }
  
     /** GETTER

@@ -73,6 +73,14 @@ public class EventRequestBuilder {
         eventRequestModel.setBody(body);
         return this;
     }
+
+    /**
+     * Transfer Encoding of the body such as "base64", null value implies "json" transfer encoding
+     */
+    public EventRequestBuilder transferEncoding(String transferEncoding) {
+        eventRequestModel.setTransferEncoding(transferEncoding);
+        return this;
+    }
     /**
      * Build the instance with the given values
      */

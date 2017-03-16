@@ -51,6 +51,14 @@ public class EventResponseBuilder {
     }
 
     /**
+     * Transfer Encoding of the body such as "base64", null value implies "json" transfer encoding
+     */
+    public EventResponseBuilder transferEncoding(String transferEncoding) {
+        eventResponseModel.setTransferEncoding(transferEncoding);
+        return this;
+    }
+
+    /**
      * IP Address from the response, such as the server IP Address
      */
     public EventResponseBuilder ipAddress(String ipAddress) {

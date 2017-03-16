@@ -14,7 +14,6 @@ import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 import com.moesif.api.http.client.APICallBack;
 import com.moesif.api.http.client.HttpContext;
 import org.junit.AfterClass;
@@ -27,19 +26,19 @@ import com.moesif.api.APIHelper;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
-public class ApiControllerTest extends ControllerTestBase {
+public class APIControllerTest extends ControllerTestBase {
     
     /**
      * Controller instance (for all tests)
      */
-    private static ApiController controller;
+    private static APIController controller;
     
     /**
      * Setup test class
      */
     @BeforeClass
     public static void setUpClass() {
-        controller = getClient().getApi();
+        controller = getClient().getAPI();
     }
 
     /**
@@ -57,8 +56,6 @@ public class ApiControllerTest extends ControllerTestBase {
      */
     @Test
     public void testAddEvent() throws Throwable {
-
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
         // Parameters for the API call
         Object reqHeaders = APIHelper.deserialize("{" +
@@ -101,7 +98,7 @@ public class ApiControllerTest extends ControllerTestBase {
 
         EventRequestModel eventReq = new EventRequestModel();
 
-        eventReq.setTime(dateFormat.parse("2016-09-09T04:45:42.914"));
+        eventReq.setTime(new Date());
         eventReq.setUri("https://api.acmeinc.com/items/reviews/");
         eventReq.setVerb("PATCH");
         eventReq.setApiVersion("1.1.0");
@@ -112,7 +109,7 @@ public class ApiControllerTest extends ControllerTestBase {
 
         EventResponseModel eventRsp = new EventResponseModel();
 
-        eventRsp.setTime(dateFormat.parse("2016-09-09T04:45:42.914"));
+        eventRsp.setTime(new Date(System.currentTimeMillis() + 1000));
         eventRsp.setStatus(500);
         eventRsp.setHeaders(rspHeaders);
         eventRsp.setBody(rspBody);
@@ -141,8 +138,6 @@ public class ApiControllerTest extends ControllerTestBase {
     @Test
     public void testAddEventAsync() throws Throwable {
         final CountDownLatch lock = new CountDownLatch(1);
-
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
         // Parameters for the API call
         Object reqHeaders = APIHelper.deserialize("{" +
@@ -185,7 +180,7 @@ public class ApiControllerTest extends ControllerTestBase {
 
         EventRequestModel eventReq = new EventRequestModel();
 
-        eventReq.setTime(dateFormat.parse("2016-09-09T04:45:42.914"));
+        eventReq.setTime(new Date());
         eventReq.setUri("https://api.acmeinc.com/items/reviews/");
         eventReq.setVerb("PATCH");
         eventReq.setApiVersion("1.1.0");
@@ -196,7 +191,7 @@ public class ApiControllerTest extends ControllerTestBase {
 
         EventResponseModel eventRsp = new EventResponseModel();
 
-        eventRsp.setTime(dateFormat.parse("2016-09-09T04:45:42.914"));
+        eventRsp.setTime(new Date(System.currentTimeMillis() + 1000));
         eventRsp.setStatus(500);
         eventRsp.setHeaders(rspHeaders);
         eventRsp.setBody(rspBody);
@@ -267,6 +262,196 @@ public class ApiControllerTest extends ControllerTestBase {
         };
 
         controller.createEventsBatchAsync(body, callBack);
+        assertEquals(true, lock.await(10000, TimeUnit.MILLISECONDS));
+    }
+
+    /**
+     * Update Single User via Injestion API
+     * @throws Throwable
+     */
+    @Test
+    public void testUpdateUser() throws Throwable {
+
+        UserModel user = new UserModel();
+        user.setUserId("12345");
+        user.setModifiedTime(new Date());
+        user.setIpAddress("29.80.250.240");
+        user.setSessionToken("di3hd982h3fubv3yfd94egf");
+        user.setUserAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
+        user.setMetadata(APIHelper.deserialize("{" +
+                "\"email\": \"johndoe@acmeinc.com\"," +
+                "\"string_field\": \"value_1\"," +
+                "\"number_field\": 0," +
+                "\"object_field\": {" +
+                "\"field_1\": \"value_1\"," +
+                "\"field_2\": \"value_2\"" +
+                "}" +
+                "}"));
+
+        // Set callback and perform API call
+        controller.setHttpCallBack(httpResponse);
+        try {
+            controller.updateUser(user);
+        } catch(APIException e) {};
+
+        // Test response code
+        assertEquals("Status is not 201",
+                201, httpResponse.getResponse().getStatusCode());
+    }
+
+    /**
+     * Update Single User Async via Injestion API
+     * @throws Throwable
+     */
+    @Test
+    public void testUpdateUserAsync() throws Throwable {
+        final CountDownLatch lock = new CountDownLatch(1);
+
+        UserModel user = new UserModel();
+        user.setUserId("12345");
+        user.setModifiedTime(new Date());
+        user.setIpAddress("29.80.250.240");
+        user.setSessionToken("di3hd982h3fubv3yfd94egf");
+        user.setUserAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
+        user.setMetadata(APIHelper.deserialize("{" +
+                "\"email\": \"johndoe@acmeinc.com\"," +
+                "\"string_field\": \"value_1\"," +
+                "\"number_field\": 0," +
+                "\"object_field\": {" +
+                "\"field_1\": \"value_1\"," +
+                "\"field_2\": \"value_2\"" +
+                "}" +
+                "}"));
+
+        APICallBack<Object> callBack = new APICallBack<Object>() {
+            public void onSuccess(HttpContext context, Object response) {
+                assertEquals("Status is not 201",
+                        201, context.getResponse().getStatusCode());
+                lock.countDown();
+            }
+
+            public void onFailure(HttpContext context, Throwable error) {
+                fail();
+            }
+        };
+
+        controller.updateUserAsync(user, callBack);
+        assertEquals(true, lock.await(10000, TimeUnit.MILLISECONDS));
+    }
+
+    /**
+     * Update Batched Users via Ingestion API
+     * @throws Throwable
+     */
+    @Test
+    public void testUpdateBatchedUsers() throws Throwable {
+        // Parameters for the API call
+        List<UserModel> body = new ArrayList<UserModel>();
+
+        UserModel user = new UserModel();
+        user.setUserId("12345");
+        user.setModifiedTime(new Date());
+        user.setIpAddress("29.80.250.240");
+        user.setSessionToken("di3hd982h3fubv3yfd94egf");
+        user.setUserAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
+        user.setMetadata(APIHelper.deserialize("{" +
+                "\"email\": \"johndoe@acmeinc.com\"," +
+                "\"string_field\": \"value_1\"," +
+                "\"number_field\": 0," +
+                "\"object_field\": {" +
+                "\"field_1\": \"value_1\"," +
+                "\"field_2\": \"value_2\"" +
+                "}" +
+                "}"));
+        body.add(user);
+
+        user = new UserModel();
+        user.setUserId("456789");
+        user.setModifiedTime(new Date());
+        user.setIpAddress("31.77.210.105");
+        user.setSessionToken("daskbdxhsarwjlifgwefbEI");
+        user.setUserAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
+        user.setMetadata(APIHelper.deserialize("{" +
+                "\"email\": \"maryjane@acmeinc.com\"," +
+                "\"string_field\": \"value_1\"," +
+                "\"number_field\": 1," +
+                "\"object_field\": {" +
+                "\"field_1\": \"value_1\"," +
+                "\"field_2\": \"value_2\"" +
+                "}" +
+                "}"));
+        body.add(user);
+
+
+        // Set callback and perform API call
+        controller.setHttpCallBack(httpResponse);
+        try {
+            controller.updateUsersBatch(body);
+        } catch(APIException e) {};
+
+        // Test response code
+        assertEquals("Status is not 201",
+                201, httpResponse.getResponse().getStatusCode());
+    }
+
+    /**
+     * Update Batched Users Async via Ingestion API
+     * @throws Throwable
+     */
+    @Test
+    public void testAddBatchedUsersAsync() throws Throwable {
+        final CountDownLatch lock = new CountDownLatch(1);
+
+        // Parameters for the API call
+        List<UserModel> body = new ArrayList<UserModel>();
+
+        UserModel user = new UserModel();
+        user.setUserId("12345");
+        user.setModifiedTime(new Date());
+        user.setIpAddress("29.80.250.240");
+        user.setSessionToken("di3hd982h3fubv3yfd94egf");
+        user.setUserAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
+        user.setMetadata(APIHelper.deserialize("{" +
+            "\"email\": \"johndoe@acmeinc.com\"," +
+            "\"string_field\": \"value_1\"," +
+            "\"number_field\": 0," +
+            "\"object_field\": {" +
+                "\"field_1\": \"value_1\"," +
+                "\"field_2\": \"value_2\"" +
+                "}" +
+            "}"));
+        body.add(user);
+
+        user = new UserModel();
+        user.setUserId("456789");
+        user.setModifiedTime(new Date());
+        user.setIpAddress("31.77.210.105");
+        user.setSessionToken("daskbdxhsarwjlifgwefbEI");
+        user.setUserAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
+        user.setMetadata(APIHelper.deserialize("{" +
+                "\"email\": \"maryjane@acmeinc.com\"," +
+                "\"string_field\": \"value_1\"," +
+                "\"number_field\": 1," +
+                "\"object_field\": {" +
+                "\"field_1\": \"value_1\"," +
+                "\"field_2\": \"value_2\"" +
+                "}" +
+                "}"));
+        body.add(user);
+
+        APICallBack<Object> callBack = new APICallBack<Object>() {
+            public void onSuccess(HttpContext context, Object response) {
+                assertEquals("Status is not 201",
+                        201, context.getResponse().getStatusCode());
+                lock.countDown();
+            }
+
+            public void onFailure(HttpContext context, Throwable error) {
+                fail();
+            }
+        };
+
+        controller.updateUsersBatchAsync(body, callBack);
         assertEquals(true, lock.await(10000, TimeUnit.MILLISECONDS));
     }
 
