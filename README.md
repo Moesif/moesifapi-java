@@ -8,24 +8,25 @@ __Check out Moesif's [Developer Documentation](https://www.moesif.com/docs) and 
 
 ## How to Install:
 
+```xml
+<!-- Step 1. Add the JitPack repository to your build file -->
 
-  Step 1. Add the JitPack repository to your build file
-
-	<repositories>
-		<repository>
-		    <id>jitpack.io</id>
-		    <url>https://jitpack.io</url>
-		</repository>
-	</repositories>
+<repositories>
+	<repository>
+	    <id>jitpack.io</id>
+	    <url>https://jitpack.io</url>
+	</repository>
+</repositories>
 
 
-    Step 2. Add the dependency
+<!-- Step 2. Add the dependency -->
 
-    <dependency>
-  	    <groupId>com.moesif</groupId>
-  	    <artifactId>moesifapi-java</artifactId>
-  	    <version>1.1.0</version>
-  	</dependency>
+<dependency>
+    <groupId>com.moesif</groupId>
+    <artifactId>moesifapi-java</artifactId>
+    <version>1.1.3</version>
+</dependency>
+```
 
 The code uses a Java library namely UniRest. The reference to this
 library is already added as a maven dependency in the pom.xml
