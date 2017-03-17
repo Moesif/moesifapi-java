@@ -53,17 +53,17 @@ reqHeaders.put("Content-Length", "126");
 reqHeaders.put("Accept-Encoding", "gzip");
 
 Object reqBody = APIHelper.deserialize("{" +
-						"\"items\": [" +
-								"{" +
-										"\"type\": 1," +
-										"\"id\": \"fwfrf\"" +
-								"}," +
-								"{" +
-										"\"type\": 2," +
-										 "\"id\": \"d43d3f\"" +
-								 "}" +
-						"]" +
-				"}");
+	"\"items\": [" +
+		"{" +
+			"\"type\": 1," +
+			"\"id\": \"fwfrf\"" +
+		"}," +
+		"{" +
+			"\"type\": 2," +
+			 "\"id\": \"d43d3f\"" +
+		 "}" +
+	"]" +
+	"}");
 
 Map<String, String> rspHeaders = new HashMap<String, String>();
 rspHeaders.put("Date", "Tue, 23 Feb 2017 23:46:49 GMT");
@@ -74,9 +74,9 @@ rspHeaders.put("Content-Type", "application/json; charset=utf-8");
 rspHeaders.put("Cache-Control","no-cache");
 
 Object rspBody = APIHelper.deserialize("{" +
-						"\"Error\": \"InvalidArgumentException\"," +
-						"\"Message\": \"Missing field field_a\"" +
-				"}");
+		"\"Error\": \"InvalidArgumentException\"," +
+		"\"Message\": \"Missing field field_a\"" +
+	"}");
 
 
 EventRequestModel eventReq = new EventRequestBuilder()
@@ -151,17 +151,17 @@ reqHeaders.put("Content-Length", "126");
 reqHeaders.put("Accept-Encoding", "gzip");
 
 Object reqBody = APIHelper.deserialize("{" +
-				"\"items\": [" +
-				"{" +
-				"\"type\": 1," +
-				"\"id\": \"fwfrf\"" +
-				"}," +
-				"{" +
-				"\"type\": 2," +
-				"\"id\": \"d43d3f\"" +
-				"}" +
-				"]" +
-				"}");
+	"\"items\": [" +
+		"{" +
+			"\"type\": 1," +
+			"\"id\": \"fwfrf\"" +
+		"}," +
+		"{" +
+			"\"type\": 2," +
+			"\"id\": \"d43d3f\"" +
+		"}" +
+	"]" +
+	"}");
 
 Map<String, String> rspHeaders = new HashMap<String, String>();
 rspHeaders.put("Date", "Tue, 23 Feb 2017 23:46:49 GMT");
@@ -172,9 +172,9 @@ rspHeaders.put("Content-Type", "application/json; charset=utf-8");
 rspHeaders.put("Cache-Control","no-cache");
 
 Object rspBody = APIHelper.deserialize("{" +
-				"\"Error\": \"InvalidArgumentException\"," +
-				"\"Message\": \"Missing field field_a\"" +
-				"}");
+		"\"Error\": \"InvalidArgumentException\"," +
+		"\"Message\": \"Missing field field_a\"" +
+	"}");
 
 
 EventRequestModel eventReq = new EventRequestBuilder()
@@ -261,10 +261,10 @@ UserModel user = new UserBuilder()
 				"\"string_field\": \"value_1\"," +
 				"\"number_field\": 0," +
 				"\"object_field\": {" +
-				"\"field_1\": \"value_1\"," +
-				"\"field_2\": \"value_2\"" +
+					"\"field_1\": \"value_1\"," +
+					"\"field_2\": \"value_2\"" +
 				"}" +
-				"}"))
+			"}"))
 		 .build();
 ```
 
@@ -317,14 +317,14 @@ UserModel userA = new UserBuilder()
 		.sessionToken("di3hd982h3fubv3yfd94egf")
 		.userAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
 		.metadata(APIHelper.deserialize("{" +
-						"\"email\": \"johndoe@acmeinc.com\"," +
-						"\"string_field\": \"value_1\"," +
-						"\"number_field\": 0," +
-						"\"object_field\": {" +
-						"\"field_1\": \"value_1\"," +
-						"\"field_2\": \"value_2\"" +
-						"}" +
-						"}"))
+				"\"email\": \"johndoe@acmeinc.com\"," +
+				"\"string_field\": \"value_1\"," +
+				"\"number_field\": 0," +
+				"\"object_field\": {" +
+					"\"field_1\": \"value_1\"," +
+					"\"field_2\": \"value_2\"" +
+				"}" +
+			"}"))
 		.build();
 users.add(userA);
 
@@ -335,14 +335,14 @@ UserModel userB = new UserBuilder()
 		.sessionToken("zceadckekvsfgfpsakvnbfouavsdvds")
 		.userAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
 		.metadata(APIHelper.deserialize("{" +
-						"\"email\": \"maryjane@acmeinc.com\"," +
-						"\"string_field\": \"value_1\"," +
-						"\"number_field\": 1," +
-						"\"object_field\": {" +
-						"\"field_1\": \"value_1\"," +
-						"\"field_2\": \"value_2\"" +
-						"}" +
-						"}"))
+				"\"email\": \"maryjane@acmeinc.com\"," +
+				"\"string_field\": \"value_1\"," +
+				"\"number_field\": 1," +
+				"\"object_field\": {" +
+					"\"field_1\": \"value_1\"," +
+					"\"field_2\": \"value_2\"" +
+				"}" +
+			"}"))
 		.build();
 users.add(userB);
 ```
