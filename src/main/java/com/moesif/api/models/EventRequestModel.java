@@ -18,7 +18,7 @@ public class EventRequestModel
     private Date time;
     private String uri;
     private String verb;
-    private Object headers;
+    private Map<String, String> headers;
     private String apiVersion;
     private String ipAddress;
     private Object body;
@@ -76,7 +76,7 @@ public class EventRequestModel
      * Key/Value map of request headers
      */
     @JsonGetter("headers")
-    public Object getHeaders ( ) { 
+    public Map<String, String> getHeaders ( ) {
         return this.headers;
     }
     
@@ -84,7 +84,7 @@ public class EventRequestModel
      * Key/Value map of request headers
      */
     @JsonSetter("headers")
-    public void setHeaders (Object value) { 
+    public void setHeaders (Map<String, String> value) {
         this.headers = value;
     }
  

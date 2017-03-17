@@ -14,6 +14,7 @@ import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import com.fasterxml.jackson.core.ObjectCodec;
 import com.moesif.api.http.client.APICallBack;
 import com.moesif.api.http.client.HttpContext;
 import org.junit.AfterClass;
@@ -58,15 +59,14 @@ public class APIControllerTest extends ControllerTestBase {
     public void testAddEvent() throws Throwable {
 
         // Parameters for the API call
-        Object reqHeaders = APIHelper.deserialize("{" +
-                    "\"Host\": \"api.acmeinc.com\"," +
-                    "\"Accept\": \"*/*\"," +
-                    "\"Connection\": \"Keep-Alive\"," +
-                    "\"User-Agent\": \"Dalvik/2.1.0 (Linux; U; Android 5.0.2; C6906 Build/14.5.A.0.242)\"," +
-                    "\"Content-Type\": \"application/json\"," +
-                    "\"Content-Length\": \"126\"," +
-                    "\"Accept-Encoding\": \"gzip\"" +
-                "}");
+        Map<String, String> reqHeaders = new HashMap<String, String>();
+        reqHeaders.put("Host", "api.acmeinc.com");
+        reqHeaders.put("Accept", "*/*");
+        reqHeaders.put("Connection", "Keep-Alive");
+        reqHeaders.put("User-Agent", "Dalvik/2.1.0 (Linux; U; Android 5.0.2; C6906 Build/14.5.A.0.242)");
+        reqHeaders.put("Content-Type", "application/json");
+        reqHeaders.put("Content-Length", "126");
+        reqHeaders.put("Accept-Encoding", "gzip");
 
         Object reqBody = APIHelper.deserialize("{" +
                     "\"items\": [" +
@@ -81,14 +81,13 @@ public class APIControllerTest extends ControllerTestBase {
                     "]" +
                 "}");
 
-        Object rspHeaders = APIHelper.deserialize("{" +
-                    "\"Date\": \"Tue, 23 Aug 2016 23:46:49 GMT\"," +
-                    "\"Vary\": \"Accept-Encoding\"," +
-                    "\"Pragma\": \"no-cache\"," +
-                    "\"Expires\": \"-1\"," +
-                    "\"Content-Type\": \"application/json; charset=utf-8\"," +
-                    "\"Cache-Control\": \"no-cache\"" +
-                "}");
+        Map<String, String> rspHeaders = new HashMap<String, String>();
+        rspHeaders.put("Date", "Tue, 23 Feb 2017 23:46:49 GMT");
+        rspHeaders.put("Vary", "Accept-Encoding");
+        rspHeaders.put("Pragma", "no-cache");
+        rspHeaders.put("Expires", "-1");
+        rspHeaders.put("Content-Type", "application/json; charset=utf-8");
+        rspHeaders.put("Cache-Control","no-cache");
 
         Object rspBody = APIHelper.deserialize("{" +
                     "\"Error\": \"InvalidArgumentException\"," +
@@ -96,29 +95,30 @@ public class APIControllerTest extends ControllerTestBase {
                 "}");
 
 
-        EventRequestModel eventReq = new EventRequestModel();
+        EventRequestModel eventReq = new EventRequestBuilder()
+                .time(new Date())
+                .uri("https://api.acmeinc.com/items/reviews/")
+                .verb("PATCH")
+                .apiVersion("1.1.0")
+                .ipAddress("61.48.220.123")
+                .headers(reqHeaders)
+                .body(reqBody)
+                .build();
 
-        eventReq.setTime(new Date());
-        eventReq.setUri("https://api.acmeinc.com/items/reviews/");
-        eventReq.setVerb("PATCH");
-        eventReq.setApiVersion("1.1.0");
-        eventReq.setIpAddress("61.48.220.123");
-        eventReq.setHeaders(reqHeaders);
-        eventReq.setBody(reqBody);
 
+        EventResponseModel eventRsp = new EventResponseBuilder()
+                .time(new Date(System.currentTimeMillis() + 1000))
+                .status(500)
+                .headers(rspHeaders)
+                .body(rspBody)
+                .build();
 
-        EventResponseModel eventRsp = new EventResponseModel();
-
-        eventRsp.setTime(new Date(System.currentTimeMillis() + 1000));
-        eventRsp.setStatus(500);
-        eventRsp.setHeaders(rspHeaders);
-        eventRsp.setBody(rspBody);
-
-        EventModel eventModel = new EventModel();
-        eventModel.setRequest(eventReq);
-        eventModel.setResponse(eventRsp);
-        eventModel.setUserId("my_user_id");
-        eventModel.setSessionToken("23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f");
+        EventModel eventModel = new EventBuilder()
+                .request(eventReq)
+                .response(eventRsp)
+                .userId("my_user_id")
+                .sessionToken("23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f")
+                .build();
 
         // Set callback and perform API call
         controller.setHttpCallBack(httpResponse);
@@ -140,67 +140,67 @@ public class APIControllerTest extends ControllerTestBase {
         final CountDownLatch lock = new CountDownLatch(1);
 
         // Parameters for the API call
-        Object reqHeaders = APIHelper.deserialize("{" +
-                    "\"Host\": \"api.acmeinc.com\"," +
-                    "\"Accept\": \"*/*\"," +
-                    "\"Connection\": \"Keep-Alive\"," +
-                    "\"User-Agent\": \"Dalvik/2.1.0 (Linux; U; Android 5.0.2; C6906 Build/14.5.A.0.242)\"," +
-                    "\"Content-Type\": \"application/json\"," +
-                    "\"Content-Length\": \"126\"," +
-                    "\"Accept-Encoding\": \"gzip\"" +
-                "}");
+        Map<String, String> reqHeaders = new HashMap<String, String>();
+        reqHeaders.put("Host", "api.acmeinc.com");
+        reqHeaders.put("Accept", "*/*");
+        reqHeaders.put("Connection", "Keep-Alive");
+        reqHeaders.put("User-Agent", "Dalvik/2.1.0 (Linux; U; Android 5.0.2; C6906 Build/14.5.A.0.242)");
+        reqHeaders.put("Content-Type", "application/json");
+        reqHeaders.put("Content-Length", "126");
+        reqHeaders.put("Accept-Encoding", "gzip");
 
         Object reqBody = APIHelper.deserialize("{" +
-                    "\"items\": [" +
-                        "{" +
-                            "\"type\": 1," +
-                            "\"id\": \"fwfrf\"" +
-                        "}," +
-                        "{" +
-                            "\"type\": 2," +
-                            "\"id\": \"d43d3f\"" +
-                        "}" +
-                     "]" +
+                "\"items\": [" +
+                "{" +
+                "\"type\": 1," +
+                "\"id\": \"fwfrf\"" +
+                "}," +
+                "{" +
+                "\"type\": 2," +
+                "\"id\": \"d43d3f\"" +
+                "}" +
+                "]" +
                 "}");
 
-        Object rspHeaders = APIHelper.deserialize("{" +
-                    "\"Date\": \"Tue, 23 Aug 2016 23:46:49 GMT\"," +
-                    "\"Vary\": \"Accept-Encoding\"," +
-                    "\"Pragma\": \"no-cache\"," +
-                    "\"Expires\": \"-1\"," +
-                    "\"Content-Type\": \"application/json; charset=utf-8\"," +
-                    "\"Cache-Control\": \"no-cache\"" +
-                "}");
+        Map<String, String> rspHeaders = new HashMap<String, String>();
+        rspHeaders.put("Date", "Tue, 23 Feb 2017 23:46:49 GMT");
+        rspHeaders.put("Vary", "Accept-Encoding");
+        rspHeaders.put("Pragma", "no-cache");
+        rspHeaders.put("Expires", "-1");
+        rspHeaders.put("Content-Type", "application/json; charset=utf-8");
+        rspHeaders.put("Cache-Control","no-cache");
 
         Object rspBody = APIHelper.deserialize("{" +
-                    "\"Error\": \"InvalidArgumentException\"," +
-                    "\"Message\": \"Missing field field_a\"" +
+                "\"Error\": \"InvalidArgumentException\"," +
+                "\"Message\": \"Missing field field_a\"" +
                 "}");
 
 
-        EventRequestModel eventReq = new EventRequestModel();
+        EventRequestModel eventReq = new EventRequestBuilder()
+                .time(new Date())
+                .uri("https://api.acmeinc.com/items/reviews/")
+                .verb("PATCH")
+                .apiVersion("1.1.0")
+                .ipAddress("61.48.220.123")
+                .headers(reqHeaders)
+                .body(reqBody)
+                .build();
 
-        eventReq.setTime(new Date());
-        eventReq.setUri("https://api.acmeinc.com/items/reviews/");
-        eventReq.setVerb("PATCH");
-        eventReq.setApiVersion("1.1.0");
-        eventReq.setIpAddress("61.48.220.123");
-        eventReq.setHeaders(reqHeaders);
-        eventReq.setBody(reqBody);
 
+        EventResponseModel eventRsp = new EventResponseBuilder()
+                .time(new Date(System.currentTimeMillis() + 1000))
+                .status(500)
+                .headers(rspHeaders)
+                .body(rspBody)
+                .build();
 
-        EventResponseModel eventRsp = new EventResponseModel();
+        EventModel eventModel = new EventBuilder()
+                .request(eventReq)
+                .response(eventRsp)
+                .userId("my_user_id")
+                .sessionToken("23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f")
+                .build();
 
-        eventRsp.setTime(new Date(System.currentTimeMillis() + 1000));
-        eventRsp.setStatus(500);
-        eventRsp.setHeaders(rspHeaders);
-        eventRsp.setBody(rspBody);
-
-        EventModel eventModel = new EventModel();
-        eventModel.setRequest(eventReq);
-        eventModel.setResponse(eventRsp);
-        eventModel.setUserId("my_user_id");
-        eventModel.setSessionToken("23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f");
 
         APICallBack<Object> callBack = new APICallBack<Object>() {
             public void onSuccess(HttpContext context, Object response) {
@@ -225,12 +225,77 @@ public class APIControllerTest extends ControllerTestBase {
     @Test
     public void testAddBatchedEvents() throws Throwable {
         // Parameters for the API call
-        List<EventModel> body = APIHelper.deserialize("[{ 					\"request\": { 						\"time\": \"2016-09-09T04:45:42.914\", 						\"uri\": \"https://api.acmeinc.com/items/reviews/\", 						\"verb\": \"PATCH\", 						\"api_version\": \"1.1.0\", 						\"ip_address\": \"61.48.220.123\", 						\"headers\": { 							\"Host\": \"api.acmeinc.com\", 							\"Accept\": \"*/*\", 							\"Connection\": \"Keep-Alive\", 							\"User-Agent\": \"Dalvik/2.1.0 (Linux; U; Android 5.0.2; C6906 Build/14.5.A.0.242)\", 							\"Content-Type\": \"application/json\", 							\"Content-Length\": \"126\", 							\"Accept-Encoding\": \"gzip\" 						}, 						\"body\": { 							\"items\": [ 								{ 									\"direction_type\": 1, 									\"discovery_id\": \"fwfrf\", 									\"liked\": false 								}, 								{ 									\"direction_type\": 2, 									\"discovery_id\": \"d43d3f\", 									\"liked\": true 								} 							] 						} 					}, 					\"response\": { 						\"time\": \"2016-09-09T04:45:42.914\", 						\"status\": 500, 						\"headers\": { 							\"Date\": \"Tue, 23 Aug 2016 23:46:49 GMT\", 							\"Vary\": \"Accept-Encoding\", 							\"Pragma\": \"no-cache\", 							\"Expires\": \"-1\", 							\"Content-Type\": \"application/json; charset=utf-8\", 							\"X-Powered-By\": \"ARR/3.0\", 							\"Cache-Control\": \"no-cache\", 							\"Arr-Disable-Session-Affinity\": \"true\" 						}, 						\"body\": { 							\"Error\": \"InvalidArgumentException\", 							\"Message\": \"Missing field field_a\" 						} 					}, 					\"user_id\": \"mndug437f43\", 					\"session_token\": \"23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f\" 					 }, { 					\"request\": { 						\"time\": \"2016-09-09T04:46:42.914\", 						\"uri\": \"https://api.acmeinc.com/items/reviews/\", 						\"verb\": \"PATCH\", 						\"api_version\": \"1.1.0\", 						\"ip_address\": \"61.48.220.123\", 						\"headers\": { 							\"Host\": \"api.acmeinc.com\", 							\"Accept\": \"*/*\", 							\"Connection\": \"Keep-Alive\", 							\"User-Agent\": \"Dalvik/2.1.0 (Linux; U; Android 5.0.2; C6906 Build/14.5.A.0.242)\", 							\"Content-Type\": \"application/json\", 							\"Content-Length\": \"126\", 							\"Accept-Encoding\": \"gzip\" 						}, 						\"body\": { 							\"items\": [ 								{ 									\"direction_type\": 1, 									\"discovery_id\": \"fwfrf\", 									\"liked\": false 								}, 								{ 									\"direction_type\": 2, 									\"discovery_id\": \"d43d3f\", 									\"liked\": true 								} 							] 						} 					}, 					\"response\": { 						\"time\": \"2016-09-09T04:46:42.914\", 						\"status\": 500, 						\"headers\": { 							\"Date\": \"Tue, 23 Aug 2016 23:46:49 GMT\", 							\"Vary\": \"Accept-Encoding\", 							\"Pragma\": \"no-cache\", 							\"Expires\": \"-1\", 							\"Content-Type\": \"application/json; charset=utf-8\", 							\"X-Powered-By\": \"ARR/3.0\", 							\"Cache-Control\": \"no-cache\", 							\"Arr-Disable-Session-Affinity\": \"true\" 						}, 						\"body\": { 							\"Error\": \"InvalidArgumentException\", 							\"Message\": \"Missing field field_a\" 						} 					}, 					\"user_id\": \"mndug437f43\", 					\"session_token\": \"23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f\" 					 }, { 					\"request\": { 						\"time\": \"2016-09-09T04:47:42.914\", 						\"uri\": \"https://api.acmeinc.com/items/reviews/\", 						\"verb\": \"PATCH\", 						\"api_version\": \"1.1.0\", 						\"ip_address\": \"61.48.220.123\", 						\"headers\": { 							\"Host\": \"api.acmeinc.com\", 							\"Accept\": \"*/*\", 							\"Connection\": \"Keep-Alive\", 							\"User-Agent\": \"Dalvik/2.1.0 (Linux; U; Android 5.0.2; C6906 Build/14.5.A.0.242)\", 							\"Content-Type\": \"application/json\", 							\"Content-Length\": \"126\", 							\"Accept-Encoding\": \"gzip\" 						}, 						\"body\": { 							\"items\": [ 								{ 									\"direction_type\": 1, 									\"discovery_id\": \"fwfrf\", 									\"liked\": false 								}, 								{ 									\"direction_type\": 2, 									\"discovery_id\": \"d43d3f\", 									\"liked\": true 								} 							] 						} 					}, 					\"response\": { 						\"time\": \"2016-09-09T04:47:42.914\", 						\"status\": 500, 						\"headers\": { 							\"Date\": \"Tue, 23 Aug 2016 23:46:49 GMT\", 							\"Vary\": \"Accept-Encoding\", 							\"Pragma\": \"no-cache\", 							\"Expires\": \"-1\", 							\"Content-Type\": \"application/json; charset=utf-8\", 							\"X-Powered-By\": \"ARR/3.0\", 							\"Cache-Control\": \"no-cache\", 							\"Arr-Disable-Session-Affinity\": \"true\" 						}, 						\"body\": { 							\"Error\": \"InvalidArgumentException\", 							\"Message\": \"Missing field field_a\" 						} 					}, 					\"user_id\": \"mndug437f43\", 					\"session_token\": \"23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f\" 					 }, { 					\"request\": { 						\"time\": \"2016-09-09T04:48:42.914\", 						\"uri\": \"https://api.acmeinc.com/items/reviews/\", 						\"verb\": \"PATCH\", 						\"api_version\": \"1.1.0\", 						\"ip_address\": \"61.48.220.123\", 						\"headers\": { 							\"Host\": \"api.acmeinc.com\", 							\"Accept\": \"*/*\", 							\"Connection\": \"Keep-Alive\", 							\"User-Agent\": \"Dalvik/2.1.0 (Linux; U; Android 5.0.2; C6906 Build/14.5.A.0.242)\", 							\"Content-Type\": \"application/json\", 							\"Content-Length\": \"126\", 							\"Accept-Encoding\": \"gzip\" 						}, 						\"body\": { 							\"items\": [ 								{ 									\"direction_type\": 1, 									\"discovery_id\": \"fwfrf\", 									\"liked\": false 								}, 								{ 									\"direction_type\": 2, 									\"discovery_id\": \"d43d3f\", 									\"liked\": true 								} 							] 						} 					}, 					\"response\": { 						\"time\": \"2016-09-09T04:48:42.914\", 						\"status\": 500, 						\"headers\": { 							\"Date\": \"Tue, 23 Aug 2016 23:46:49 GMT\", 							\"Vary\": \"Accept-Encoding\", 							\"Pragma\": \"no-cache\", 							\"Expires\": \"-1\", 							\"Content-Type\": \"application/json; charset=utf-8\", 							\"X-Powered-By\": \"ARR/3.0\", 							\"Cache-Control\": \"no-cache\", 							\"Arr-Disable-Session-Affinity\": \"true\" 						}, 						\"body\": { 							\"Error\": \"InvalidArgumentException\", 							\"Message\": \"Missing field field_a\" 						} 					}, 					\"user_id\": \"mndug437f43\", 					\"session_token\": \"exfzweachxjgznvKUYrxFcxv]s98y18cx98q3yhwmnhcfx43f\" 					 }, { 					\"request\": { 						\"time\": \"2016-09-09T04:49:42.914\", 						\"uri\": \"https://api.acmeinc.com/items/reviews/\", 						\"verb\": \"PATCH\", 						\"api_version\": \"1.1.0\", 						\"ip_address\": \"61.48.220.123\", 						\"headers\": { 							\"Host\": \"api.acmeinc.com\", 							\"Accept\": \"*/*\", 							\"Connection\": \"Keep-Alive\", 							\"User-Agent\": \"Dalvik/2.1.0 (Linux; U; Android 5.0.2; C6906 Build/14.5.A.0.242)\", 							\"Content-Type\": \"application/json\", 							\"Content-Length\": \"126\", 							\"Accept-Encoding\": \"gzip\" 						}, 						\"body\": { 							\"items\": [ 								{ 									\"direction_type\": 1, 									\"discovery_id\": \"fwfrf\", 									\"liked\": false 								}, 								{ 									\"direction_type\": 2, 									\"discovery_id\": \"d43d3f\", 									\"liked\": true 								} 							] 						} 					}, 					\"response\": { 						\"time\": \"2016-09-09T04:49:42.914\", 						\"status\": 500, 						\"headers\": { 							\"Date\": \"Tue, 23 Aug 2016 23:46:49 GMT\", 							\"Vary\": \"Accept-Encoding\", 							\"Pragma\": \"no-cache\", 							\"Expires\": \"-1\", 							\"Content-Type\": \"application/json; charset=utf-8\", 							\"X-Powered-By\": \"ARR/3.0\", 							\"Cache-Control\": \"no-cache\", 							\"Arr-Disable-Session-Affinity\": \"true\" 						}, 						\"body\": { 							\"Error\": \"InvalidArgumentException\", 							\"Message\": \"Missing field field_a\" 						} 					}, 					\"user_id\": \"mndug437f43\", 					\"session_token\": \"23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f\" 					 }, { 					\"request\": { 						\"time\": \"2016-09-09T04:50:42.914\", 						\"uri\": \"https://api.acmeinc.com/items/reviews/\", 						\"verb\": \"PATCH\", 						\"api_version\": \"1.1.0\", 						\"ip_address\": \"61.48.220.123\", 						\"headers\": { 							\"Host\": \"api.acmeinc.com\", 							\"Accept\": \"*/*\", 							\"Connection\": \"Keep-Alive\", 							\"User-Agent\": \"Dalvik/2.1.0 (Linux; U; Android 5.0.2; C6906 Build/14.5.A.0.242)\", 							\"Content-Type\": \"application/json\", 							\"Content-Length\": \"126\", 							\"Accept-Encoding\": \"gzip\" 						}, 						\"body\": { 							\"items\": [ 								{ 									\"direction_type\": 1, 									\"discovery_id\": \"fwfrf\", 									\"liked\": false 								}, 								{ 									\"direction_type\": 2, 									\"discovery_id\": \"d43d3f\", 									\"liked\": true 								} 							] 						} 					}, 					\"response\": { 						\"time\": \"2016-09-09T04:50:42.914\", 						\"status\": 500, 						\"headers\": { 							\"Date\": \"Tue, 23 Aug 2016 23:46:49 GMT\", 							\"Vary\": \"Accept-Encoding\", 							\"Pragma\": \"no-cache\", 							\"Expires\": \"-1\", 							\"Content-Type\": \"application/json; charset=utf-8\", 							\"X-Powered-By\": \"ARR/3.0\", 							\"Cache-Control\": \"no-cache\", 							\"Arr-Disable-Session-Affinity\": \"true\" 						}, 						\"body\": { 							\"Error\": \"InvalidArgumentException\", 							\"Message\": \"Missing field field_a\" 						} 					}, 					\"user_id\": \"recvreedfef\", 					\"session_token\": \"xcvkrjmcfghwuignrmcmhxdhaaezse4w]s98y18cx98q3yhwmnhcfx43f\" 					 } ]", new TypeReference<List<EventModel>>(){});
+        Map<String, String> reqHeaders = new HashMap<String, String>();
+        reqHeaders.put("Host", "api.acmeinc.com");
+        reqHeaders.put("Accept", "*/*");
+        reqHeaders.put("Connection", "Keep-Alive");
+        reqHeaders.put("User-Agent", "Dalvik/2.1.0 (Linux; U; Android 5.0.2; C6906 Build/14.5.A.0.242)");
+        reqHeaders.put("Content-Type", "application/json");
+        reqHeaders.put("Content-Length", "126");
+        reqHeaders.put("Accept-Encoding", "gzip");
+
+        Object reqBody = APIHelper.deserialize("{" +
+                "\"items\": [" +
+                "{" +
+                "\"type\": 1," +
+                "\"id\": \"fwfrf\"" +
+                "}," +
+                "{" +
+                "\"type\": 2," +
+                "\"id\": \"d43d3f\"" +
+                "}" +
+                "]" +
+                "}");
+
+        Map<String, String> rspHeaders = new HashMap<String, String>();
+        rspHeaders.put("Date", "Tue, 23 Feb 2017 23:46:49 GMT");
+        rspHeaders.put("Vary", "Accept-Encoding");
+        rspHeaders.put("Pragma", "no-cache");
+        rspHeaders.put("Expires", "-1");
+        rspHeaders.put("Content-Type", "application/json; charset=utf-8");
+        rspHeaders.put("Cache-Control","no-cache");
+
+        Object rspBody = APIHelper.deserialize("{" +
+                "\"Error\": \"InvalidArgumentException\"," +
+                "\"Message\": \"Missing field field_a\"" +
+                "}");
+
+
+        EventRequestModel eventReq = new EventRequestBuilder()
+                .time(new Date())
+                .uri("https://api.acmeinc.com/items/reviews/")
+                .verb("PATCH")
+                .apiVersion("1.1.0")
+                .ipAddress("61.48.220.123")
+                .headers(reqHeaders)
+                .body(reqBody)
+                .build();
+
+
+        EventResponseModel eventRsp = new EventResponseBuilder()
+                .time(new Date(System.currentTimeMillis() + 1000))
+                .status(500)
+                .headers(rspHeaders)
+                .body(rspBody)
+                .build();
+
+        EventModel eventModel = new EventBuilder()
+                .request(eventReq)
+                .response(eventRsp)
+                .userId("my_user_id")
+                .sessionToken("23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f")
+                .build();
+
+        List<EventModel> events = new ArrayList<EventModel>();
+        events.add(eventModel);
+        events.add(eventModel);
+        events.add(eventModel);
+        events.add(eventModel);
 
         // Set callback and perform API call
         controller.setHttpCallBack(httpResponse);
         try {
-        controller.createEventsBatch(body);
+        controller.createEventsBatch(events);
         } catch(APIException e) {};
 
         // Test response code
@@ -247,7 +312,72 @@ public class APIControllerTest extends ControllerTestBase {
         final CountDownLatch lock = new CountDownLatch(1);
 
         // Parameters for the API call
-        List<EventModel> body = APIHelper.deserialize("[{ 					\"request\": { 						\"time\": \"2016-09-09T04:45:42.914\", 						\"uri\": \"https://api.acmeinc.com/items/reviews/\", 						\"verb\": \"PATCH\", 						\"api_version\": \"1.1.0\", 						\"ip_address\": \"61.48.220.123\", 						\"headers\": { 							\"Host\": \"api.acmeinc.com\", 							\"Accept\": \"*/*\", 							\"Connection\": \"Keep-Alive\", 							\"User-Agent\": \"Dalvik/2.1.0 (Linux; U; Android 5.0.2; C6906 Build/14.5.A.0.242)\", 							\"Content-Type\": \"application/json\", 							\"Content-Length\": \"126\", 							\"Accept-Encoding\": \"gzip\" 						}, 						\"body\": { 							\"items\": [ 								{ 									\"direction_type\": 1, 									\"discovery_id\": \"fwfrf\", 									\"liked\": false 								}, 								{ 									\"direction_type\": 2, 									\"discovery_id\": \"d43d3f\", 									\"liked\": true 								} 							] 						} 					}, 					\"response\": { 						\"time\": \"2016-09-09T04:45:42.914\", 						\"status\": 500, 						\"headers\": { 							\"Date\": \"Tue, 23 Aug 2016 23:46:49 GMT\", 							\"Vary\": \"Accept-Encoding\", 							\"Pragma\": \"no-cache\", 							\"Expires\": \"-1\", 							\"Content-Type\": \"application/json; charset=utf-8\", 							\"X-Powered-By\": \"ARR/3.0\", 							\"Cache-Control\": \"no-cache\", 							\"Arr-Disable-Session-Affinity\": \"true\" 						}, 						\"body\": { 							\"Error\": \"InvalidArgumentException\", 							\"Message\": \"Missing field field_a\" 						} 					}, 					\"user_id\": \"mndug437f43\", 					\"session_token\": \"23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f\" 					 }, { 					\"request\": { 						\"time\": \"2016-09-09T04:46:42.914\", 						\"uri\": \"https://api.acmeinc.com/items/reviews/\", 						\"verb\": \"PATCH\", 						\"api_version\": \"1.1.0\", 						\"ip_address\": \"61.48.220.123\", 						\"headers\": { 							\"Host\": \"api.acmeinc.com\", 							\"Accept\": \"*/*\", 							\"Connection\": \"Keep-Alive\", 							\"User-Agent\": \"Dalvik/2.1.0 (Linux; U; Android 5.0.2; C6906 Build/14.5.A.0.242)\", 							\"Content-Type\": \"application/json\", 							\"Content-Length\": \"126\", 							\"Accept-Encoding\": \"gzip\" 						}, 						\"body\": { 							\"items\": [ 								{ 									\"direction_type\": 1, 									\"discovery_id\": \"fwfrf\", 									\"liked\": false 								}, 								{ 									\"direction_type\": 2, 									\"discovery_id\": \"d43d3f\", 									\"liked\": true 								} 							] 						} 					}, 					\"response\": { 						\"time\": \"2016-09-09T04:46:42.914\", 						\"status\": 500, 						\"headers\": { 							\"Date\": \"Tue, 23 Aug 2016 23:46:49 GMT\", 							\"Vary\": \"Accept-Encoding\", 							\"Pragma\": \"no-cache\", 							\"Expires\": \"-1\", 							\"Content-Type\": \"application/json; charset=utf-8\", 							\"X-Powered-By\": \"ARR/3.0\", 							\"Cache-Control\": \"no-cache\", 							\"Arr-Disable-Session-Affinity\": \"true\" 						}, 						\"body\": { 							\"Error\": \"InvalidArgumentException\", 							\"Message\": \"Missing field field_a\" 						} 					}, 					\"user_id\": \"mndug437f43\", 					\"session_token\": \"23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f\" 					 }, { 					\"request\": { 						\"time\": \"2016-09-09T04:47:42.914\", 						\"uri\": \"https://api.acmeinc.com/items/reviews/\", 						\"verb\": \"PATCH\", 						\"api_version\": \"1.1.0\", 						\"ip_address\": \"61.48.220.123\", 						\"headers\": { 							\"Host\": \"api.acmeinc.com\", 							\"Accept\": \"*/*\", 							\"Connection\": \"Keep-Alive\", 							\"User-Agent\": \"Dalvik/2.1.0 (Linux; U; Android 5.0.2; C6906 Build/14.5.A.0.242)\", 							\"Content-Type\": \"application/json\", 							\"Content-Length\": \"126\", 							\"Accept-Encoding\": \"gzip\" 						}, 						\"body\": { 							\"items\": [ 								{ 									\"direction_type\": 1, 									\"discovery_id\": \"fwfrf\", 									\"liked\": false 								}, 								{ 									\"direction_type\": 2, 									\"discovery_id\": \"d43d3f\", 									\"liked\": true 								} 							] 						} 					}, 					\"response\": { 						\"time\": \"2016-09-09T04:47:42.914\", 						\"status\": 500, 						\"headers\": { 							\"Date\": \"Tue, 23 Aug 2016 23:46:49 GMT\", 							\"Vary\": \"Accept-Encoding\", 							\"Pragma\": \"no-cache\", 							\"Expires\": \"-1\", 							\"Content-Type\": \"application/json; charset=utf-8\", 							\"X-Powered-By\": \"ARR/3.0\", 							\"Cache-Control\": \"no-cache\", 							\"Arr-Disable-Session-Affinity\": \"true\" 						}, 						\"body\": { 							\"Error\": \"InvalidArgumentException\", 							\"Message\": \"Missing field field_a\" 						} 					}, 					\"user_id\": \"mndug437f43\", 					\"session_token\": \"23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f\" 					 }, { 					\"request\": { 						\"time\": \"2016-09-09T04:48:42.914\", 						\"uri\": \"https://api.acmeinc.com/items/reviews/\", 						\"verb\": \"PATCH\", 						\"api_version\": \"1.1.0\", 						\"ip_address\": \"61.48.220.123\", 						\"headers\": { 							\"Host\": \"api.acmeinc.com\", 							\"Accept\": \"*/*\", 							\"Connection\": \"Keep-Alive\", 							\"User-Agent\": \"Dalvik/2.1.0 (Linux; U; Android 5.0.2; C6906 Build/14.5.A.0.242)\", 							\"Content-Type\": \"application/json\", 							\"Content-Length\": \"126\", 							\"Accept-Encoding\": \"gzip\" 						}, 						\"body\": { 							\"items\": [ 								{ 									\"direction_type\": 1, 									\"discovery_id\": \"fwfrf\", 									\"liked\": false 								}, 								{ 									\"direction_type\": 2, 									\"discovery_id\": \"d43d3f\", 									\"liked\": true 								} 							] 						} 					}, 					\"response\": { 						\"time\": \"2016-09-09T04:48:42.914\", 						\"status\": 500, 						\"headers\": { 							\"Date\": \"Tue, 23 Aug 2016 23:46:49 GMT\", 							\"Vary\": \"Accept-Encoding\", 							\"Pragma\": \"no-cache\", 							\"Expires\": \"-1\", 							\"Content-Type\": \"application/json; charset=utf-8\", 							\"X-Powered-By\": \"ARR/3.0\", 							\"Cache-Control\": \"no-cache\", 							\"Arr-Disable-Session-Affinity\": \"true\" 						}, 						\"body\": { 							\"Error\": \"InvalidArgumentException\", 							\"Message\": \"Missing field field_a\" 						} 					}, 					\"user_id\": \"mndug437f43\", 					\"session_token\": \"exfzweachxjgznvKUYrxFcxv]s98y18cx98q3yhwmnhcfx43f\" 					 }, { 					\"request\": { 						\"time\": \"2016-09-09T04:49:42.914\", 						\"uri\": \"https://api.acmeinc.com/items/reviews/\", 						\"verb\": \"PATCH\", 						\"api_version\": \"1.1.0\", 						\"ip_address\": \"61.48.220.123\", 						\"headers\": { 							\"Host\": \"api.acmeinc.com\", 							\"Accept\": \"*/*\", 							\"Connection\": \"Keep-Alive\", 							\"User-Agent\": \"Dalvik/2.1.0 (Linux; U; Android 5.0.2; C6906 Build/14.5.A.0.242)\", 							\"Content-Type\": \"application/json\", 							\"Content-Length\": \"126\", 							\"Accept-Encoding\": \"gzip\" 						}, 						\"body\": { 							\"items\": [ 								{ 									\"direction_type\": 1, 									\"discovery_id\": \"fwfrf\", 									\"liked\": false 								}, 								{ 									\"direction_type\": 2, 									\"discovery_id\": \"d43d3f\", 									\"liked\": true 								} 							] 						} 					}, 					\"response\": { 						\"time\": \"2016-09-09T04:49:42.914\", 						\"status\": 500, 						\"headers\": { 							\"Date\": \"Tue, 23 Aug 2016 23:46:49 GMT\", 							\"Vary\": \"Accept-Encoding\", 							\"Pragma\": \"no-cache\", 							\"Expires\": \"-1\", 							\"Content-Type\": \"application/json; charset=utf-8\", 							\"X-Powered-By\": \"ARR/3.0\", 							\"Cache-Control\": \"no-cache\", 							\"Arr-Disable-Session-Affinity\": \"true\" 						}, 						\"body\": { 							\"Error\": \"InvalidArgumentException\", 							\"Message\": \"Missing field field_a\" 						} 					}, 					\"user_id\": \"mndug437f43\", 					\"session_token\": \"23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f\" 					 }, { 					\"request\": { 						\"time\": \"2016-09-09T04:50:42.914\", 						\"uri\": \"https://api.acmeinc.com/items/reviews/\", 						\"verb\": \"PATCH\", 						\"api_version\": \"1.1.0\", 						\"ip_address\": \"61.48.220.123\", 						\"headers\": { 							\"Host\": \"api.acmeinc.com\", 							\"Accept\": \"*/*\", 							\"Connection\": \"Keep-Alive\", 							\"User-Agent\": \"Dalvik/2.1.0 (Linux; U; Android 5.0.2; C6906 Build/14.5.A.0.242)\", 							\"Content-Type\": \"application/json\", 							\"Content-Length\": \"126\", 							\"Accept-Encoding\": \"gzip\" 						}, 						\"body\": { 							\"items\": [ 								{ 									\"direction_type\": 1, 									\"discovery_id\": \"fwfrf\", 									\"liked\": false 								}, 								{ 									\"direction_type\": 2, 									\"discovery_id\": \"d43d3f\", 									\"liked\": true 								} 							] 						} 					}, 					\"response\": { 						\"time\": \"2016-09-09T04:50:42.914\", 						\"status\": 500, 						\"headers\": { 							\"Date\": \"Tue, 23 Aug 2016 23:46:49 GMT\", 							\"Vary\": \"Accept-Encoding\", 							\"Pragma\": \"no-cache\", 							\"Expires\": \"-1\", 							\"Content-Type\": \"application/json; charset=utf-8\", 							\"X-Powered-By\": \"ARR/3.0\", 							\"Cache-Control\": \"no-cache\", 							\"Arr-Disable-Session-Affinity\": \"true\" 						}, 						\"body\": { 							\"Error\": \"InvalidArgumentException\", 							\"Message\": \"Missing field field_a\" 						} 					}, 					\"user_id\": \"recvreedfef\", 					\"session_token\": \"xcvkrjmcfghwuignrmcmhxdhaaezse4w]s98y18cx98q3yhwmnhcfx43f\" 					 } ]", new TypeReference<List<EventModel>>(){});
+        Map<String, String> reqHeaders = new HashMap<String, String>();
+        reqHeaders.put("Host", "api.acmeinc.com");
+        reqHeaders.put("Accept", "*/*");
+        reqHeaders.put("Connection", "Keep-Alive");
+        reqHeaders.put("User-Agent", "Dalvik/2.1.0 (Linux; U; Android 5.0.2; C6906 Build/14.5.A.0.242)");
+        reqHeaders.put("Content-Type", "application/json");
+        reqHeaders.put("Content-Length", "126");
+        reqHeaders.put("Accept-Encoding", "gzip");
+
+        Object reqBody = APIHelper.deserialize("{" +
+                "\"items\": [" +
+                "{" +
+                "\"type\": 1," +
+                "\"id\": \"fwfrf\"" +
+                "}," +
+                "{" +
+                "\"type\": 2," +
+                "\"id\": \"d43d3f\"" +
+                "}" +
+                "]" +
+                "}");
+
+        Map<String, String> rspHeaders = new HashMap<String, String>();
+        rspHeaders.put("Date", "Tue, 23 Feb 2017 23:46:49 GMT");
+        rspHeaders.put("Vary", "Accept-Encoding");
+        rspHeaders.put("Pragma", "no-cache");
+        rspHeaders.put("Expires", "-1");
+        rspHeaders.put("Content-Type", "application/json; charset=utf-8");
+        rspHeaders.put("Cache-Control","no-cache");
+
+        Object rspBody = APIHelper.deserialize("{" +
+                "\"Error\": \"InvalidArgumentException\"," +
+                "\"Message\": \"Missing field field_a\"" +
+                "}");
+
+
+        EventRequestModel eventReq = new EventRequestBuilder()
+                .time(new Date())
+                .uri("https://api.acmeinc.com/items/reviews/")
+                .verb("PATCH")
+                .apiVersion("1.1.0")
+                .ipAddress("61.48.220.123")
+                .headers(reqHeaders)
+                .body(reqBody)
+                .build();
+
+
+        EventResponseModel eventRsp = new EventResponseBuilder()
+                .time(new Date(System.currentTimeMillis() + 1000))
+                .status(500)
+                .headers(rspHeaders)
+                .body(rspBody)
+                .build();
+
+        EventModel eventModel = new EventBuilder()
+                .request(eventReq)
+                .response(eventRsp)
+                .userId("my_user_id")
+                .sessionToken("23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f")
+                .build();
+
+        List<EventModel> events = new ArrayList<EventModel>();
+        events.add(eventModel);
+        events.add(eventModel);
+        events.add(eventModel);
+        events.add(eventModel);
 
         APICallBack<Object> callBack = new APICallBack<Object>() {
             public void onSuccess(HttpContext context, Object response) {
@@ -261,7 +391,7 @@ public class APIControllerTest extends ControllerTestBase {
             }
         };
 
-        controller.createEventsBatchAsync(body, callBack);
+        controller.createEventsBatchAsync(events, callBack);
         assertEquals(true, lock.await(10000, TimeUnit.MILLISECONDS));
     }
 
@@ -272,13 +402,13 @@ public class APIControllerTest extends ControllerTestBase {
     @Test
     public void testUpdateUser() throws Throwable {
 
-        UserModel user = new UserModel();
-        user.setUserId("12345");
-        user.setModifiedTime(new Date());
-        user.setIpAddress("29.80.250.240");
-        user.setSessionToken("di3hd982h3fubv3yfd94egf");
-        user.setUserAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
-        user.setMetadata(APIHelper.deserialize("{" +
+        UserModel user = new UserBuilder()
+            .userId("12345")
+            .modifiedTime(new Date())
+            .ipAddress("29.80.250.240")
+            .sessionToken("di3hd982h3fubv3yfd94egf")
+            .userAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
+            .metadata(APIHelper.deserialize("{" +
                 "\"email\": \"johndoe@acmeinc.com\"," +
                 "\"string_field\": \"value_1\"," +
                 "\"number_field\": 0," +
@@ -286,7 +416,8 @@ public class APIControllerTest extends ControllerTestBase {
                 "\"field_1\": \"value_1\"," +
                 "\"field_2\": \"value_2\"" +
                 "}" +
-                "}"));
+                "}"))
+             .build();
 
         // Set callback and perform API call
         controller.setHttpCallBack(httpResponse);
@@ -307,21 +438,22 @@ public class APIControllerTest extends ControllerTestBase {
     public void testUpdateUserAsync() throws Throwable {
         final CountDownLatch lock = new CountDownLatch(1);
 
-        UserModel user = new UserModel();
-        user.setUserId("12345");
-        user.setModifiedTime(new Date());
-        user.setIpAddress("29.80.250.240");
-        user.setSessionToken("di3hd982h3fubv3yfd94egf");
-        user.setUserAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
-        user.setMetadata(APIHelper.deserialize("{" +
-                "\"email\": \"johndoe@acmeinc.com\"," +
-                "\"string_field\": \"value_1\"," +
-                "\"number_field\": 0," +
-                "\"object_field\": {" +
-                "\"field_1\": \"value_1\"," +
-                "\"field_2\": \"value_2\"" +
-                "}" +
-                "}"));
+        UserModel user = new UserBuilder()
+            .userId("12345")
+            .modifiedTime(new Date())
+            .ipAddress("29.80.250.240")
+            .sessionToken("di3hd982h3fubv3yfd94egf")
+            .userAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
+            .metadata(APIHelper.deserialize("{" +
+                    "\"email\": \"johndoe@acmeinc.com\"," +
+                    "\"string_field\": \"value_1\"," +
+                    "\"number_field\": 0," +
+                    "\"object_field\": {" +
+                    "\"field_1\": \"value_1\"," +
+                    "\"field_2\": \"value_2\"" +
+                    "}" +
+                    "}"))
+            .build();
 
         APICallBack<Object> callBack = new APICallBack<Object>() {
             public void onSuccess(HttpContext context, Object response) {
@@ -345,48 +477,50 @@ public class APIControllerTest extends ControllerTestBase {
      */
     @Test
     public void testUpdateBatchedUsers() throws Throwable {
+
         // Parameters for the API call
-        List<UserModel> body = new ArrayList<UserModel>();
+        List<UserModel> users = new ArrayList<UserModel>();
 
-        UserModel user = new UserModel();
-        user.setUserId("12345");
-        user.setModifiedTime(new Date());
-        user.setIpAddress("29.80.250.240");
-        user.setSessionToken("di3hd982h3fubv3yfd94egf");
-        user.setUserAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
-        user.setMetadata(APIHelper.deserialize("{" +
-                "\"email\": \"johndoe@acmeinc.com\"," +
-                "\"string_field\": \"value_1\"," +
-                "\"number_field\": 0," +
-                "\"object_field\": {" +
-                "\"field_1\": \"value_1\"," +
-                "\"field_2\": \"value_2\"" +
-                "}" +
-                "}"));
-        body.add(user);
+        UserModel userA = new UserBuilder()
+            .userId("12345")
+            .modifiedTime(new Date())
+            .ipAddress("29.80.250.240")
+            .sessionToken("di3hd982h3fubv3yfd94egf")
+            .userAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
+            .metadata(APIHelper.deserialize("{" +
+                    "\"email\": \"johndoe@acmeinc.com\"," +
+                    "\"string_field\": \"value_1\"," +
+                    "\"number_field\": 0," +
+                    "\"object_field\": {" +
+                    "\"field_1\": \"value_1\"," +
+                    "\"field_2\": \"value_2\"" +
+                    "}" +
+                    "}"))
+            .build();
+        users.add(userA);
 
-        user = new UserModel();
-        user.setUserId("456789");
-        user.setModifiedTime(new Date());
-        user.setIpAddress("31.77.210.105");
-        user.setSessionToken("daskbdxhsarwjlifgwefbEI");
-        user.setUserAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
-        user.setMetadata(APIHelper.deserialize("{" +
-                "\"email\": \"maryjane@acmeinc.com\"," +
-                "\"string_field\": \"value_1\"," +
-                "\"number_field\": 1," +
-                "\"object_field\": {" +
-                "\"field_1\": \"value_1\"," +
-                "\"field_2\": \"value_2\"" +
-                "}" +
-                "}"));
-        body.add(user);
-
+        UserModel userB = new UserBuilder()
+            .userId("56789")
+            .modifiedTime(new Date())
+            .ipAddress("21.80.11.242")
+            .sessionToken("zceadckekvsfgfpsakvnbfouavsdvds")
+            .userAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
+            .metadata(APIHelper.deserialize("{" +
+                    "\"email\": \"maryjane@acmeinc.com\"," +
+                    "\"string_field\": \"value_1\"," +
+                    "\"number_field\": 1," +
+                    "\"object_field\": {" +
+                    "\"field_1\": \"value_1\"," +
+                    "\"field_2\": \"value_2\"" +
+                    "}" +
+                    "}"))
+            .build();
+        users.add(userB);
 
         // Set callback and perform API call
         controller.setHttpCallBack(httpResponse);
         try {
-            controller.updateUsersBatch(body);
+            controller.updateUsersBatch(users);
         } catch(APIException e) {};
 
         // Test response code
@@ -403,41 +537,44 @@ public class APIControllerTest extends ControllerTestBase {
         final CountDownLatch lock = new CountDownLatch(1);
 
         // Parameters for the API call
-        List<UserModel> body = new ArrayList<UserModel>();
+        List<UserModel> users = new ArrayList<UserModel>();
 
-        UserModel user = new UserModel();
-        user.setUserId("12345");
-        user.setModifiedTime(new Date());
-        user.setIpAddress("29.80.250.240");
-        user.setSessionToken("di3hd982h3fubv3yfd94egf");
-        user.setUserAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
-        user.setMetadata(APIHelper.deserialize("{" +
-            "\"email\": \"johndoe@acmeinc.com\"," +
-            "\"string_field\": \"value_1\"," +
-            "\"number_field\": 0," +
-            "\"object_field\": {" +
-                "\"field_1\": \"value_1\"," +
-                "\"field_2\": \"value_2\"" +
-                "}" +
-            "}"));
-        body.add(user);
+        UserModel userA = new UserBuilder()
+                .userId("12345")
+                .modifiedTime(new Date())
+                .ipAddress("29.80.250.240")
+                .sessionToken("di3hd982h3fubv3yfd94egf")
+                .userAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
+                .metadata(APIHelper.deserialize("{" +
+                        "\"email\": \"johndoe@acmeinc.com\"," +
+                        "\"string_field\": \"value_1\"," +
+                        "\"number_field\": 0," +
+                        "\"object_field\": {" +
+                        "\"field_1\": \"value_1\"," +
+                        "\"field_2\": \"value_2\"" +
+                        "}" +
+                        "}"))
+                .build();
+        users.add(userA);
 
-        user = new UserModel();
-        user.setUserId("456789");
-        user.setModifiedTime(new Date());
-        user.setIpAddress("31.77.210.105");
-        user.setSessionToken("daskbdxhsarwjlifgwefbEI");
-        user.setUserAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
-        user.setMetadata(APIHelper.deserialize("{" +
-                "\"email\": \"maryjane@acmeinc.com\"," +
-                "\"string_field\": \"value_1\"," +
-                "\"number_field\": 1," +
-                "\"object_field\": {" +
-                "\"field_1\": \"value_1\"," +
-                "\"field_2\": \"value_2\"" +
-                "}" +
-                "}"));
-        body.add(user);
+        UserModel userB = new UserBuilder()
+                .userId("56789")
+                .modifiedTime(new Date())
+                .ipAddress("21.80.11.242")
+                .sessionToken("zceadckekvsfgfpsakvnbfouavsdvds")
+                .userAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
+                .metadata(APIHelper.deserialize("{" +
+                        "\"email\": \"maryjane@acmeinc.com\"," +
+                        "\"string_field\": \"value_1\"," +
+                        "\"number_field\": 1," +
+                        "\"object_field\": {" +
+                        "\"field_1\": \"value_1\"," +
+                        "\"field_2\": \"value_2\"" +
+                        "}" +
+                        "}"))
+                .build();
+        users.add(userB);
+
 
         APICallBack<Object> callBack = new APICallBack<Object>() {
             public void onSuccess(HttpContext context, Object response) {
@@ -451,7 +588,7 @@ public class APIControllerTest extends ControllerTestBase {
             }
         };
 
-        controller.updateUsersBatchAsync(body, callBack);
+        controller.updateUsersBatchAsync(users, callBack);
         assertEquals(true, lock.await(10000, TimeUnit.MILLISECONDS));
     }
 

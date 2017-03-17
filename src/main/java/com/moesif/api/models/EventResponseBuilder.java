@@ -37,7 +37,7 @@ public class EventResponseBuilder {
     /**
      * Key/Value map of response headers
      */
-    public EventResponseBuilder headers(Object headers) {
+    public EventResponseBuilder headers(Map<String, String> headers) {
         eventResponseModel.setHeaders(headers);
         return this;
     }

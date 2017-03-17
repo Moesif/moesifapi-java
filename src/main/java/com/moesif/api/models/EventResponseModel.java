@@ -17,7 +17,7 @@ public class EventResponseModel
     private static final long serialVersionUID = 5045792952371564693L;
     private Date time;
     private int status;
-    private Object headers;
+    private Map<String, String> headers;
     private Object body;
     private String transferEncoding;
     private String ipAddress;
@@ -58,7 +58,7 @@ public class EventResponseModel
      * Key/Value map of response headers
      */
     @JsonGetter("headers")
-    public Object getHeaders ( ) { 
+    public Map<String, String> getHeaders ( ) {
         return this.headers;
     }
     
@@ -66,7 +66,7 @@ public class EventResponseModel
      * Key/Value map of response headers
      */
     @JsonSetter("headers")
-    public void setHeaders (Object value) { 
+    public void setHeaders (Map<String, String> value) {
         this.headers = value;
     }
  

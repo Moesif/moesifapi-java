@@ -24,7 +24,7 @@ __Check out Moesif's [Developer Documentation](https://www.moesif.com/docs) and 
 <dependency>
     <groupId>com.moesif</groupId>
     <artifactId>moesifapi-java</artifactId>
-    <version>1.1.3</version>
+    <version>1.2.0</version>
 </dependency>
 ```
 
@@ -43,70 +43,66 @@ There are two ways to create an event: _synchronously_ or _asynchronously_ on a 
 #### 1. Generate the event model
 
 ```java
-// Parameters for the API call
-Object reqHeaders = APIHelper.deserialize("{" +
-            "\"Host\": \"api.acmeinc.com\"," +
-            "\"Accept\": \"*/*\"," +
-            "\"Connection\": \"Keep-Alive\"," +
-            "\"User-Agent\": \"Dalvik/2.1.0 (Linux; U; Android 5.0.2; C6906 Build/14.5.A.0.242)\"," +
-            "\"Content-Type\": \"application/json\"," +
-            "\"Content-Length\": \"126\"," +
-            "\"Accept-Encoding\": \"gzip\"" +
-        "}");
+Map<String, String> reqHeaders = new HashMap<String, String>();
+reqHeaders.put("Host", "api.acmeinc.com");
+reqHeaders.put("Accept", "*/*");
+reqHeaders.put("Connection", "Keep-Alive");
+reqHeaders.put("User-Agent", "Dalvik/2.1.0 (Linux; U; Android 5.0.2; C6906 Build/14.5.A.0.242)");
+reqHeaders.put("Content-Type", "application/json");
+reqHeaders.put("Content-Length", "126");
+reqHeaders.put("Accept-Encoding", "gzip");
 
 Object reqBody = APIHelper.deserialize("{" +
-            "\"items\": [" +
-                "{" +
-                    "\"type\": 1," +
-                    "\"id\": \"fwfrf\"" +
-                "}," +
-                "{" +
-                    "\"type\": 2," +
-                     "\"id\": \"d43d3f\"" +
-                 "}" +
-            "]" +
-        "}");
+						"\"items\": [" +
+								"{" +
+										"\"type\": 1," +
+										"\"id\": \"fwfrf\"" +
+								"}," +
+								"{" +
+										"\"type\": 2," +
+										 "\"id\": \"d43d3f\"" +
+								 "}" +
+						"]" +
+				"}");
 
-Object rspHeaders = APIHelper.deserialize("{" +
-            "\"Date\": \"Tue, 23 Aug 2016 23:46:49 GMT\"," +
-            "\"Vary\": \"Accept-Encoding\"," +
-            "\"Pragma\": \"no-cache\"," +
-            "\"Expires\": \"-1\"," +
-            "\"Content-Type\": \"application/json; charset=utf-8\"," +
-            "\"Cache-Control\": \"no-cache\"" +
-        "}");
+Map<String, String> rspHeaders = new HashMap<String, String>();
+rspHeaders.put("Date", "Tue, 23 Feb 2017 23:46:49 GMT");
+rspHeaders.put("Vary", "Accept-Encoding");
+rspHeaders.put("Pragma", "no-cache");
+rspHeaders.put("Expires", "-1");
+rspHeaders.put("Content-Type", "application/json; charset=utf-8");
+rspHeaders.put("Cache-Control","no-cache");
 
 Object rspBody = APIHelper.deserialize("{" +
-            "\"Error\": \"InvalidArgumentException\"," +
-            "\"Message\": \"Missing field field_a\"" +
-        "}");
+						"\"Error\": \"InvalidArgumentException\"," +
+						"\"Message\": \"Missing field field_a\"" +
+				"}");
 
 
-EventRequestModel eventReq = new EventRequestModel();
+EventRequestModel eventReq = new EventRequestBuilder()
+				.time(new Date())
+				.uri("https://api.acmeinc.com/items/reviews/")
+				.verb("PATCH")
+				.apiVersion("1.1.0")
+				.ipAddress("61.48.220.123")
+				.headers(reqHeaders)
+				.body(reqBody)
+				.build();
 
-eventReq.setTime(new Date());
-eventReq.setUri("https://api.acmeinc.com/items/reviews/");
-eventReq.setVerb("PATCH");
-eventReq.setApiVersion("1.1.3");
-eventReq.setIpAddress("61.48.220.123");
-eventReq.setHeaders(reqHeaders);
-eventReq.setBody(reqBody);
 
+EventResponseModel eventRsp = new EventResponseBuilder()
+				.time(new Date(System.currentTimeMillis() + 1000))
+				.status(500)
+				.headers(rspHeaders)
+				.body(rspBody)
+				.build();
 
-EventResponseModel eventRsp = new EventResponseModel();
-
-eventRsp.setTime(new Date(System.currentTimeMillis() + 1000));
-eventRsp.setStatus(500);
-eventRsp.setHeaders(rspHeaders);
-eventRsp.setBody(rspBody);
-
-EventModel eventModel = new EventModel();
-eventModel.setRequest(eventReq);
-eventModel.setResponse(eventRsp);
-eventModel.setUserId("my_user_id");
-eventModel.setSessionToken("23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f";
-```
-
+EventModel eventModel = new EventBuilder()
+				.request(eventReq)
+				.response(eventRsp)
+				.userId("my_user_id")
+				.sessionToken("23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f")
+				.build();
 #### 2.a Send the event asynchronously
 
 ```java
@@ -145,74 +141,72 @@ Similar to the single event API, there are two ways to create an event: _synchro
 #### 1. Generate the list of events
 
 ```java
-// Parameters for the API call
-Object reqHeaders = APIHelper.deserialize("{" +
-            "\"Host\": \"api.acmeinc.com\"," +
-            "\"Accept\": \"*/*\"," +
-            "\"Connection\": \"Keep-Alive\"," +
-            "\"User-Agent\": \"Dalvik/2.1.0 (Linux; U; Android 5.0.2; C6906 Build/14.5.A.0.242)\"," +
-            "\"Content-Type\": \"application/json\"," +
-            "\"Content-Length\": \"126\"," +
-            "\"Accept-Encoding\": \"gzip\"" +
-        "}");
+Map<String, String> reqHeaders = new HashMap<String, String>();
+reqHeaders.put("Host", "api.acmeinc.com");
+reqHeaders.put("Accept", "*/*");
+reqHeaders.put("Connection", "Keep-Alive");
+reqHeaders.put("User-Agent", "Dalvik/2.1.0 (Linux; U; Android 5.0.2; C6906 Build/14.5.A.0.242)");
+reqHeaders.put("Content-Type", "application/json");
+reqHeaders.put("Content-Length", "126");
+reqHeaders.put("Accept-Encoding", "gzip");
 
 Object reqBody = APIHelper.deserialize("{" +
-            "\"items\": [" +
-                "{" +
-                    "\"type\": 1," +
-                    "\"id\": \"fwfrf\"" +
-                "}," +
-                "{" +
-                    "\"type\": 2," +
-                     "\"id\": \"d43d3f\"" +
-                 "}" +
-            "]" +
-        "}");
+				"\"items\": [" +
+				"{" +
+				"\"type\": 1," +
+				"\"id\": \"fwfrf\"" +
+				"}," +
+				"{" +
+				"\"type\": 2," +
+				"\"id\": \"d43d3f\"" +
+				"}" +
+				"]" +
+				"}");
 
-Object rspHeaders = APIHelper.deserialize("{" +
-            "\"Date\": \"Tue, 23 Aug 2016 23:46:49 GMT\"," +
-            "\"Vary\": \"Accept-Encoding\"," +
-            "\"Pragma\": \"no-cache\"," +
-            "\"Expires\": \"-1\"," +
-            "\"Content-Type\": \"application/json; charset=utf-8\"," +
-            "\"Cache-Control\": \"no-cache\"" +
-        "}");
+Map<String, String> rspHeaders = new HashMap<String, String>();
+rspHeaders.put("Date", "Tue, 23 Feb 2017 23:46:49 GMT");
+rspHeaders.put("Vary", "Accept-Encoding");
+rspHeaders.put("Pragma", "no-cache");
+rspHeaders.put("Expires", "-1");
+rspHeaders.put("Content-Type", "application/json; charset=utf-8");
+rspHeaders.put("Cache-Control","no-cache");
 
 Object rspBody = APIHelper.deserialize("{" +
-            "\"Error\": \"InvalidArgumentException\"," +
-            "\"Message\": \"Missing field field_a\"" +
-        "}");
+				"\"Error\": \"InvalidArgumentException\"," +
+				"\"Message\": \"Missing field field_a\"" +
+				"}");
 
 
-EventRequestModel eventReq = new EventRequestModel();
+EventRequestModel eventReq = new EventRequestBuilder()
+				.time(new Date())
+				.uri("https://api.acmeinc.com/items/reviews/")
+				.verb("PATCH")
+				.apiVersion("1.1.0")
+				.ipAddress("61.48.220.123")
+				.headers(reqHeaders)
+				.body(reqBody)
+				.build();
 
-eventReq.setTime(new Date());
-eventReq.setUri("https://api.acmeinc.com/items/reviews/");
-eventReq.setVerb("PATCH");
-eventReq.setApiVersion("1.1.3");
-eventReq.setIpAddress("61.48.220.123");
-eventReq.setHeaders(reqHeaders);
-eventReq.setBody(reqBody);
 
+EventResponseModel eventRsp = new EventResponseBuilder()
+				.time(new Date(System.currentTimeMillis() + 1000))
+				.status(500)
+				.headers(rspHeaders)
+				.body(rspBody)
+				.build();
 
-EventResponseModel eventRsp = new EventResponseModel();
+EventModel eventModel = new EventBuilder()
+				.request(eventReq)
+				.response(eventRsp)
+				.userId("my_user_id")
+				.sessionToken("23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f")
+				.build();
 
-eventRsp.setTime(new Date(System.currentTimeMillis() + 1000));
-eventRsp.setStatus(500);
-eventRsp.setHeaders(rspHeaders);
-eventRsp.setBody(rspBody);
-
-EventModel eventModel = new EventModel();
-eventModel.setRequest(eventReq);
-eventModel.setResponse(eventRsp);
-eventModel.setUserId("my_user_id");
-eventModel.setSessionToken("23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f";
-
-List<EventModel> eventsList = new ArrayList<EventModel>();
-eventsList.add(eventModel);
-eventsList.add(eventModel);
-eventsList.add(eventModel);
-eventsList.add(eventModel);
+List<EventModel> events = new ArrayList<EventModel>();
+events.add(eventModel);
+events.add(eventModel);
+events.add(eventModel);
+events.add(eventModel);
 ```
 
 #### 2.a Send the events batch asynchronously
@@ -233,7 +227,7 @@ APICallBack<Object> callBack = new APICallBack<Object>() {
     }
 };
 
-api.createEventsBatchAsync(eventsList, callBack);
+api.createEventsBatchAsync(events, callBack);
 ```
 
 #### 2.b Send the events batch synchronously
@@ -242,7 +236,7 @@ api.createEventsBatchAsync(eventsList, callBack);
 MoesifAPIClient client = new MoesifAPIClient("my_application_id");
 APIController api = getClient().getAPI();
 
-api.createEventsBatch(eventsList, callBack);
+api.createEventsBatch(events, callBack);
 ```
 
 ### Update an end user
@@ -256,21 +250,22 @@ You can update a user _synchronously_ or _asynchronously_ on a background thread
 #### 1. Generate the user model
 
 ```java
-UserModel user = new UserModel();
-user.setUserId("12345");
-user.setModifiedTime(new Date());
-user.setIpAddress("29.80.250.240");
-user.setSessionToken("di3hd982h3fubv3yfd94egf");
-user.setUserAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
-user.setMetadata(APIHelper.deserialize("{" +
-        "\"email\": \"johndoe@acmeinc.com\"," +
-        "\"string_field\": \"value_1\"," +
-        "\"number_field\": 0," +
-        "\"object_field\": {" +
-        "\"field_1\": \"value_1\"," +
-        "\"field_2\": \"value_2\"" +
-        "}" +
-        "}"));
+UserModel user = new UserBuilder()
+		.userId("12345")
+		.modifiedTime(new Date())
+		.ipAddress("29.80.250.240")
+		.sessionToken("di3hd982h3fubv3yfd94egf")
+		.userAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
+		.metadata(APIHelper.deserialize("{" +
+				"\"email\": \"johndoe@acmeinc.com\"," +
+				"\"string_field\": \"value_1\"," +
+				"\"number_field\": 0," +
+				"\"object_field\": {" +
+				"\"field_1\": \"value_1\"," +
+				"\"field_2\": \"value_2\"" +
+				"}" +
+				"}"))
+		 .build();
 ```
 
 #### 2.a Update the user asynchronously
@@ -313,41 +308,43 @@ You can update users _synchronously_ or _asynchronously_ on a background thread.
 #### 1. Generate the list of users
 
 ```java
-List<UserModel> userList = new ArrayList<UserModel>();
+List<UserModel> users = new ArrayList<UserModel>();
 
-UserModel user = new UserModel();
-user.setUserId("12345");
-user.setModifiedTime(new Date());
-user.setIpAddress("29.80.250.240");
-user.setSessionToken("di3hd982h3fubv3yfd94egf");
-user.setUserAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
-user.setMetadata(APIHelper.deserialize("{" +
-    "\"email\": \"johndoe@acmeinc.com\"," +
-    "\"string_field\": \"value_1\"," +
-    "\"number_field\": 0," +
-    "\"object_field\": {" +
-        "\"field_1\": \"value_1\"," +
-        "\"field_2\": \"value_2\"" +
-        "}" +
-    "}"));
-body.add(user);
+UserModel userA = new UserBuilder()
+		.userId("12345")
+		.modifiedTime(new Date())
+		.ipAddress("29.80.250.240")
+		.sessionToken("di3hd982h3fubv3yfd94egf")
+		.userAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
+		.metadata(APIHelper.deserialize("{" +
+						"\"email\": \"johndoe@acmeinc.com\"," +
+						"\"string_field\": \"value_1\"," +
+						"\"number_field\": 0," +
+						"\"object_field\": {" +
+						"\"field_1\": \"value_1\"," +
+						"\"field_2\": \"value_2\"" +
+						"}" +
+						"}"))
+		.build();
+users.add(userA);
 
-user = new UserModel();
-user.setUserId("456789");
-user.setModifiedTime(new Date());
-user.setIpAddress("31.77.210.105");
-user.setSessionToken("daskbdxhsarwjlifgwefbEI");
-user.setUserAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
-user.setMetadata(APIHelper.deserialize("{" +
-        "\"email\": \"maryjane@acmeinc.com\"," +
-        "\"string_field\": \"value_1\"," +
-        "\"number_field\": 1," +
-        "\"object_field\": {" +
-        "\"field_1\": \"value_1\"," +
-        "\"field_2\": \"value_2\"" +
-        "}" +
-        "}"));
-userList.add(user);
+UserModel userB = new UserBuilder()
+		.userId("56789")
+		.modifiedTime(new Date())
+		.ipAddress("21.80.11.242")
+		.sessionToken("zceadckekvsfgfpsakvnbfouavsdvds")
+		.userAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
+		.metadata(APIHelper.deserialize("{" +
+						"\"email\": \"maryjane@acmeinc.com\"," +
+						"\"string_field\": \"value_1\"," +
+						"\"number_field\": 1," +
+						"\"object_field\": {" +
+						"\"field_1\": \"value_1\"," +
+						"\"field_2\": \"value_2\"" +
+						"}" +
+						"}"))
+		.build();
+users.add(userB);
 ```
 
 #### 2.a Update the users asynchronously
@@ -369,7 +366,7 @@ APICallBack<Object> callBack = new APICallBack<Object>() {
     }
 };
 
-api.updateUsersBatchAsync(userList, callBack);
+api.updateUsersBatchAsync(users, callBack);
 ```
 
 #### 2.b Update the users synchronously
@@ -378,7 +375,7 @@ api.updateUsersBatchAsync(userList, callBack);
 MoesifAPIClient client = new MoesifAPIClient("my_application_id");
 APIController api = getClient().getAPI();
 
-api.updateUsersBatch(userList, callBack);
+api.updateUsersBatch(users, callBack);
 ```
 
 
@@ -394,7 +391,7 @@ api.updateUsersBatch(userList, callBack);
         <dependency>
             <groupId>MoesifApi</groupId>
             <artifactId>MoesifApi</artifactId>
-            <version>1.1.3</version>
+            <version>1.2.0</version>
             <scope>compile</scope>
         </dependency>
 

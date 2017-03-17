@@ -62,7 +62,7 @@ public class UserBuilder {
     /**
      * Custom user metadata as a JSON object
      */
-    public UserBuilder metadata(String metadata) {
+    public UserBuilder metadata(Object metadata) {
         UserModel.setMetadata(metadata);
         return this;
     }

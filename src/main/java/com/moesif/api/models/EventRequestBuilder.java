@@ -45,7 +45,7 @@ public class EventRequestBuilder {
     /**
      * Key/Value map of request headers
      */
-    public EventRequestBuilder headers(Object headers) {
+    public EventRequestBuilder headers(Map<String, String> headers) {
         eventRequestModel.setHeaders(headers);
         return this;
     }
