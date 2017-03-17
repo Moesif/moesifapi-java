@@ -107,7 +107,7 @@ EventModel eventModel = new EventBuilder()
 
 ```java
 MoesifAPIClient client = new MoesifAPIClient("my_application_id");
-APIController api = getClient().getAPI();
+APIController api = client.getAPI();
 
 APICallBack<Object> callBack = new APICallBack<Object>() {
     public void onSuccess(HttpContext context, Object response) {
@@ -128,7 +128,7 @@ api.createEventAsync(eventModel, callBack);
 
 ```java
 MoesifAPIClient client = new MoesifAPIClient("my_application_id");
-APIController api = getClient().getAPI();
+APIController api = client.getAPI();
 
 api.createEvent(eventModel, callBack);
 ```
@@ -213,7 +213,7 @@ events.add(eventModel);
 
 ```java
 MoesifAPIClient client = new MoesifAPIClient("my_application_id");
-APIController api = getClient().getAPI();
+APIController api = client.getAPI();
 
 APICallBack<Object> callBack = new APICallBack<Object>() {
     public void onSuccess(HttpContext context, Object response) {
@@ -272,7 +272,7 @@ UserModel user = new UserBuilder()
 
 ```java
 MoesifAPIClient client = new MoesifAPIClient("my_application_id");
-APIController api = getClient().getAPI();
+APIController api = client.getAPI();
 
 APICallBack<Object> callBack = new APICallBack<Object>() {
     public void onSuccess(HttpContext context, Object response) {
@@ -352,7 +352,7 @@ users.add(userB);
 
 ```java
 MoesifAPIClient client = new MoesifAPIClient("my_application_id");
-APIController api = getClient().getAPI();
+APIController api = client.getAPI();
 
 APICallBack<Object> callBack = new APICallBack<Object>() {
     public void onSuccess(HttpContext context, Object response) {
