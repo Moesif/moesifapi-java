@@ -47,6 +47,7 @@ public class APIHelper {
   
     /**
      * Singleton access to the threadpool scheduler
+     * @return ExecutorService instance
      */
     public static ExecutorService getScheduler() {
         synchronized(syncRoot) {
@@ -105,6 +106,7 @@ public class APIHelper {
      * JSON Serialization of a given object.
      * @param  obj The object to serialize into JSON
      * @return The serialized Json string representation of the given object
+     * @throws JsonProcessingException if error serializing JSON obj
      */
     public static String serialize(Object obj)
             throws JsonProcessingException {
@@ -118,7 +120,9 @@ public class APIHelper {
      * JSON Deserialization of the given json string.
      * @param   json The json string to deserialize
      * @param   <T>  The type of the object to deserialize into
+     * @param   typeReference The TypeReference of the object to deserialize into
      * @return  The deserialized object
+     * @throws IOException if error deserializing
      */
     public static <T extends Object> T deserialize(String json, TypeReference<T> typeReference)
             throws IOException {
@@ -130,9 +134,11 @@ public class APIHelper {
 
     /**
      * JSON Deserialization of the given json string.
-     * @param   jParser The json parser for reading json to deserialize
+     * @param   json The json string to deserialize
      * @param   <T> The type of the object to deserialize into
+     * @param   typeReference The Class of the object to deserialize into
      * @return  The deserialized object
+     * @throws IOException if error deserializing
      */
     public static <T extends Object> T deserialize(String json, Class<T> typeReference)
             throws IOException {
@@ -145,7 +151,8 @@ public class APIHelper {
     /**
      * Populates an object of an APIException subclass with the required properties.
      * @param   json The json string to deserialize
-     * @param   <APIException>  The object to populate.
+     * @param   obj  The object to populate
+     * @throws IOException if error deserializing
      */
     public static void populate(String json, APIException obj)
             throws IOException {
@@ -157,6 +164,7 @@ public class APIHelper {
      * JSON Deserialization of the given json string.
      * @param   json    The json string to deserialize
      * @return  The deserialized json as a Map
+     * @throws IOException if error deserializing
      */
     public static LinkedHashMap<String, Object> deserialize(String json)
             throws IOException {
@@ -259,6 +267,7 @@ public class APIHelper {
 
     /**
      * Removes null values from the given map
+     * @param map the input map
      */
     public static void removeNullValues(Map<String, ?> map) {
         if(map == null)

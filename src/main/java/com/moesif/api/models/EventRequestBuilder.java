@@ -20,6 +20,8 @@ public class EventRequestBuilder {
 
     /**
      * Time when request was made
+     * @param time the field to set
+     * @return itself
      */
     public EventRequestBuilder time(Date time) {
         eventRequestModel.setTime(time);
@@ -28,6 +30,8 @@ public class EventRequestBuilder {
 
     /**
      * full uri of request such as https://www.example.com/my_path?param=1
+     * @param uri the field to set
+     * @return itself
      */
     public EventRequestBuilder uri(String uri) {
         eventRequestModel.setUri(uri);
@@ -36,6 +40,8 @@ public class EventRequestBuilder {
 
     /**
      * verb of the API request such as GET or POST
+     * @param verb the field to set
+     * @return itself
      */
     public EventRequestBuilder verb(String verb) {
         eventRequestModel.setVerb(verb);
@@ -44,6 +50,8 @@ public class EventRequestBuilder {
 
     /**
      * Key/Value map of request headers
+     * @param headers the field to set
+     * @return itself
      */
     public EventRequestBuilder headers(Map<String, String> headers) {
         eventRequestModel.setHeaders(headers);
@@ -52,6 +60,8 @@ public class EventRequestBuilder {
 
     /**
      * Optionally tag the call with your API or App version
+     * @param apiVersion the field to set
+     * @return itself
      */
     public EventRequestBuilder apiVersion(String apiVersion) {
         eventRequestModel.setApiVersion(apiVersion);
@@ -60,6 +70,8 @@ public class EventRequestBuilder {
 
     /**
      * IP Address of the client if known.
+     * @param ipAddress the field to set
+     * @return itself
      */
     public EventRequestBuilder ipAddress(String ipAddress) {
         eventRequestModel.setIpAddress(ipAddress);
@@ -68,6 +80,8 @@ public class EventRequestBuilder {
 
     /**
      * Request body
+     * @param body the field to set
+     * @return itself
      */
     public EventRequestBuilder body(Object body) {
         eventRequestModel.setBody(body);
@@ -76,6 +90,8 @@ public class EventRequestBuilder {
 
     /**
      * Transfer Encoding of the body such as "base64", null value implies "json" transfer encoding
+     * @param transferEncoding the field to set
+     * @return itself
      */
     public EventRequestBuilder transferEncoding(String transferEncoding) {
         eventRequestModel.setTransferEncoding(transferEncoding);
@@ -83,6 +99,7 @@ public class EventRequestBuilder {
     }
     /**
      * Build the instance with the given values
+     * @return the built EventRequestModel
      */
     public EventRequestModel build() {
         return eventRequestModel;

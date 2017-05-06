@@ -23,6 +23,7 @@ public class EventResponseModel
     private String ipAddress;
     /** GETTER
      * Time when response received
+     * @return the value
      */
     @JsonGetter("time")
     @JsonFormat(pattern = Configuration.DateTimeFormat)
@@ -32,6 +33,7 @@ public class EventResponseModel
     
     /** SETTER
      * Time when response received
+     * @param value the value to set
      */
     @JsonSetter("time")
     public void setTime (Date value) { 
@@ -40,6 +42,7 @@ public class EventResponseModel
  
     /** GETTER
      * HTTP Status code such as 200
+     * @return the value
      */
     @JsonGetter("status")
     public int getStatus ( ) { 
@@ -48,6 +51,7 @@ public class EventResponseModel
     
     /** SETTER
      * HTTP Status code such as 200
+     * @param value the value to set
      */
     @JsonSetter("status")
     public void setStatus (int value) { 
@@ -56,6 +60,7 @@ public class EventResponseModel
  
     /** GETTER
      * Key/Value map of response headers
+     * @return the value
      */
     @JsonGetter("headers")
     public Map<String, String> getHeaders ( ) {
@@ -64,6 +69,7 @@ public class EventResponseModel
     
     /** SETTER
      * Key/Value map of response headers
+     * @param value the value to set
      */
     @JsonSetter("headers")
     public void setHeaders (Map<String, String> value) {
@@ -72,6 +78,7 @@ public class EventResponseModel
  
     /** GETTER
      * Response body
+     * @return the value
      */
     @JsonGetter("body")
     public Object getBody ( ) { 
@@ -80,6 +87,7 @@ public class EventResponseModel
     
     /** SETTER
      * Response body
+     * @param value the value to set
      */
     @JsonSetter("body")
     public void setBody (Object value) { 
@@ -88,6 +96,7 @@ public class EventResponseModel
 
     /** GETTER
      * Transfer Encoding of the body such as "base64", null value implies "json" transfer encoding
+     * @return the value
      */
     @JsonGetter("transfer_encoding")
     public String getTransferEncoding ( ) {
@@ -96,6 +105,7 @@ public class EventResponseModel
 
     /** SETTER
      * Transfer Encoding of the body such as "base64", null value implies "json" transfer encoding
+     * @param value the value to set
      */
     @JsonSetter("transfer_encoding")
     public void setTransferEncoding (String value) {
@@ -104,6 +114,7 @@ public class EventResponseModel
  
     /** GETTER
      * IP Address from the response, such as the server IP Address
+     * @return the value
      */
     @JsonGetter("ip_address")
     public String getIpAddress ( ) { 
@@ -112,6 +123,7 @@ public class EventResponseModel
     
     /** SETTER
      * IP Address from the response, such as the server IP Address
+     * @param value the value to set
      */
     @JsonSetter("ip_address")
     public void setIpAddress (String value) { 

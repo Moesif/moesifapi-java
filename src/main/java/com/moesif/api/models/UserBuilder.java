@@ -20,6 +20,8 @@ public class UserBuilder {
 
     /**
      * End user's user_id string from your app
+     * @param userId the field to set
+     * @return itself
      */
     public UserBuilder userId(String userId) {
         UserModel.setUserId(userId);
@@ -28,6 +30,8 @@ public class UserBuilder {
 
     /**
      * Timestamp of when user was updated. (Moesif will use the current time if not set)
+     * @param modifiedTime the field to set
+     * @return itself
      */
     public UserBuilder modifiedTime(Date modifiedTime) {
         UserModel.setMetadata(modifiedTime);
@@ -36,6 +40,8 @@ public class UserBuilder {
 
     /**
      * Last seen IP Address of the user if known
+     * @param ipAddress the field to set
+     * @return itself
      */
     public UserBuilder ipAddress(String ipAddress) {
         UserModel.setIpAddress(ipAddress);
@@ -44,6 +50,8 @@ public class UserBuilder {
 
     /**
      * End user's auth/session token
+     * @param sessionToken the field to set
+     * @return itself
      */
     public UserBuilder sessionToken(String sessionToken) {
         UserModel.setSessionToken(sessionToken);
@@ -53,6 +61,8 @@ public class UserBuilder {
     /**
      * User Agent String of the user's device
      * such as "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
+     * @param userAgentString the field to set
+     * @return itself
      */
     public UserBuilder userAgentString(String userAgentString) {
         UserModel.setUserAgentString(userAgentString);
@@ -61,6 +71,8 @@ public class UserBuilder {
 
     /**
      * Custom user metadata as a JSON object
+     * @param metadata the field to set
+     * @return itself
      */
     public UserBuilder metadata(Object metadata) {
         UserModel.setMetadata(metadata);
@@ -69,6 +81,7 @@ public class UserBuilder {
 
     /**
      * Build the instance with the given values
+     * @return The built UserModel
      */
     public UserModel build() {
         return UserModel;

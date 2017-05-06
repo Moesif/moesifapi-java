@@ -27,8 +27,8 @@ public class APICallBackCatcher<T> extends SynchronousBase implements APICallBac
     /**
      * Get the result from the API callback.
      * Blocks if API call is not complete yet.
-     * @return
-     * @throws Throwable 
+     * @return result
+     * @throws Throwable error waiting for tasks to complete
      */
     public T getResult() throws Throwable {
         await();
@@ -37,7 +37,7 @@ public class APICallBackCatcher<T> extends SynchronousBase implements APICallBac
 
     /**
      * Set API callback result
-     * @param response
+     * @param response the response to set
      */
     private void setResult(T response) {
         this.result = response;
@@ -46,8 +46,8 @@ public class APICallBackCatcher<T> extends SynchronousBase implements APICallBac
     /**
      * Get the exception object thrown by this API callback if any.
      * Blocks if API call is not complete yet.
-     * @return
-     * @throws InterruptedException 
+     * @return the error object
+     * @throws InterruptedException error waiting for tasks to complete
      */
     public Throwable getError() throws InterruptedException {
         await();
@@ -56,7 +56,7 @@ public class APICallBackCatcher<T> extends SynchronousBase implements APICallBac
 
     /**
      * Set the exception object.
-     * @param error
+     * @param error the error object
      */
     private void setError(Throwable error) {
         this.error = error;
@@ -65,8 +65,8 @@ public class APICallBackCatcher<T> extends SynchronousBase implements APICallBac
     /**
      * Was the API call successful?
      * Blocks if API call is not complete yet.
-     * @return
-     * @throws InterruptedException 
+     * @return true if successful
+     * @throws InterruptedException error waiting for tasks to complete
      */
     public boolean isSuccess() throws InterruptedException {
         await();
@@ -75,7 +75,7 @@ public class APICallBackCatcher<T> extends SynchronousBase implements APICallBac
 
     /**
      * Set the success for API call.
-     * @param success
+     * @param success the input value to set
      */
     private void setSuccess(boolean success) {
         this.success = success;

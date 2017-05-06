@@ -48,7 +48,8 @@ public class MoesifAPIClient {
 	}
 
     /**
-     * Client initialization constructor 
+     * Client initialization constructor
+     * @param applicationId The Application Id for authentication
      */     
     public MoesifAPIClient(String applicationId) {
         this();

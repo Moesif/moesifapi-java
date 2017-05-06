@@ -18,6 +18,7 @@ public class EventModel
     private String userId;
     /** GETTER
      * API request object
+     * @return the value
      */
     @JsonGetter("request")
     public EventRequestModel getRequest ( ) {
@@ -26,6 +27,7 @@ public class EventModel
     
     /** SETTER
      * API request object
+     * @param value the value to set
      */
     @JsonSetter("request")
     public void setRequest (EventRequestModel value) {
@@ -34,6 +36,7 @@ public class EventModel
  
     /** GETTER
      * API response Object
+     * @return the value
      */
     @JsonGetter("response")
     public EventResponseModel getResponse ( ) {
@@ -42,6 +45,7 @@ public class EventModel
     
     /** SETTER
      * API response Object
+     * @param value the value to set
      */
     @JsonSetter("response")
     public void setResponse (EventResponseModel value) {
@@ -50,6 +54,7 @@ public class EventModel
  
     /** GETTER
      * End user's auth/session token
+     * @return the value
      */
     @JsonGetter("session_token")
     public String getSessionToken ( ) { 
@@ -58,6 +63,7 @@ public class EventModel
     
     /** SETTER
      * End user's auth/session token
+     * @param value the value to set
      */
     @JsonSetter("session_token")
     public void setSessionToken (String value) { 
@@ -66,6 +72,7 @@ public class EventModel
  
     /** GETTER
      * comma separated list of tags, see documentation
+     * @return the value
      */
     @JsonGetter("tags")
     public String getTags ( ) { 
@@ -74,6 +81,7 @@ public class EventModel
     
     /** SETTER
      * comma separated list of tags, see documentation
+     * @param value the value to set
      */
     @JsonSetter("tags")
     public void setTags (String value) { 
@@ -82,6 +90,7 @@ public class EventModel
  
     /** GETTER
      * End user's user_id string from your app
+     * @return the value
      */
     @JsonGetter("user_id")
     public String getUserId ( ) { 
@@ -90,6 +99,7 @@ public class EventModel
     
     /** SETTER
      * End user's user_id string from your app
+     * @param value the value to set
      */
     @JsonSetter("user_id")
     public void setUserId (String value) { 

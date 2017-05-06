@@ -40,7 +40,7 @@ public class HealthController extends BaseController implements IHealthControlle
 
     /**
      * Health Probe
-     * @return    Returns the StatusModel response from the API call
+     * @return  The health probe
      */
     public StatusModel getHealthProbe(
     ) throws Throwable {
@@ -52,8 +52,8 @@ public class HealthController extends BaseController implements IHealthControlle
     }
 
     /**
-     * Health Probe
-     * @return    Returns the void response from the API call 
+     * Health Probe Async
+     * @param    callBack Called after the HTTP response is received
      */
     public void getHealthProbeAsync(
                 final APICallBack<StatusModel> callBack

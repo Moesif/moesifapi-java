@@ -18,6 +18,8 @@ public class StatusBuilder {
 
     /**
      * Status of Call
+     * @param status the field to set
+     * @return itself
      */
     public StatusBuilder status(boolean status) {
         statusModel.setStatus(status);
@@ -26,6 +28,8 @@ public class StatusBuilder {
 
     /**
      * Location
+     * @param region the field to set
+     * @return itself
      */
     public StatusBuilder region(String region) {
         statusModel.setRegion(region);
@@ -33,6 +37,7 @@ public class StatusBuilder {
     }
     /**
      * Build the instance with the given values
+     * @return The built StatusModel
      */
     public StatusModel build() {
         return statusModel;

@@ -17,6 +17,7 @@ public class HttpBodyRequest extends HttpRequest {
 
     /**
      * Body for the http request
+     * @return the request body as a string
      */
     public String getBody() {
         return body;
@@ -29,7 +30,6 @@ public class HttpBodyRequest extends HttpRequest {
      * @param _queryUrl The http url to create the HTTP Request. Expect a fully qualified absolute Url
      * @param _headers  The key-value map of all http headers to be sent
      * @param _body     The object to be sent as body after serialization
-     * @return Http request initialized with the given method, url, headers and request body
      */
     public HttpBodyRequest(HttpMethod _method, String _queryUrl,
                            Map<String, String> _headers, String _body) {
@@ -46,7 +46,6 @@ public class HttpBodyRequest extends HttpRequest {
      * @param _body     The object to be sent as body after serialization
      * @param _username Username for basic authentication
      * @param _password Password for basic authentication
-     * @return Http request initialized with the given method, url, headers and request body
      */
     public HttpBodyRequest(HttpMethod _method, String _queryUrl,
                            Map<String, String> _headers, String _body,

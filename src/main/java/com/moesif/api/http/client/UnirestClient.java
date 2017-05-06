@@ -108,7 +108,7 @@ public class UnirestClient implements HttpClient {
     /**
      * Publishes success or failure result as HttpResponse from a HttpRequest
      * @param   response    The http response to publish
-     * @param   context     The user specified context object
+     * @param   request     The http request
      * @param   completionBlock     The success and failure code block reference to invoke the delegate
      * @param   uniException       The reported errors for getting the http response
      */

@@ -22,6 +22,7 @@ public class HttpRequest {
 
     /**
      * Headers for the http request
+     * @return the HTTP method/verb
      */
     public HttpMethod getHttpMethod() {
         return httpMethod;
@@ -29,6 +30,7 @@ public class HttpRequest {
 
     /**
      * Headers for the http request
+     * @return the HTTP request headers
      */
     public Map<String, String> getHeaders() {
         return headers;
@@ -36,6 +38,7 @@ public class HttpRequest {
 
     /**
      * Query url for the http request
+     * @return the query url
      */
     public String getQueryUrl() {
         return queryUrl;
@@ -43,6 +46,7 @@ public class HttpRequest {
 
     /**
      * Parameters for the http request
+     * @return the parameters as a map
      */
     public Map<String, Object> getParameters() {
         return parameters;
@@ -50,6 +54,7 @@ public class HttpRequest {
 
     /**
      * Username for basic authentication
+     * @return the username part for basic auth
      */
     public String getUsername() {
         return username;
@@ -57,6 +62,7 @@ public class HttpRequest {
 
     /**
      * Password for basic authentication
+     * @return the password part for basic auth
      */
     public String getPassword() {
         return password;
@@ -69,7 +75,6 @@ public class HttpRequest {
      * @param _queryUrl   The http url to create the HTTP Request. Expect a fully qualified absolute Url
      * @param _headers    The key-value map of all http headers to be sent
      * @param _parameters The form data values in a key-value map
-     * @return Http request initialized with the given method, url and headers
      */
     public HttpRequest(HttpMethod _method, String _queryUrl,
                        Map<String, String> _headers, Map<String, Object> _parameters) {
@@ -88,7 +93,6 @@ public class HttpRequest {
      * @param _parameters The form data values in a key-value map
      * @param _username   Username for basic authentication
      * @param _password   Password for basic authentication
-     * @return Http request initialized with the given method, url and headers
      */
     public HttpRequest(HttpMethod _method, String _queryUrl,
                        Map<String, String> _headers, Map<String, Object> _parameters,

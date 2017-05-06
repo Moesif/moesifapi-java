@@ -20,6 +20,8 @@ public class EventResponseBuilder {
 
     /**
      * Time when response received
+     * @param time the field to set
+     * @return itself
      */
     public EventResponseBuilder time(Date time) {
         eventResponseModel.setTime(time);
@@ -28,6 +30,8 @@ public class EventResponseBuilder {
 
     /**
      * HTTP Status code such as 200
+     * @param status the field to set
+     * @return itself
      */
     public EventResponseBuilder status(int status) {
         eventResponseModel.setStatus(status);
@@ -36,6 +40,8 @@ public class EventResponseBuilder {
 
     /**
      * Key/Value map of response headers
+     * @param headers the field to set
+     * @return itself
      */
     public EventResponseBuilder headers(Map<String, String> headers) {
         eventResponseModel.setHeaders(headers);
@@ -44,6 +50,8 @@ public class EventResponseBuilder {
 
     /**
      * Response body
+     * @param body the field to set
+     * @return itself
      */
     public EventResponseBuilder body(Object body) {
         eventResponseModel.setBody(body);
@@ -52,6 +60,8 @@ public class EventResponseBuilder {
 
     /**
      * Transfer Encoding of the body such as "base64", null value implies "json" transfer encoding
+     * @param transferEncoding the field to set
+     * @return itself
      */
     public EventResponseBuilder transferEncoding(String transferEncoding) {
         eventResponseModel.setTransferEncoding(transferEncoding);
@@ -60,6 +70,8 @@ public class EventResponseBuilder {
 
     /**
      * IP Address from the response, such as the server IP Address
+     * @param ipAddress the field to set
+     * @return itself
      */
     public EventResponseBuilder ipAddress(String ipAddress) {
         eventResponseModel.setIpAddress(ipAddress);
@@ -67,6 +79,7 @@ public class EventResponseBuilder {
     }
     /**
      * Build the instance with the given values
+     * @return The built EventResponseModel
      */
     public EventResponseModel build() {
         return eventResponseModel;

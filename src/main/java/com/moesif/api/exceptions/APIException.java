@@ -23,6 +23,7 @@ public class APIException extends Exception {
 
     /**
     * The HTTP response code from the API request
+    * @return the HTTP status code
     */
     public int getResponseCode() {
         return (httpContext != null) ? httpContext.getResponse().getStatusCode() : -1;
@@ -30,6 +31,7 @@ public class APIException extends Exception {
 
     /**
      * The HTTP response body from the API request
+     * @return the HTTP context containing HTTO response
      */
     public HttpContext getHttpContext() {
         return httpContext;

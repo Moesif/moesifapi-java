@@ -25,6 +25,7 @@ public class EventRequestModel
     private String transferEncoding;
     /** GETTER
      * Time when request was made
+     * @return the value
      */
     @JsonGetter("time")
     @JsonFormat(pattern = Configuration.DateTimeFormat)
@@ -34,6 +35,7 @@ public class EventRequestModel
     
     /** SETTER
      * Time when request was made
+     * @param value the value to set
      */
     @JsonSetter("time")
     public void setTime (Date value) { 
@@ -42,6 +44,7 @@ public class EventRequestModel
  
     /** GETTER
      * full uri of request such as https://www.example.com/my_path?param=1
+     * @return the value
      */
     @JsonGetter("uri")
     public String getUri ( ) { 
@@ -50,6 +53,7 @@ public class EventRequestModel
     
     /** SETTER
      * full uri of request such as https://www.example.com/my_path?param=1
+     * @param value the value to set
      */
     @JsonSetter("uri")
     public void setUri (String value) { 
@@ -58,6 +62,7 @@ public class EventRequestModel
  
     /** GETTER
      * verb of the API request such as GET or POST
+     * @return the value
      */
     @JsonGetter("verb")
     public String getVerb ( ) { 
@@ -66,6 +71,7 @@ public class EventRequestModel
     
     /** SETTER
      * verb of the API request such as GET or POST
+     * @param value the value to set
      */
     @JsonSetter("verb")
     public void setVerb (String value) { 
@@ -74,6 +80,7 @@ public class EventRequestModel
  
     /** GETTER
      * Key/Value map of request headers
+     * @return the value
      */
     @JsonGetter("headers")
     public Map<String, String> getHeaders ( ) {
@@ -82,6 +89,7 @@ public class EventRequestModel
     
     /** SETTER
      * Key/Value map of request headers
+     * @param value the value to set
      */
     @JsonSetter("headers")
     public void setHeaders (Map<String, String> value) {
@@ -90,6 +98,7 @@ public class EventRequestModel
  
     /** GETTER
      * Optionally tag the call with your API or App version
+     * @return the value
      */
     @JsonGetter("api_version")
     public String getApiVersion ( ) { 
@@ -98,6 +107,7 @@ public class EventRequestModel
     
     /** SETTER
      * Optionally tag the call with your API or App version
+     * @param value the value to set
      */
     @JsonSetter("api_version")
     public void setApiVersion (String value) { 
@@ -106,6 +116,7 @@ public class EventRequestModel
  
     /** GETTER
      * IP Address of the client if known.
+     * @return the value
      */
     @JsonGetter("ip_address")
     public String getIpAddress ( ) { 
@@ -114,6 +125,7 @@ public class EventRequestModel
     
     /** SETTER
      * IP Address of the client if known.
+     * @param value the value to set
      */
     @JsonSetter("ip_address")
     public void setIpAddress (String value) { 
@@ -122,6 +134,7 @@ public class EventRequestModel
  
     /** GETTER
      * Request body
+     * @return the value
      */
     @JsonGetter("body")
     public Object getBody ( ) { 
@@ -130,6 +143,7 @@ public class EventRequestModel
     
     /** SETTER
      * Request body
+     * @param value the value to set
      */
     @JsonSetter("body")
     public void setBody (Object value) { 
@@ -138,6 +152,7 @@ public class EventRequestModel
 
     /** GETTER
      * Transfer Encoding of the body such as "base64", null value implies "json" transfer encoding
+     * @return the value
      */
     @JsonGetter("transfer_encoding")
     public String getTransferEncoding ( ) {
@@ -146,6 +161,7 @@ public class EventRequestModel
 
     /** SETTER
      * Transfer Encoding of the body such as "base64", null value implies "json" transfer encoding
+     * @param value the value to set
      */
     @JsonSetter("transfer_encoding")
     public void setTransferEncoding (String value) {

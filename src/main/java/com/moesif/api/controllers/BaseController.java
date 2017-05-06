@@ -34,7 +34,7 @@ public abstract class BaseController {
     
     /**
      * Set the httpCallBack for this controller
-     * @param httpCallBack
+     * @param httpCallBack called after HTTP response is received
      */
     public void setHttpCallBack(HttpCallBack httpCallBack) {
         this.httpCallBack = httpCallBack;
@@ -68,7 +68,8 @@ public abstract class BaseController {
     /**
      * Validates the response against HTTP errors defined at the API level
      * @param   response    The response recieved
-     * @param   context     Context of the request and the recieved response 
+     * @param   context     Context of the request and the recieved response
+     * @throws APIException invalid response
      */
     protected void validateResponse(HttpResponse response, HttpContext context) 
             throws APIException {

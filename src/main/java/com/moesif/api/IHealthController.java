@@ -15,10 +15,18 @@ import java.util.Map;
 
 public interface IHealthController {
 
+
     /**
      * Health Probe
-     * @return    Returns the void response from the API call 
+     * @return  The health probe
+     * @throws Throwable on getting health probe
      */
-    public void getHealthProbeAsync(final APICallBack<StatusModel> callBack);
+    StatusModel getHealthProbe() throws Throwable;
+
+    /**
+     * Health Probe async
+     * @param    callBack Called after the HTTP response is received
+     */
+    void getHealthProbeAsync(final APICallBack<StatusModel> callBack);
 
 }

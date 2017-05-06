@@ -38,8 +38,8 @@ public class APIController extends BaseController implements IAPIController {
 
     /**
      * Add Single API Event Call
-     * @param    body    Required parameter: Example: 
-     * @return    Returns the void response from the API call 
+     * @param    body    The event to create
+     * @throws Throwable on error creating event
      */
     public void createEvent(
                 final EventModel body
@@ -53,8 +53,9 @@ public class APIController extends BaseController implements IAPIController {
 
     /**
      * Add Single API Event Call
-     * @param    body    Required parameter: Example: 
-     * @return    Returns the void response from the API call 
+     * @param    body    The event to create
+     * @param    callBack Called after the HTTP response is received
+     * @throws JsonProcessingException on error creating event
      */
     public void createEventAsync(
                 final EventModel body,
@@ -100,8 +101,8 @@ public class APIController extends BaseController implements IAPIController {
 
     /**
      * Add multiple API Events in a single batch
-     * @param    body    Required parameter: Example: 
-     * @return    Returns the void response from the API call 
+     * @param    body    The events to create
+     * @throws Throwable on error creating event
      */
     public void createEventsBatch(
                 final List<EventModel> body
@@ -115,8 +116,9 @@ public class APIController extends BaseController implements IAPIController {
 
     /**
      * Add multiple API Events in a single batch
-     * @param    body    Required parameter: Example: 
-     * @return    Returns the void response from the API call 
+     * @param    body    The events to create
+     * @param    callBack Called after the HTTP response is received
+     * @throws JsonProcessingException on error creating event
      */
     public void createEventsBatchAsync(
                 final List<EventModel> body,
@@ -161,9 +163,9 @@ public class APIController extends BaseController implements IAPIController {
     }
 
     /**
-     * Add Single API Event Call
-     * @param    body    Required parameter: Example:
-     * @return    Returns the void response from the API call
+     * Update a Single User
+     * @param    body    The user to update
+     * @throws Throwable on error creating event
      */
     public void updateUser(
             final UserModel body
@@ -176,9 +178,10 @@ public class APIController extends BaseController implements IAPIController {
     }
 
     /**
-     * Add Single API Event Call
-     * @param    body    Required parameter: Example:
-     * @return    Returns the void response from the API call
+     * Update a Single User async
+     * @param    body    The user to update
+     * @param    callBack Called after the HTTP response is received
+     * @throws JsonProcessingException on error creating event
      */
     public void updateUserAsync(
             final UserModel body,
@@ -223,9 +226,9 @@ public class APIController extends BaseController implements IAPIController {
     }
 
     /**
-     * Add multiple API Events in a single batch
-     * @param    body    Required parameter: Example:
-     * @return    Returns the void response from the API call
+     * Update multiple Users in a single batch
+     * @param    body    The list of users to update
+     * @throws Throwable on error creating event
      */
     public void updateUsersBatch(
             final List<UserModel> body
@@ -238,9 +241,10 @@ public class APIController extends BaseController implements IAPIController {
     }
 
     /**
-     * Add multiple API Events in a single batch
-     * @param    body    Required parameter: Example:
-     * @return    Returns the void response from the API call
+     * Update multiple Users in a single batch async
+     * @param    body    The list of users to update
+     * @param    callBack Called after the HTTP response is received
+     * @throws JsonProcessingException on error creating event
      */
     public void updateUsersBatchAsync(
             final List<UserModel> body,

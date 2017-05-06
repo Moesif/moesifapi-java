@@ -18,6 +18,8 @@ public class EventBuilder {
 
     /**
      * API request object
+     * @param request the field to set
+     * @return itself
      */
     public EventBuilder request(EventRequestModel request) {
         eventModel.setRequest(request);
@@ -26,6 +28,8 @@ public class EventBuilder {
 
     /**
      * API response Object
+     * @param response the field to set
+     * @return itself
      */
     public EventBuilder response(EventResponseModel response) {
         eventModel.setResponse(response);
@@ -34,6 +38,8 @@ public class EventBuilder {
 
     /**
      * End user's auth/session token
+     * @param sessionToken the field to set
+     * @return itself
      */
     public EventBuilder sessionToken(String sessionToken) {
         eventModel.setSessionToken(sessionToken);
@@ -42,6 +48,8 @@ public class EventBuilder {
 
     /**
      * comma separated list of tags, see documentation
+     * @param tags the field to set
+     * @return itself
      */
     public EventBuilder tags(String tags) {
         eventModel.setTags(tags);
@@ -50,6 +58,8 @@ public class EventBuilder {
 
     /**
      * End user's user_id string from your app
+     * @param userId the field to set
+     * @return itself
      */
     public EventBuilder userId(String userId) {
         eventModel.setUserId(userId);
@@ -57,6 +67,7 @@ public class EventBuilder {
     }
     /**
      * Build the instance with the given values
+     * @return the built EventModel
      */
     public EventModel build() {
         return eventModel;

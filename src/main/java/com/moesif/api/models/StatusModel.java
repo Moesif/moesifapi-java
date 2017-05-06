@@ -16,6 +16,7 @@ public class StatusModel
     private String region;
     /** GETTER
      * Status of Call
+     * @return the value
      */
     @JsonGetter("status")
     public boolean getStatus ( ) { 
@@ -24,6 +25,7 @@ public class StatusModel
     
     /** SETTER
      * Status of Call
+     * @param value the value to set
      */
     @JsonSetter("status")
     public void setStatus (boolean value) { 
@@ -32,6 +34,7 @@ public class StatusModel
  
     /** GETTER
      * Location
+     * @return the value
      */
     @JsonGetter("region")
     public String getRegion ( ) { 
@@ -40,6 +43,7 @@ public class StatusModel
     
     /** SETTER
      * Location
+     * @param value the value to set
      */
     @JsonSetter("region")
     public void setRegion (String value) { 

@@ -40,7 +40,7 @@ public class SynchronousBase {
     
     /**
      * Wait until all tasks are marked as done
-     * @throws InterruptedException
+     * @throws InterruptedException error waiting for tasks to complete
      */
     public void await() throws InterruptedException {
         lock.await();
@@ -50,8 +50,8 @@ public class SynchronousBase {
      * Wait until all tasks are marked as done or timeout after given time
      * @param timeout Time to wait
      * @param unit    Unit for time
-     * @return
-     * @throws InterruptedException
+     * @return true if done
+     * @throws InterruptedException error waiting for tasks to complete
      */
     public boolean await(long timeout, TimeUnit unit) throws InterruptedException {
         boolean t = lock.await(timeout, unit);

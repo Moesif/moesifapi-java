@@ -23,6 +23,7 @@ public class UserModel
     private Object metadata;
     /** GETTER
      * End user's user_id string from your app
+     * @return the value
      */
     @JsonGetter("user_id")
     public String getUserId ( ) {
@@ -31,6 +32,7 @@ public class UserModel
 
     /** SETTER
      * End user's user_id string from your app
+     * @param value the value to set
      */
     @JsonSetter("user_id")
     public void setUserId (String value) {
@@ -39,6 +41,7 @@ public class UserModel
 
     /** GETTER
      * Timestamp of when user was updated. (Moesif will use the current time if not set)
+     * @return the value
      */
     @JsonGetter("modified_time")
     @JsonFormat(pattern = Configuration.DateTimeFormat)
@@ -48,6 +51,7 @@ public class UserModel
     
     /** SETTER
      * Timestamp of when user was updated. (Moesif will use the current time if not set)
+     * @param value the value to set
      */
     @JsonSetter("modified_time")
     public void setModifiedTime (Date value) {
@@ -56,6 +60,7 @@ public class UserModel
  
     /** GETTER
      * Last seen IP Address of the user if known
+     * @return the value
      */
     @JsonGetter("ip_address")
     public String getIpAddress ( ) {
@@ -64,6 +69,7 @@ public class UserModel
     
     /** SETTER
      * Last seen IP Address of the user if known
+     * @param value the value to set
      */
     @JsonSetter("ip_address")
     public void setIpAddress (String value) {
@@ -72,6 +78,7 @@ public class UserModel
 
     /** GETTER
      * End user's auth/session token
+     * @return the value
      */
     @JsonGetter("session_token")
     public String getSessionToken ( ) {
@@ -80,6 +87,7 @@ public class UserModel
 
     /** SETTER
      * End user's auth/session token
+     * @param value the value to set
      */
     @JsonSetter("session_token")
     public void setSessionToken (String value) {
@@ -89,6 +97,7 @@ public class UserModel
     /** GETTER
      * User Agent String of the user's device
      * such as "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
+     * @return the value
      */
     @JsonGetter("user_agent_string")
     public String getUserAgentString ( ) {
@@ -98,6 +107,7 @@ public class UserModel
     /** SETTER
      * User Agent String of the user's device
      * such as "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
+     * @param value the value to set
      */
     @JsonSetter("user_agent_string")
     public void setUserAgentString (String value) {
@@ -106,6 +116,7 @@ public class UserModel
 
     /** GETTER
      * Custom user metadata as a JSON object
+     * @return the value
      */
     @JsonGetter("metadata")
     public Object getMetadata ( ) {
@@ -114,6 +125,7 @@ public class UserModel
 
     /** SETTER
      * Custom user metadata as a JSON object
+     * @param value the value to set
      */
     @JsonSetter("metadata")
     public void setMetadata (Object value) {

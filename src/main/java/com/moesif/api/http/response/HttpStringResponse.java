@@ -16,6 +16,7 @@ public class HttpStringResponse extends HttpResponse {
 
     /**
      * String body of the http response
+     * @return the HTTP response body as a string
      */
     public String getBody() {
         return body;
@@ -25,7 +26,7 @@ public class HttpStringResponse extends HttpResponse {
      * @param _code    The HTTP status code
      * @param _headers The HTTP headers read from response
      * @param _rawBody The raw data returned by the HTTP request
-     * @return Http response initialized with the given code, headers and rawBody
+     * @param body     The HTTP body as a string
      */
     public HttpStringResponse(int _code, Map<String, String> _headers, InputStream _rawBody, String body) {
         super(_code, _headers, _rawBody);
