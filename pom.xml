@@ -10,6 +10,36 @@
     <version>1.3.1</version>
     <packaging>jar</packaging>
     <name>moesifapi</name>
+    <description>Java API Library for Moesif</description>
+    <url>https://www.moesif.com</url>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/Moesif/moesifapi-java.git</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>moesif</id>
+            <name>Moesif API</name>
+            <email>support@moesif.com</email>
+            <url>https://www.moesif.com</url>
+            <organization>Moesif, Inc.</organization>
+            <organizationUrl>http://www.moesif.com</organizationUrl>
+            <roles>
+                <role>owner</role>
+                <role>developer</role>
+            </roles>
+            <timezone>America/Los_Angeles</timezone>
+        </developer>
+    </developers>
 
     <repositories>
         <repository>
@@ -109,6 +139,20 @@
                 </executions>
                 <configuration>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
