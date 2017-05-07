@@ -1,8 +1,7 @@
 # MoesifApi Lib for Java
 
 
-[![](https://jitpack.io/v/com.moesif/moesifapi-java.svg)](https://jitpack.io/#com.moesif/moesifapi-java)
-
+[ ![Download](https://api.bintray.com/packages/moesif/maven/moesifapi/images/download.svg) ](https://bintray.com/moesif/maven/moesifapi/_latestVersion)
 
 __Check out Moesif's [Developer Documentation](https://www.moesif.com/docs) and [Java API Reference](https://www.moesif.com/docs/api?java) to learn more__
 
@@ -13,8 +12,9 @@ __Check out Moesif's [Developer Documentation](https://www.moesif.com/docs) and 
 
 <repositories>
 	<repository>
-	    <id>jitpack.io</id>
-	    <url>https://jitpack.io</url>
+		<id>bintray-moesif-maven</id>
+		<name>bintray</name>
+		<url>http://dl.bintray.com/moesif/maven</url>
 	</repository>
 </repositories>
 
@@ -22,9 +22,9 @@ __Check out Moesif's [Developer Documentation](https://www.moesif.com/docs) and 
 <!-- Step 2. Add the dependency -->
 
 <dependency>
-    <groupId>com.moesif</groupId>
-    <artifactId>moesifapi-java</artifactId>
-    <version>1.2.0</version>
+	<groupId>com.moesif.api</groupId>
+	<artifactId>moesifapi</artifactId>
+	<version>1.3.1</version>
 </dependency>
 ```
 
@@ -387,13 +387,6 @@ api.updateUsersBatch(users, callBack);
     3. Execute "mvn install", this will install dependencies and also add the generated JAR in your local maven repository.
 
     4. The invoked process will automatically run the JUnit tests and show the results in the console.
-    5.In your own maven application, add the following lines which will refer to newly installed SDK:
-        <dependency>
-            <groupId>MoesifApi</groupId>
-            <artifactId>MoesifApi</artifactId>
-            <version>1.2.0</version>
-            <scope>compile</scope>
-        </dependency>
 
 ## How to build via Eclipse:
 
