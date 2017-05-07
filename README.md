@@ -8,7 +8,7 @@ __Check out Moesif's [Developer Documentation](https://www.moesif.com/docs) and 
 ## How to Install:
 
 ```xml
-<!-- Step 1. Add the JitPack repository to your build file -->
+<!-- Step 1. Add the Bintray repository to your build file -->
 
 <repositories>
 	<repository>
