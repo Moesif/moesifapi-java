@@ -7,30 +7,25 @@ __Check out Moesif's [Developer Documentation](https://www.moesif.com/docs) and 
 
 ## How to Install:
 
+#### Maven users
+
+Add this dependency to your project's POM:
+
 ```xml
-<!-- Step 1. Add the Bintray repository to your build file -->
-
-<repositories>
-	<repository>
-		<id>bintray-moesif-maven</id>
-		<name>bintray</name>
-		<url>http://dl.bintray.com/moesif/maven</url>
-	</repository>
-</repositories>
-
-
-<!-- Step 2. Add the dependency -->
-
 <dependency>
-	<groupId>com.moesif.api</groupId>
-	<artifactId>moesifapi</artifactId>
-	<version>1.3.1</version>
+    <groupId>com.moesif.api</groupId>
+    <artifactId>moesifapi</artifactId>
+    <version>1.3.1</version>
 </dependency>
 ```
 
-The code uses a Java library namely UniRest. The reference to this
-library is already added as a maven dependency in the pom.xml
-file. Therefore, you will need internet access to resolve this dependency.
+#### Gradle users
+
+Add this dependency to your project's build file:
+
+```gradle
+compile 'com.moesif.api:moesifapi:1.3.1'
+```
 
 ## How to Use:
 
