@@ -65,6 +65,17 @@ public class EventBuilder {
         eventModel.setUserId(userId);
         return this;
     }
+
+    /**
+     * Custom event metadata as a JSON object
+     * @param metadata the field to set
+     * @return itself
+     */
+    public EventBuilder metadata(Object metadata) {
+        eventModel.setMetadata(metadata);
+        return this;
+    }
+
     /**
      * Build the instance with the given values
      * @return the built EventModel

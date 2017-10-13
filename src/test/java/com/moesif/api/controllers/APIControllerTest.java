@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.moesif.api.http.client.APICallBack;
 import com.moesif.api.http.client.HttpContext;
+import org.json.JSONObject;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -97,7 +98,7 @@ public class APIControllerTest extends ControllerTestBase {
 
         EventRequestModel eventReq = new EventRequestBuilder()
                 .time(new Date())
-                .uri("https://api.acmeinc.com/items/reviews/")
+                .uri("https://api.acmeinc.com/items/feed/")
                 .verb("PATCH")
                 .apiVersion("1.1.0")
                 .ipAddress("61.48.220.123")
@@ -113,11 +114,19 @@ public class APIControllerTest extends ControllerTestBase {
                 .body(rspBody)
                 .build();
 
+        Map<String, Object> customMetadata = new HashMap<String, Object>();
+        Map<String, Object> subObject = new HashMap<String, Object>();
+        subObject.put("some_bool", true);
+        customMetadata.put("some_string", "value_a");
+        customMetadata.put("some_int", 77);
+        customMetadata.put("some_obj", subObject);
+
         EventModel eventModel = new EventBuilder()
                 .request(eventReq)
                 .response(eventRsp)
                 .userId("my_user_id")
                 .sessionToken("23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f")
+                .metadata(customMetadata)
                 .build();
 
         // Set callback and perform API call
@@ -263,7 +272,7 @@ public class APIControllerTest extends ControllerTestBase {
 
         EventRequestModel eventReq = new EventRequestBuilder()
                 .time(new Date())
-                .uri("https://api.acmeinc.com/items/reviews/")
+                .uri("https://api.acmeinc.com/items/feed/")
                 .verb("PATCH")
                 .apiVersion("1.1.0")
                 .ipAddress("61.48.220.123")
@@ -350,7 +359,7 @@ public class APIControllerTest extends ControllerTestBase {
 
         EventRequestModel eventReq = new EventRequestBuilder()
                 .time(new Date())
-                .uri("https://api.acmeinc.com/items/reviews/")
+                .uri("https://api.acmeinc.com/items/feed/")
                 .verb("PATCH")
                 .apiVersion("1.1.0")
                 .ipAddress("61.48.220.123")

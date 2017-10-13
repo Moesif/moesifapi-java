@@ -16,6 +16,7 @@ public class EventModel
     private String sessionToken;
     private String tags;
     private String userId;
+    private Object metadata;
     /** GETTER
      * API request object
      * @return the value
@@ -105,6 +106,23 @@ public class EventModel
     public void setUserId (String value) { 
         this.userId = value;
     }
- 
+
+    /** GETTER
+     * Custom event metadata as a JSON object
+     * @return the value
+     */
+    @JsonGetter("metadata")
+    public Object getMetadata ( ) {
+        return this.metadata;
+    }
+
+    /** SETTER
+     * Custom event metadata as a JSON object
+     * @param value the value to set
+     */
+    @JsonSetter("metadata")
+    public void setMetadata (Object value) {
+        this.metadata = value;
+    }
 }
  

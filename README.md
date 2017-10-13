@@ -15,7 +15,7 @@ Add this dependency to your project's POM:
 <dependency>
     <groupId>com.moesif.api</groupId>
     <artifactId>moesifapi</artifactId>
-    <version>1.3.1</version>
+    <version>1.4.0</version>
 </dependency>
 ```
 
@@ -24,7 +24,7 @@ Add this dependency to your project's POM:
 Add this dependency to your project's build file:
 
 ```gradle
-compile 'com.moesif.api:moesifapi:1.3.1'
+compile 'com.moesif.api:moesifapi:1.4.0'
 ```
 
 ## How to Use:
