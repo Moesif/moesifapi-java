@@ -1,7 +1,9 @@
 # MoesifApi Lib for Java
 
-
-[ ![Download](https://api.bintray.com/packages/moesif/maven/moesifapi/images/download.svg) ](https://bintray.com/moesif/maven/moesifapi/_latestVersion)
+[![Built For rack][ico-built-for]][link-built-for]
+[![Latest Version][ico-version]][link-package]
+[![Software License][ico-license]][link-license]
+[![Source Code][ico-source]][link-source]
 
 __Check out Moesif's [Developer Documentation](https://www.moesif.com/docs) and [Java API Reference](https://www.moesif.com/docs/api?java) to learn more__
 
@@ -418,3 +420,13 @@ http://help.eclipse.org/mars/topic/org.eclipse.jdt.doc.user/tasks/tasks-33.htm
 
 Using JARs:
 http://help.eclipse.org/juno/topic/org.eclipse.jst.j2ee.doc.user/topics/tjimpapp.html
+
+[ico-built-for]: https://img.shields.io/badge/built%20for-servlet-blue.svg
+[ico-version]: https://api.bintray.com/packages/moesif/maven/moesifapi/images/download.svg
+[ico-license]: https://img.shields.io/badge/License-Apache%202.0-green.svg
+[ico-source]: https://img.shields.io/github/last-commit/moesif/moesifapi-java.svg?style=social
+
+[link-built-for]: https://www.java.com/en/
+[link-package]: https://bintray.com/moesif/maven/moesifapi/_latestVersion
+[link-license]: https://raw.githubusercontent.com/Moesif/moesifapi-java/master/LICENSE
+[link-source]: https://github.com/moesif/moesifapi-java
