@@ -421,7 +421,7 @@ http://help.eclipse.org/mars/topic/org.eclipse.jdt.doc.user/tasks/tasks-33.htm
 Using JARs:
 http://help.eclipse.org/juno/topic/org.eclipse.jst.j2ee.doc.user/topics/tjimpapp.html
 
-[ico-built-for]: https://img.shields.io/badge/built%20for-servlet-blue.svg
+[ico-built-for]: https://img.shields.io/badge/built%20for-java-blue.svg
 [ico-version]: https://api.bintray.com/packages/moesif/maven/moesifapi/images/download.svg
 [ico-license]: https://img.shields.io/badge/License-Apache%202.0-green.svg
 [ico-source]: https://img.shields.io/github/last-commit/moesif/moesifapi-java.svg?style=social
