@@ -1,6 +1,6 @@
 # MoesifApi Lib for Java
 
-[![Built For rack][ico-built-for]][link-built-for]
+[![Built For][ico-built-for]][link-built-for]
 [![Latest Version][ico-version]][link-package]
 [![Software License][ico-license]][link-license]
 [![Source Code][ico-source]][link-source]
