@@ -16,6 +16,7 @@ public class EventModel
     private String sessionToken;
     private String tags;
     private String userId;
+    private String companyId;
     private Object metadata;
     /** GETTER
      * API request object
@@ -105,6 +106,24 @@ public class EventModel
     @JsonSetter("user_id")
     public void setUserId (String value) { 
         this.userId = value;
+    }
+    
+    /** GETTER
+     * User's company_id string
+     * @return the value
+     */
+    @JsonGetter("company_id")
+    public String getCompanyId ( ) { 
+        return this.companyId;
+    }
+    
+    /** SETTER
+     * User's company_id string
+     * @param value the value to set
+     */
+    @JsonSetter("company_id")
+    public void setCompanyId (String value) { 
+        this.companyId = value;
     }
 
     /** GETTER
