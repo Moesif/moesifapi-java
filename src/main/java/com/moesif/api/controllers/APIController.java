@@ -287,10 +287,9 @@ public class APIController extends BaseController implements IAPIController {
         //execute async using thread pool
         APIHelper.getScheduler().execute(_responseTask);
     }
-    
+
     /**
      * Get the Application config
-     * @param    body   
      * @throws Throwable on error getting app config
      */
     public void getAppConfig() throws Throwable {
@@ -303,7 +302,6 @@ public class APIController extends BaseController implements IAPIController {
 
     /**
      * Get the Application config async
-     * @param    body   
      * @param    callBack Called after the HTTP response is received
      * @throws JsonProcessingException on error getting app config
      */
