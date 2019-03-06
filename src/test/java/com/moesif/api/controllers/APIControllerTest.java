@@ -8,16 +8,12 @@ package com.moesif.api.controllers;
 import static org.junit.Assert.*;
 
 import java.io.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import com.fasterxml.jackson.core.ObjectCodec;
 import com.moesif.api.http.client.APICallBack;
 import com.moesif.api.http.client.HttpContext;
-import org.json.JSONObject;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -25,8 +21,6 @@ import org.junit.Test;
 import com.moesif.api.models.*;
 import com.moesif.api.exceptions.*;
 import com.moesif.api.APIHelper;
-
-import com.fasterxml.jackson.core.type.TypeReference;
 
 public class APIControllerTest extends ControllerTestBase {
     
@@ -542,7 +536,7 @@ public class APIControllerTest extends ControllerTestBase {
      * @throws Throwable
      */
     @Test
-    public void testAddBatchedUsersAsync() throws Throwable {
+    public void testUpdateBatchedUsersAsync() throws Throwable {
         final CountDownLatch lock = new CountDownLatch(1);
 
         // Parameters for the API call
@@ -601,4 +595,196 @@ public class APIControllerTest extends ControllerTestBase {
         assertEquals(true, lock.await(10000, TimeUnit.MILLISECONDS));
     }
 
+    
+    /**
+     * Get Application Config via Injestion API
+     * @throws Throwable
+     */
+    @Test
+    public void testGetAppConfig() throws Throwable {
+    	// Set callback and perform API call
+        controller.setHttpCallBack(httpResponse);
+        try {
+        controller.getAppConfig();
+        } catch(APIException e) {};
+
+        // Test response code
+        assertEquals("Status is not 200", 200, httpResponse.getResponse().getStatusCode());
+        // Test the header x-moesif-config-etag
+        assertNotNull(httpResponse.getResponse().getHeaders().get("x-moesif-config-etag"));
+        // Test the raw body
+        assertNotNull(httpResponse.getResponse().getRawBody());
+    }
+    
+	/**
+	 * Update Single Company via Injestion API
+	 * @throws Throwable
+	 */
+    @Test
+    public void testUpdateCompany() throws Throwable {
+
+      CompanyModel company = new CompanyBuilder()
+          .companyId("1")
+          .modifiedTime(new Date())
+          .ipAddress("29.80.250.240")
+          .sessionToken("di3hd982h3fubv3yfd94egf")
+          .metadata(APIHelper.deserialize("{" +
+              "\"email\": \"johndoe@acmeinc.com\"," +
+              "\"string_field\": \"value_1\"," +
+              "\"number_field\": 0," +
+              "\"object_field\": {" +
+              "\"field_1\": \"value_1\"," +
+              "\"field_2\": \"value_2\"" +
+              "}" +
+              "}"))
+          .build();
+
+      // Set callback and perform API call
+      controller.setHttpCallBack(httpResponse);
+      try {
+          controller.updateCompany(company);
+      } catch(APIException e) {};
+
+      // Test response code
+      assertEquals("Status is not 201",
+              201, httpResponse.getResponse().getStatusCode());
+  }
+    
+    /**
+     * Update Single Company Async via Injestion API
+     * @throws Throwable
+     */
+    @Test
+    public void testUpdateCompanyAsync() throws Throwable {
+        final CountDownLatch lock = new CountDownLatch(1);
+
+        CompanyModel company = new CompanyBuilder()
+            .companyId("1")
+            .modifiedTime(new Date())
+            .ipAddress("29.80.250.240")
+            .sessionToken("di3hd982h3fubv3yfd94egf")
+            .metadata(APIHelper.deserialize("{" +
+                    "\"email\": \"johndoe@acmeinc.com\"," +
+                    "\"string_field\": \"value_1\"," +
+                    "\"number_field\": 0," +
+                    "\"object_field\": {" +
+                    "\"field_1\": \"value_1\"," +
+                    "\"field_2\": \"value_2\"" +
+                    "}" +
+                    "}"))
+            .build();
+
+        APICallBack<Object> callBack = new APICallBack<Object>() {
+            public void onSuccess(HttpContext context, Object response) {
+                assertEquals("Status is not 201",
+                        201, context.getResponse().getStatusCode());
+                lock.countDown();
+            }
+
+            public void onFailure(HttpContext context, Throwable error) {
+                fail();
+            }
+        };
+
+        controller.updateCompanyAsync(company, callBack);
+        assertEquals(true, lock.await(10000, TimeUnit.MILLISECONDS));
+    }
+    
+    /**
+     * Update Batched Companies via Ingestion API
+     * @throws Throwable
+     */
+    @Test
+    public void testUpdateBatchedCompanies() throws Throwable {
+
+        // Parameters for the API call
+        List<CompanyModel> companies = new ArrayList<CompanyModel>();
+
+        CompanyModel companyA = new CompanyBuilder()
+    		.companyId("1")
+            .modifiedTime(new Date())
+            .ipAddress("29.80.250.240")
+            .companyDomain("moesif")
+            .build();
+        companies.add(companyA);
+
+        CompanyModel companyB = new CompanyBuilder()
+            .companyId("2")
+            .modifiedTime(new Date())
+            .ipAddress("21.80.11.242")
+            .sessionToken("zceadckekvsfgfpsakvnbfouavsdvds")
+            .companyDomain("moesif")
+            .metadata(APIHelper.deserialize("{" +
+                    "\"email\": \"johndoe@acmeinc.com\"," +
+                    "\"string_field\": \"value_1\"," +
+                    "\"number_field\": 0," +
+                    "\"object_field\": {" +
+                    "\"field_1\": \"value_1\"," +
+                    "\"field_2\": \"value_2\"" +
+                    "}" +
+                    "}"))
+            .build();
+        companies.add(companyB);
+
+        // Set callback and perform API call
+        controller.setHttpCallBack(httpResponse);
+        try {
+            controller.updateCompaniesBatch(companies);
+        } catch(APIException e) {};
+
+        // Test response code
+        assertEquals("Status is not 201",
+                201, httpResponse.getResponse().getStatusCode());
+    }
+    
+    /**
+     * Update Batched Companies Async via Ingestion API
+     * @throws Throwable
+     */
+    @Test
+    public void testUpdateBatchedCompaniesAsync() throws Throwable {
+        final CountDownLatch lock = new CountDownLatch(1);
+
+        // Parameters for the API call
+        List<CompanyModel> companies = new ArrayList<CompanyModel>();
+
+        CompanyModel companyA = new CompanyBuilder()
+                .companyId("1")
+                .modifiedTime(new Date())
+                .companyDomain("moesif")
+                .build();
+        companies.add(companyA);
+
+        CompanyModel companyB = new CompanyBuilder()
+        		.companyId("2")
+                .modifiedTime(new Date())
+                .companyDomain("moesif")
+                .metadata(APIHelper.deserialize("{" +
+                        "\"email\": \"johndoe@acmeinc.com\"," +
+                        "\"string_field\": \"value_1\"," +
+                        "\"number_field\": 0," +
+                        "\"object_field\": {" +
+                        "\"field_1\": \"value_1\"," +
+                        "\"field_2\": \"value_2\"" +
+                        "}" +
+                        "}"))
+                .build();
+        companies.add(companyB);
+
+
+        APICallBack<Object> callBack = new APICallBack<Object>() {
+            public void onSuccess(HttpContext context, Object response) {
+                assertEquals("Status is not 201",
+                        201, context.getResponse().getStatusCode());
+                lock.countDown();
+            }
+
+            public void onFailure(HttpContext context, Throwable error) {
+                fail();
+            }
+        };
+
+        controller.updateCompaniesBatchAsync(companies, callBack);
+        assertEquals(true, lock.await(10000, TimeUnit.MILLISECONDS));
+    }
 }

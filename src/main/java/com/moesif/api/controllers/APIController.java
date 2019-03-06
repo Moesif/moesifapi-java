@@ -165,7 +165,7 @@ public class APIController extends BaseController implements IAPIController {
     /**
      * Update a Single User
      * @param    body    The user to update
-     * @throws Throwable on error creating event
+     * @throws Throwable on error updating user
      */
     public void updateUser(
             final UserModel body
@@ -181,7 +181,7 @@ public class APIController extends BaseController implements IAPIController {
      * Update a Single User async
      * @param    body    The user to update
      * @param    callBack Called after the HTTP response is received
-     * @throws JsonProcessingException on error creating event
+     * @throws JsonProcessingException on error updating user
      */
     public void updateUserAsync(
             final UserModel body,
@@ -228,7 +228,7 @@ public class APIController extends BaseController implements IAPIController {
     /**
      * Update multiple Users in a single batch
      * @param    body    The list of users to update
-     * @throws Throwable on error creating event
+     * @throws Throwable on error updating users
      */
     public void updateUsersBatch(
             final List<UserModel> body
@@ -244,7 +244,7 @@ public class APIController extends BaseController implements IAPIController {
      * Update multiple Users in a single batch async
      * @param    body    The list of users to update
      * @param    callBack Called after the HTTP response is received
-     * @throws JsonProcessingException on error creating event
+     * @throws JsonProcessingException on error updating users
      */
     public void updateUsersBatchAsync(
             final List<UserModel> body,
@@ -256,6 +256,192 @@ public class APIController extends BaseController implements IAPIController {
         //prepare query string for API call
         StringBuilder _queryBuilder = new StringBuilder(_baseUri);
         _queryBuilder.append("/v1/users/batch");
+        //validate and preprocess url
+        String _queryUrl = APIHelper.cleanUrl(_queryBuilder);
+
+        //load all headers for the outgoing API request
+        Map<String, String> _headers = new HashMap<String, String>() {
+            private static final long serialVersionUID = 5519066674529741692L;
+            {
+                put( "X-Moesif-Application-Id", Configuration.ApplicationId);
+            }
+        };
+
+        //prepare and invoke the API call request to fetch the response
+        final HttpRequest _request = getClientInstance().postBody(_queryUrl, _headers, APIHelper.serialize(body));
+
+        //invoke the callback before request if its not null
+        if (getHttpCallBack() != null)
+        {
+            getHttpCallBack().OnBeforeRequest(_request);
+        }
+
+        //invoke request and get response
+        Runnable _responseTask = new Runnable() {
+            public void run() {
+                //make the API call
+                getClientInstance().executeAsStringAsync(_request, createHttpResponseCallback(callBack));
+            }
+        };
+
+        //execute async using thread pool
+        APIHelper.getScheduler().execute(_responseTask);
+    }
+    
+    /**
+     * Get the Application config
+     * @param    body   
+     * @throws Throwable on error getting app config
+     */
+    public void getAppConfig() throws Throwable {
+        APICallBackCatcher<Object> callback = new APICallBackCatcher<Object>();
+        getAppConfigAsync(callback);
+        if(!callback.isSuccess())
+            throw callback.getError();
+        callback.getResult();
+    }
+
+    /**
+     * Get the Application config async
+     * @param    body   
+     * @param    callBack Called after the HTTP response is received
+     * @throws JsonProcessingException on error getting app config
+     */
+    public void getAppConfigAsync(
+    		final APICallBack<Object> callBack
+    ) throws JsonProcessingException {
+        //the base uri for api requests
+        String _baseUri = Configuration.BaseUri;
+
+        //prepare query string for API call
+        StringBuilder _queryBuilder = new StringBuilder(_baseUri);
+        _queryBuilder.append("/v1/config");
+        //validate and preprocess url
+        String _queryUrl = APIHelper.cleanUrl(_queryBuilder);
+
+        //load all headers for the outgoing API request
+        Map<String, String> _headers = new HashMap<String, String>() {
+            private static final long serialVersionUID = 4703880768413831931L;
+            {
+                put( "X-Moesif-Application-Id", Configuration.ApplicationId);
+            }
+        };
+
+        //prepare and invoke the API call request to fetch the response
+        final HttpRequest _request = getClientInstance().get(_queryUrl, _headers, null);
+
+        //invoke the callback before request if its not null
+        if (getHttpCallBack() != null)
+        {
+            getHttpCallBack().OnBeforeRequest(_request);
+        }
+
+        //invoke request and get response
+        Runnable _responseTask = new Runnable() {
+            public void run() {
+                //make the API call
+            	getClientInstance().executeAsStringAsync(_request, createHttpResponseCallback(callBack));
+            }
+        };
+
+        //execute async using thread pool
+        APIHelper.getScheduler().execute(_responseTask);
+    }
+    
+    /**
+     * Update a Single Company
+     * @param    body    The company to update
+     * @throws Throwable on error updating a company
+     */
+    public void updateCompany(
+            final CompanyModel body
+    ) throws Throwable {
+        APICallBackCatcher<Object> callback = new APICallBackCatcher<Object>();
+        updateCompanyAsync(body, callback);
+        if(!callback.isSuccess())
+            throw callback.getError();
+        callback.getResult();
+    }
+
+    /**
+     * Update a Single Company async
+     * @param    body    The company to update
+     * @param    callBack Called after the HTTP response is received
+     * @throws JsonProcessingException on error updating a company
+     */
+    public void updateCompanyAsync(
+            final CompanyModel body,
+            final APICallBack<Object> callBack
+    ) throws JsonProcessingException {
+        //the base uri for api requests
+        String _baseUri = Configuration.BaseUri;
+
+        //prepare query string for API call
+        StringBuilder _queryBuilder = new StringBuilder(_baseUri);
+        _queryBuilder.append("/v1/companies");
+        //validate and preprocess url
+        String _queryUrl = APIHelper.cleanUrl(_queryBuilder);
+
+        //load all headers for the outgoing API request
+        Map<String, String> _headers = new HashMap<String, String>() {
+            private static final long serialVersionUID = 4703880768413831931L;
+            {
+                put( "X-Moesif-Application-Id", Configuration.ApplicationId);
+            }
+        };
+
+        //prepare and invoke the API call request to fetch the response
+        final HttpRequest _request = getClientInstance().postBody(_queryUrl, _headers, APIHelper.serialize(body));
+
+        //invoke the callback before request if its not null
+        if (getHttpCallBack() != null)
+        {
+            getHttpCallBack().OnBeforeRequest(_request);
+        }
+
+        //invoke request and get response
+        Runnable _responseTask = new Runnable() {
+            public void run() {
+                //make the API call
+                getClientInstance().executeAsStringAsync(_request, createHttpResponseCallback(callBack));
+            }
+        };
+
+        //execute async using thread pool
+        APIHelper.getScheduler().execute(_responseTask);
+    }
+    
+    /**
+     * Update multiple Companies in a single batch
+     * @param    body    The list of companies to update
+     * @throws Throwable on error updating companies
+     */
+    public void updateCompaniesBatch(
+            final List<CompanyModel> body
+    ) throws Throwable {
+        APICallBackCatcher<Object> callback = new APICallBackCatcher<Object>();
+        updateCompaniesBatchAsync(body, callback);
+        if(!callback.isSuccess())
+            throw callback.getError();
+        callback.getResult();
+    }
+
+    /**
+     * Update multiple Companies in a single batch async
+     * @param    body    The list of companies to update
+     * @param    callBack Called after the HTTP response is received
+     * @throws JsonProcessingException on error updating companies
+     */
+    public void updateCompaniesBatchAsync(
+            final List<CompanyModel> body,
+            final APICallBack<Object> callBack
+    ) throws JsonProcessingException {
+        //the base uri for api requests
+        String _baseUri = Configuration.BaseUri;
+
+        //prepare query string for API call
+        StringBuilder _queryBuilder = new StringBuilder(_baseUri);
+        _queryBuilder.append("/v1/companies/batch");
         //validate and preprocess url
         String _queryUrl = APIHelper.cleanUrl(_queryBuilder);
 

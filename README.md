@@ -17,7 +17,7 @@ Add this dependency to your project's POM:
 <dependency>
     <groupId>com.moesif.api</groupId>
     <artifactId>moesifapi</artifactId>
-    <version>1.4.0</version>
+    <version>1.5.0</version>
 </dependency>
 ```
 
@@ -26,7 +26,7 @@ Add this dependency to your project's POM:
 Add this dependency to your project's build file:
 
 ```gradle
-compile 'com.moesif.api:moesifapi:1.4.0'
+compile 'com.moesif.api:moesifapi:1.5.0'
 ```
 
 ## How to Use:
@@ -402,8 +402,10 @@ Junit is used as the testing framework and test runner.
 
 For test process do the following:
 
-    1. Select the project MoesifApi from the package explorer.
-    2. Select "Run -> Run as -> Junit Test" or use "Alt + Shift + X" followed by "T" to run the Tests.
+    1. Edit the '/src/test/java/com/moesif/api/controllers/ControllerTestBase.java' to change the ApplicationId to your ApplicationId obtained from Moesif.
+    2. Select the project MoesifApi from the package explorer.
+    3. Select "Run -> Run as -> Junit Test" or use "Alt + Shift + X" followed by "T" to run the Tests.
+    4. Data will be captured in the corresponding Moesif account of the ApplicationId.
 
 ## How to Export jar:
 

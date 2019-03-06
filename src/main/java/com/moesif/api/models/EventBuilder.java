@@ -65,6 +65,16 @@ public class EventBuilder {
         eventModel.setUserId(userId);
         return this;
     }
+    
+    /**
+     * User's company_id string
+     * @param companyId the field to set
+     * @return itself
+     */
+    public EventBuilder companyId(String companyId) {
+        eventModel.setCompanyId(companyId);
+        return this;
+    }
 
     /**
      * Custom event metadata as a JSON object
