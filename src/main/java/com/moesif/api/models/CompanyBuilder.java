@@ -34,7 +34,7 @@ public class CompanyBuilder {
      * @return itself
      */
     public CompanyBuilder modifiedTime(Date modifiedTime) {
-    	CompanyModel.setMetadata(modifiedTime);
+    	CompanyModel.setModifiedTime(modifiedTime);
         return this;
     }
 
