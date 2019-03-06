@@ -67,7 +67,8 @@ public class ControllerTestBase {
     protected static MoesifAPIClient getClient() {
         if(client == null)
             synchronized (clientSync) {
-                client = new MoesifAPIClient("Moesif ApplicationId");
+                // replace this ID with your own Moesif App ID
+                client = new MoesifAPIClient("eyJhcHAiOiIzNjU6NiIsInZlciI6IjIuMCIsIm9yZyI6IjM1OTo0IiwiaWF0IjoxNDczMzc5MjAwfQ.9WOx3D357PGMxrXzFm3pV3IzJSYNsO4oRudiMI8mQ3Q");
             }
         return client;
     }
