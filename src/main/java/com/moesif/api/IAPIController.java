@@ -12,6 +12,7 @@ import com.moesif.api.http.client.APICallBack;
 import com.moesif.api.models.CompanyModel;
 import com.moesif.api.models.EventModel;
 import com.moesif.api.models.UserModel;
+import com.moesif.api.http.response.HttpResponse;
 
 public interface IAPIController {
 
@@ -83,7 +84,7 @@ public interface IAPIController {
      * Get the Application config
      * @throws Throwable on error getting app config
      */
-    void getAppConfig() throws Throwable;
+    HttpResponse getAppConfig() throws Throwable;
     
     /**
      * Get the Application config async

@@ -368,12 +368,52 @@ public class APIController extends BaseController implements IAPIController {
      * Get the Application config
      * @throws Throwable on error getting app config
      */
-    public void getAppConfig() throws Throwable {
-        APICallBackCatcher<Object> callback = new APICallBackCatcher<Object>();
-        getAppConfigAsync(callback);
-        if(!callback.isSuccess())
-            throw callback.getError();
-        callback.getResult();
+    public HttpResponse getAppConfig() throws Throwable {
+    	//the base uri for api requests
+        String _baseUri = Configuration.BaseUri;
+
+        //prepare query string for API call
+        StringBuilder _queryBuilder = new StringBuilder(_baseUri);
+        _queryBuilder.append("/v1/config");
+        //validate and preprocess url
+        String _queryUrl = APIHelper.cleanUrl(_queryBuilder);
+
+        //load all headers for the outgoing API request
+        Map<String, String> _headers = new HashMap<String, String>() {
+            private static final long serialVersionUID = 4703880768413831931L;
+            {
+                put( "X-Moesif-Application-Id", Configuration.ApplicationId);
+            }
+        };
+
+        //prepare and invoke the API call request to fetch the response
+        final HttpRequest _request = getClientInstance().get(_queryUrl, _headers, null);
+
+        //invoke the callback before request if its not null
+        if (getHttpCallBack() != null)
+        {
+            getHttpCallBack().OnBeforeRequest(_request);
+        }
+        
+        // make the API call
+        HttpResponse _response = getClientInstance().executeAsString(_request);
+        
+        // Wrap the request and the response in an HttpContext object
+        HttpContext _context = new HttpContext(_request, _response);
+        
+        //invoke the callback after response if its not null
+        if (getHttpCallBack() != null)
+        {
+            getHttpCallBack().OnAfterResponse(_context);
+        }
+
+        //handle errors defined at the API level
+        validateResponse(_response, _context);
+        
+        // Return headers to the client
+        return _response;
+        
+        
     }
 
     /**
