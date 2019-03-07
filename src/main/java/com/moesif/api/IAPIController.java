@@ -20,7 +20,7 @@ public interface IAPIController {
      * @param    body    The event to create
      * @throws Throwable on error creating event
      */
-    void createEvent(final EventModel body) throws Throwable;
+	Map<String, String> createEvent(final EventModel body) throws Throwable;
 
     /**
      * Add Single API Event Call
@@ -36,7 +36,7 @@ public interface IAPIController {
      * @param    body    The events to create
      * @throws Throwable on error creating event
      */
-    void createEventsBatch(final List<EventModel> body) throws Throwable;
+    Map<String, String> createEventsBatch(final List<EventModel> body) throws Throwable;
 
     /**
      * Add multiple API Events in a single batch

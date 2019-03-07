@@ -41,14 +41,51 @@ public class APIController extends BaseController implements IAPIController {
      * @param    body    The event to create
      * @throws Throwable on error creating event
      */
-    public void createEvent(
+    public Map<String, String> createEvent(
                 final EventModel body
     ) throws Throwable {
-        APICallBackCatcher<Object> callback = new APICallBackCatcher<Object>();
-        createEventAsync(body, callback);
-        if(!callback.isSuccess())
-            throw callback.getError();
-        callback.getResult();
+    	String _baseUri = Configuration.BaseUri;
+
+        //prepare query string for API call
+        StringBuilder _queryBuilder = new StringBuilder(_baseUri);
+        _queryBuilder.append("/v1/events");
+        //validate and preprocess url
+        String _queryUrl = APIHelper.cleanUrl(_queryBuilder);
+
+        //load all headers for the outgoing API request
+        Map<String, String> _headers = new HashMap<String, String>() {
+            private static final long serialVersionUID = 4703880768413831931L;
+            {
+                    put( "X-Moesif-Application-Id", Configuration.ApplicationId);
+            }
+        };
+
+        //prepare and invoke the API call request to fetch the response
+        final HttpRequest _request = getClientInstance().postBody(_queryUrl, _headers, APIHelper.serialize(body));
+
+        //invoke the callback before request if its not null
+        if (getHttpCallBack() != null)
+        {
+            getHttpCallBack().OnBeforeRequest(_request);
+        }
+        
+        // make the API call
+        HttpResponse _response = getClientInstance().executeAsString(_request);
+        
+        // Wrap the request and the response in an HttpContext object
+        HttpContext _context = new HttpContext(_request, _response);
+        
+        //invoke the callback after response if its not null
+        if (getHttpCallBack() != null)
+        {
+            getHttpCallBack().OnAfterResponse(_context);
+        }
+
+        //handle errors defined at the API level
+        validateResponse(_response, _context);
+        
+        // Return headers to the client
+        return _response.getHeaders();
     }
 
     /**
@@ -104,14 +141,53 @@ public class APIController extends BaseController implements IAPIController {
      * @param    body    The events to create
      * @throws Throwable on error creating event
      */
-    public void createEventsBatch(
+    public Map<String, String> createEventsBatch(
                 final List<EventModel> body
     ) throws Throwable {
-        APICallBackCatcher<Object> callback = new APICallBackCatcher<Object>();
-        createEventsBatchAsync(body, callback);
-        if(!callback.isSuccess())
-            throw callback.getError();
-        callback.getResult();
+    	//the base uri for api requests
+        String _baseUri = Configuration.BaseUri;
+
+        //prepare query string for API call
+        StringBuilder _queryBuilder = new StringBuilder(_baseUri);
+        _queryBuilder.append("/v1/events/batch");
+        //validate and preprocess url
+        String _queryUrl = APIHelper.cleanUrl(_queryBuilder);
+
+        //load all headers for the outgoing API request
+        Map<String, String> _headers = new HashMap<String, String>() {
+            private static final long serialVersionUID = 5519066674529741692L;
+            {
+                    put( "X-Moesif-Application-Id", Configuration.ApplicationId);
+            }
+        };
+
+        //prepare and invoke the API call request to fetch the response
+        final HttpRequest _request = getClientInstance().postBody(_queryUrl, _headers, APIHelper.serialize(body));
+
+        //invoke the callback before request if its not null
+        if (getHttpCallBack() != null)
+        {
+            getHttpCallBack().OnBeforeRequest(_request);
+        }
+        
+        // make the API call
+        HttpResponse _response = getClientInstance().executeAsString(_request);
+        
+        // Wrap the request and the response in an HttpContext object
+        HttpContext _context = new HttpContext(_request, _response);
+        
+        //invoke the callback after response if its not null
+        if (getHttpCallBack() != null)
+        {
+            getHttpCallBack().OnAfterResponse(_context);
+        }
+
+        //handle errors defined at the API level
+        validateResponse(_response, _context);
+        
+        // Return headers to the client
+        return _response.getHeaders();
+        
     }
 
     /**
