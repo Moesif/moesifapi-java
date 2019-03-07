@@ -9,6 +9,7 @@ import java.util.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.moesif.api.http.client.APICallBack;
+import com.moesif.api.models.CompanyModel;
 import com.moesif.api.models.EventModel;
 import com.moesif.api.models.UserModel;
 
@@ -77,5 +78,50 @@ public interface IAPIController {
      */
     void updateUsersBatchAsync(final List<UserModel> body,
                                final APICallBack<Object> callBack) throws JsonProcessingException;
+    
+    /**
+     * Get the Application config
+     * @throws Throwable on error getting app config
+     */
+    void getAppConfig() throws Throwable;
+    
+    /**
+     * Get the Application config async
+     * @param    callBack Called after the HTTP response is received
+     * @throws JsonProcessingException on error getting app config
+     */
+    void getAppConfigAsync(final APICallBack<Object> callBack) throws JsonProcessingException;
+    
+    /**
+     * Update a Single Company
+     * @param    body    The company to update
+     * @throws Throwable on error updating a company
+     */
+    void updateCompany(final CompanyModel body) throws Throwable;
+    
+    /**
+     * Update a Single Company async
+     * @param    body    The company to update
+     * @param    callBack Called after the HTTP response is received
+     * @throws JsonProcessingException on error updating a company
+     */
+    void updateCompanyAsync(final CompanyModel body,
+    		final APICallBack<Object> callBack) throws JsonProcessingException;
+    
+    /**
+     * Update multiple Companies in a single batch
+     * @param    body    The list of companies to update
+     * @throws Throwable on error updating companies
+     */
+    void updateCompaniesBatch(final List<CompanyModel> body) throws Throwable;
+    
+    /**
+     * Update multiple Companies in a single batch async
+     * @param    body    The list of companies to update
+     * @param    callBack Called after the HTTP response is received
+     * @throws JsonProcessingException on error updating companies
+     */
+    void updateCompaniesBatchAsync(final List<CompanyModel> body,
+    		final APICallBack<Object> callBack) throws JsonProcessingException;
 
 }
