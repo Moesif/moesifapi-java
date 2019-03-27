@@ -31,6 +31,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import java.text.ParseException;
+import java.text.ParsePosition;
 
 import com.moesif.api.exceptions.APIException;
 import com.mashape.unirest.http.Unirest;
@@ -87,9 +89,9 @@ public class APIHelper {
      * @param date	ISO8601 encodede date string
      * @return Parsed Date object 
      */
-    public static Date parseDate(String date)
+    public static Date parseDate(String date) throws ParseException
     {
-        return com.fasterxml.jackson.databind.util.ISO8601Utils.parse(date);
+        return com.fasterxml.jackson.databind.util.ISO8601Utils.parse(date, new ParsePosition(0));
     }
     
     /**
