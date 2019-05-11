@@ -29,4 +29,12 @@ public class AppConfigBuilder {
       AppConfigModel.setEtag(etag);
       return this;
     }
+
+    /**
+     * Build the instance with the given values
+     * @return The built UserModel
+     */
+    public AppConfigModel build() {
+        return AppConfigModel;
+    }
 }

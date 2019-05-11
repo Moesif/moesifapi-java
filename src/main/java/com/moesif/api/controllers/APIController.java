@@ -6,6 +6,7 @@
 package com.moesif.api.controllers;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -19,6 +20,9 @@ import com.moesif.api.http.client.APICallBack;
 import com.moesif.api.controllers.syncwrapper.APICallBackCatcher;
 
 public class APIController extends BaseController implements IAPIController {
+    private static final Logger logger = Logger.getLogger(APIController.class.toString());
+    private static final boolean debug = false; // TODO
+
     //private static variables for the singleton pattern
     private static Object syncObject = new Object();
     private static APIController instance = null;
@@ -461,6 +465,87 @@ public class APIController extends BaseController implements IAPIController {
         //execute async using thread pool
         APIHelper.getScheduler().execute(_responseTask);
     }
+
+    public AppConfigModel getCachedAndLoadAppConfig() {
+        // TODO: download new one if necessary
+        return getDefaultAppConfig();
+    }
+
+    public AppConfigModel getDefaultAppConfig() {
+        return new AppConfigBuilder()
+            .sampleRate(100)
+            .etag("default")
+            .build();
+    }
+
+    private EventModel buildEvent(
+            EventRequestModel eventRequestModel,
+            EventResponseModel eventResponseModel,
+            String userId,
+            String sessionToken,
+            String tags,
+            Object metadata) {
+        EventBuilder eb = new EventBuilder();
+        eb.request(eventRequestModel);
+        eb.response(eventResponseModel);
+        if (userId != null) {
+            eb.userId(userId);
+        }
+        if (sessionToken != null) {
+            eb.sessionToken(sessionToken);
+        }
+        if (tags != null) {
+            eb.tags(tags);
+        }
+
+        if (metadata != null) {
+            eb.metadata(metadata);
+        }
+
+        EventModel event = eb.build();
+
+        // actually send the event here.
+        APICallBack<Object> callBack = new APICallBack<Object>() {
+            public void onSuccess(HttpContext context, Object response) {
+                if (debug) {
+                    logger.info("send to Moesif success");
+                }
+            }
+
+            public void onFailure(HttpContext context, Throwable error) {
+                if (debug) {
+                    logger.info("send to Moesif error ");
+                    logger.info( error.toString());
+                }
+            }
+        };
+
+        return event;
+    }
+
+    public boolean trySendEvent(EventModel event) {
+        AppConfigModel appConfig = getCachedAndLoadAppConfig();
+
+        boolean willSend = appConfig.getSampleRate() >= Math.random() * 100;
+
+        if (willSend) {
+            Map<String, String> eventApiResponse = null;
+
+            try {
+                eventApiResponse = createEvent(event);
+            } catch (Throwable e) {
+                if (debug) {
+                    logger.warning("Send to Moesif failed " + e.toString());
+                }
+            }
+
+            if (eventApiResponse != null) {
+
+            }
+        }
+
+        return willSend;
+    }
     
     /**
      * Update a Single Company
@@ -587,7 +672,6 @@ public class APIController extends BaseController implements IAPIController {
         //execute async using thread pool
         APIHelper.getScheduler().execute(_responseTask);
     }
-
 
     private APICallBack<HttpResponse> createHttpResponseCallback(final APICallBack<Object> callBack) {
 
