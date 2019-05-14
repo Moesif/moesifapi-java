@@ -9,6 +9,7 @@ import java.util.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy.KebabCaseStrategy;
 import com.moesif.api.*;
 import com.moesif.api.models.*;
 import com.moesif.api.exceptions.*;
@@ -22,6 +23,8 @@ public class APIController extends BaseController implements IAPIController {
     //private static variables for the singleton pattern
     private static Object syncObject = new Object();
     private static APIController instance = null;
+
+    private static final String APP_CONFIG_ETAG_HEADER = "x-moesif-config-etag";
 
     // wait 5 minutes before grabbing the new config (different servers might have different states)
     private static final int APP_CONFIG_DEBOUNCE = 1000 * 60 * 5; // 5 minutes
@@ -51,7 +54,7 @@ public class APIController extends BaseController implements IAPIController {
     public Map<String, String> createEvent(
                 final EventModel body
     ) throws Throwable {
-    	String _baseUri = Configuration.BaseUri;
+        String _baseUri = Configuration.BaseUri;
 
         //prepare query string for API call
         StringBuilder _queryBuilder = new StringBuilder(_baseUri);
@@ -78,7 +81,8 @@ public class APIController extends BaseController implements IAPIController {
         
         // make the API call
         HttpResponse _response = getClientInstance().executeAsString(_request);
-        
+        Map<String, String> headers = _response.getHeaders();
+
         // Wrap the request and the response in an HttpContext object
         HttpContext _context = new HttpContext(_request, _response);
         
@@ -90,9 +94,11 @@ public class APIController extends BaseController implements IAPIController {
 
         //handle errors defined at the API level
         validateResponse(_response, _context);
+
+        checkAppConfigEtag(headers.get(APP_CONFIG_ETAG_HEADER));
         
         // Return headers to the client
-        return _response.getHeaders();
+        return headers;
     }
 
     /**
@@ -470,30 +476,61 @@ public class APIController extends BaseController implements IAPIController {
     }
 
     private AppConfigModel getCachedAppConfig() {
-        /*if (appConfigModel == null) {
+        if (appConfigModel == null) {
             trySyncAppConfig();
             return getDefaultAppConfig();
         } else {
             return appConfigModel;
-        }*/
+        }
     }
 
-    public void shouldSyncAppConfig(boolean shouldSync) {
+    public void setShouldSyncAppConfig(boolean shouldSync) {
         shouldSyncAppConfig = shouldSync;
     }
 
-    private void trySyncAppConfig() {
-        /*long now = new Date().getTime();
+    private void checkAppConfigEtag(String newAppConfigEtag) {
+        if (newAppConfigEtag != null && !newAppConfigEtag.equals(appConfigEtag)) {
+            // only update the etag once we've gotten the new config
+            trySyncAppConfig();
+        }
+    }
 
-        if (shouldSyncAppConfig && lastAppConfigFetch + APP_CONFIG_DEBOUNCE < now) {
-            lastAppConfigFetch = new Date().getTime();
+    private boolean trySyncAppConfig() {
+        long now = new Date().getTime();
+        boolean willFetch = shouldSyncAppConfig && lastAppConfigFetch + APP_CONFIG_DEBOUNCE < now;
 
+        if (willFetch) {
+            lastAppConfigFetch = now;
+
+            syncAppConfig();
+        }
+
+        return willFetch;
+    }
+
+    private void syncAppConfig() {
+        if (shouldSyncAppConfig) {
             APICallBack<HttpResponse> callback = new APICallBack<HttpResponse>() {
                 public void onSuccess(HttpContext context, HttpResponse response) {
                     // Read the response body
+                    ObjectMapper mapper = new ObjectMapper();
+                    Map<String, Object> jsonMap = null;
 
-                    // ObjectMapper mapper = new ObjectMapper();
-                    // Map<String, Object> jsonMap = mapper.readValue(response.getRawBody(), Map.class);
+                    try {
+                        jsonMap = mapper.readValue(response.getRawBody(), Map.class);
+                    } catch (Exception e) {
+
+                    }
+
+                    appConfigModel = new AppConfigBuilder()
+                        .appId(jsonMap.get("app_id").toString())
+                        .orgId(jsonMap.get("org_id").toString())
+                        .sampleRate(Integer.parseInt(jsonMap.get("sample_rate").toString()))
+                        .build();
+
+                    appConfigEtag = response
+                        .getHeaders()
+                        .get(APP_CONFIG_ETAG_HEADER);
                 }
 
                 public void onFailure(HttpContext context, Throwable error) {
@@ -507,7 +544,7 @@ public class APIController extends BaseController implements IAPIController {
             } catch (Exception e) {
 
             }
-        }*/
+        }
     }
 
     public AppConfigModel getDefaultAppConfig() {
