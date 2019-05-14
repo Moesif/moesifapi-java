@@ -478,21 +478,22 @@ public class APIController extends BaseController implements IAPIController {
                            EventResponseModel eventResponseModel,
                            String userId,
                            String sessionToken,
-                           String tags,
+                           String apiVersion,
                            Object metadata) {
         EventBuilder eb = new EventBuilder();
+
         eb.request(eventRequestModel);
         eb.response(eventResponseModel);
+
         if (userId != null) {
             eb.userId(userId);
         }
         if (sessionToken != null) {
             eb.sessionToken(sessionToken);
         }
-        if (tags != null) {
-            eb.tags(tags);
+        if (apiVersion != null) {
+            eb.tags(apiVersion);
         }
-
         if (metadata != null) {
             eb.metadata(metadata);
         }
