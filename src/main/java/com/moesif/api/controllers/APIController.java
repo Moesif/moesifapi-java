@@ -673,15 +673,6 @@ public class APIController extends BaseController implements IAPIController {
         APIHelper.getScheduler().execute(_responseTask);
     }
 
-//    public void sendEvent(EventRequestModel eventRequestModel,
-//                          EventResponseModel eventResponseModel,
-//                          String userId,
-//                          String sessionToken,
-//                          String tags,
-//                          Object metadata) {
-//
-//    }
-
     private APICallBack<HttpResponse> createHttpResponseCallback(final APICallBack<Object> callBack) {
 
         return new APICallBack<HttpResponse>() {
