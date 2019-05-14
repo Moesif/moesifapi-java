@@ -529,20 +529,7 @@ public class APIController extends BaseController implements IAPIController {
 
             // Compare percentage to send event
             if (appConfig.getSampleRate() >= randomPercentage) {
-                // Send Event
-                Map<String, String> eventApiResponse = createEvent(event);
-                // Get the key from the global dict
-//                String cachedConfigEtag = this.configDict.keySet().iterator().next();
-//                // Get the etag from event api response
-//                String eventResponseConfigEtag = eventApiResponse.get("x-moesif-config-etag");
-//
-//                // Check if needed to call the getConfig api to update samplingPercentage
-//                if (eventResponseConfigEtag != null
-//                        && !(eventResponseConfigEtag.equals(cachedConfigEtag))
-//                        && new Date().after(new Date(this.lastUpdatedTime.getTime() + 5 * 60 * 1000))) {
-//                    // Call api to update samplingPercentage
-//                    this.samplingPercentage = getAppConfig(cachedConfigEtag);
-//                 }
+                createEvent(event); // send the event to moesif
 
                 if (debug) {
                     logger.warning("Event successfully sent to Moesif");
@@ -553,7 +540,6 @@ public class APIController extends BaseController implements IAPIController {
                     logger.info("Skipped sending event");
                 }
             }
-
         } catch(Throwable e) {
             if (debug) {
                 logger.warning("send to Moesif failed " + e.toString());
