@@ -503,20 +503,11 @@ public class APIController extends BaseController implements IAPIController {
         return eb.build();
     }
 
-    public void sendEvent(EventModel event) {
-        try {
-            AppConfigModel appConfig = getCachedAndLoadAppConfig();
+    public boolean shouldSendSampledEvent() {
+        int sampleRate = getCachedAndLoadAppConfig().getSampleRate();
+        double randomPercentage = Math.random() * 100;
 
-            // Generate random number
-            double randomPercentage = Math.random() * 100;
-
-            // Compare percentage to send event
-            if (appConfig.getSampleRate() >= randomPercentage) {
-                createEvent(event); // send the event to moesif
-            }
-        } catch(Throwable e) {
-
-        }
+        return sampleRate >= randomPercentage;
     }
     
     /**
