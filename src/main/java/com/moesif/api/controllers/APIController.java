@@ -6,7 +6,6 @@
 package com.moesif.api.controllers;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -20,8 +19,6 @@ import com.moesif.api.http.client.APICallBack;
 import com.moesif.api.controllers.syncwrapper.APICallBackCatcher;
 
 public class APIController extends BaseController implements IAPIController {
-    private static final Logger logger = Logger.getLogger(APIController.class.toString());
-
     //private static variables for the singleton pattern
     private static Object syncObject = new Object();
     private static APIController instance = null;
