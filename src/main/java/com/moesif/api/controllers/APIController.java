@@ -21,7 +21,6 @@ import com.moesif.api.controllers.syncwrapper.APICallBackCatcher;
 
 public class APIController extends BaseController implements IAPIController {
     private static final Logger logger = Logger.getLogger(APIController.class.toString());
-    private static final boolean debug = false; // TODO
 
     //private static variables for the singleton pattern
     private static Object syncObject = new Object();
@@ -505,22 +504,6 @@ public class APIController extends BaseController implements IAPIController {
     }
 
     public void sendEvent(EventModel event) {
-        // actually send the event here.
-        APICallBack<Object> callBack = new APICallBack<Object>() {
-            public void onSuccess(HttpContext context, Object response) {
-                if (debug) {
-                    logger.info("send to Moesif success");
-                }
-            }
-
-            public void onFailure(HttpContext context, Throwable error) {
-                if (debug) {
-                    logger.info("send to Moesif error ");
-                    logger.info( error.toString());
-                }
-            }
-        };
-
         try {
             AppConfigModel appConfig = getCachedAndLoadAppConfig();
 
@@ -530,20 +513,9 @@ public class APIController extends BaseController implements IAPIController {
             // Compare percentage to send event
             if (appConfig.getSampleRate() >= randomPercentage) {
                 createEvent(event); // send the event to moesif
-
-                if (debug) {
-                    logger.warning("Event successfully sent to Moesif");
-                }
-            }
-            else {
-                if(debug) {
-                    logger.info("Skipped sending event");
-                }
             }
         } catch(Throwable e) {
-            if (debug) {
-                logger.warning("send to Moesif failed " + e.toString());
-            }
+
         }
     }
     
