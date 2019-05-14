@@ -19,10 +19,14 @@ import com.moesif.api.http.response.HttpResponse;
 import com.moesif.api.http.client.APICallBack;
 import com.moesif.api.controllers.syncwrapper.APICallBackCatcher;
 
+import java.util.logging.Logger;
+
 public class APIController extends BaseController implements IAPIController {
     //private static variables for the singleton pattern
     private static Object syncObject = new Object();
     private static APIController instance = null;
+
+    private static final Logger logger = Logger.getLogger(APIController.class.toString());
 
     private static final String APP_CONFIG_ETAG_HEADER = "x-moesif-config-etag";
 
@@ -519,7 +523,7 @@ public class APIController extends BaseController implements IAPIController {
                     try {
                         jsonMap = mapper.readValue(response.getRawBody(), Map.class);
                     } catch (Exception e) {
-
+                        logger.warning("Invalid AppConfig JSON");
                     }
 
                     appConfigModel = new AppConfigBuilder()
@@ -542,7 +546,7 @@ public class APIController extends BaseController implements IAPIController {
             try {
                 getAppConfigAsync(callback);
             } catch (Exception e) {
-
+                logger.warning("Error performing async operation");
             }
         }
     }
