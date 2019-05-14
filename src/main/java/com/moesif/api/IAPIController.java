@@ -30,7 +30,7 @@ public interface IAPIController {
      * @throws JsonProcessingException on error creating event
      */
     void createEventAsync(final EventModel body,
-                          final APICallBack<Object> callBack) throws JsonProcessingException;
+                          final APICallBack<HttpResponse> callBack) throws JsonProcessingException;
 
     /**
      * Add multiple API Events in a single batch
@@ -46,7 +46,7 @@ public interface IAPIController {
      * @throws JsonProcessingException on error creating event
      */
     void createEventsBatchAsync(final List<EventModel> body,
-                                final APICallBack<Object> callBack) throws JsonProcessingException;
+                                final APICallBack<HttpResponse> callBack) throws JsonProcessingException;
 
     /**
      * Update a Single User
@@ -62,7 +62,7 @@ public interface IAPIController {
      * @throws JsonProcessingException on error creating event
      */
     void updateUserAsync(final UserModel body,
-                         final APICallBack<Object> callBack) throws JsonProcessingException;
+                         final APICallBack<HttpResponse> callBack) throws JsonProcessingException;
 
     /**
      * Update multiple Users in a single batch
@@ -78,7 +78,7 @@ public interface IAPIController {
      * @throws JsonProcessingException on error creating event
      */
     void updateUsersBatchAsync(final List<UserModel> body,
-                               final APICallBack<Object> callBack) throws JsonProcessingException;
+                               final APICallBack<HttpResponse> callBack) throws JsonProcessingException;
     
     /**
      * Get the Application config
@@ -91,7 +91,7 @@ public interface IAPIController {
      * @param    callBack Called after the HTTP response is received
      * @throws JsonProcessingException on error getting app config
      */
-    void getAppConfigAsync(final APICallBack<Object> callBack) throws JsonProcessingException;
+    void getAppConfigAsync(final APICallBack<HttpResponse> callBack) throws JsonProcessingException;
     
     /**
      * Update a Single Company
@@ -107,7 +107,7 @@ public interface IAPIController {
      * @throws JsonProcessingException on error updating a company
      */
     void updateCompanyAsync(final CompanyModel body,
-    		final APICallBack<Object> callBack) throws JsonProcessingException;
+    		final APICallBack<HttpResponse> callBack) throws JsonProcessingException;
     
     /**
      * Update multiple Companies in a single batch
@@ -123,6 +123,6 @@ public interface IAPIController {
      * @throws JsonProcessingException on error updating companies
      */
     void updateCompaniesBatchAsync(final List<CompanyModel> body,
-    		final APICallBack<Object> callBack) throws JsonProcessingException;
+    		final APICallBack<HttpResponse> callBack) throws JsonProcessingException;
 
 }

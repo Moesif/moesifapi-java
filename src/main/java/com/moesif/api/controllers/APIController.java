@@ -8,7 +8,7 @@ package com.moesif.api.controllers;
 import java.util.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moesif.api.*;
 import com.moesif.api.models.*;
 import com.moesif.api.exceptions.*;
@@ -22,6 +22,13 @@ public class APIController extends BaseController implements IAPIController {
     //private static variables for the singleton pattern
     private static Object syncObject = new Object();
     private static APIController instance = null;
+
+    // wait 5 minutes before grabbing the new config (different servers might have different states)
+    private static final int APP_CONFIG_DEBOUNCE = 1000 * 60 * 5; // 5 minutes
+    private long lastAppConfigFetch;
+    private boolean shouldSyncAppConfig = false;
+    private AppConfigModel appConfigModel;
+    private String appConfigEtag;
 
     /**
      * Singleton pattern implementation 
@@ -96,7 +103,7 @@ public class APIController extends BaseController implements IAPIController {
      */
     public void createEventAsync(
                 final EventModel body,
-                final APICallBack<Object> callBack
+                final APICallBack<HttpResponse> callBack
     ) throws JsonProcessingException {
         //the base uri for api requests
         String _baseUri = Configuration.BaseUri;
@@ -198,7 +205,7 @@ public class APIController extends BaseController implements IAPIController {
      */
     public void createEventsBatchAsync(
                 final List<EventModel> body,
-                final APICallBack<Object> callBack
+                final APICallBack<HttpResponse> callBack
     ) throws JsonProcessingException {
         //the base uri for api requests
         String _baseUri = Configuration.BaseUri;
@@ -246,7 +253,7 @@ public class APIController extends BaseController implements IAPIController {
     public void updateUser(
             final UserModel body
     ) throws Throwable {
-        APICallBackCatcher<Object> callback = new APICallBackCatcher<Object>();
+        APICallBackCatcher<HttpResponse> callback = new APICallBackCatcher<HttpResponse>();
         updateUserAsync(body, callback);
         if(!callback.isSuccess())
             throw callback.getError();
@@ -261,7 +268,7 @@ public class APIController extends BaseController implements IAPIController {
      */
     public void updateUserAsync(
             final UserModel body,
-            final APICallBack<Object> callBack
+            final APICallBack<HttpResponse> callBack
     ) throws JsonProcessingException {
         //the base uri for api requests
         String _baseUri = Configuration.BaseUri;
@@ -309,7 +316,7 @@ public class APIController extends BaseController implements IAPIController {
     public void updateUsersBatch(
             final List<UserModel> body
     ) throws Throwable {
-        APICallBackCatcher<Object> callback = new APICallBackCatcher<Object>();
+        APICallBackCatcher<HttpResponse> callback = new APICallBackCatcher<HttpResponse>();
         updateUsersBatchAsync(body, callback);
         if(!callback.isSuccess())
             throw callback.getError();
@@ -324,7 +331,7 @@ public class APIController extends BaseController implements IAPIController {
      */
     public void updateUsersBatchAsync(
             final List<UserModel> body,
-            final APICallBack<Object> callBack
+            final APICallBack<HttpResponse> callBack
     ) throws JsonProcessingException {
         //the base uri for api requests
         String _baseUri = Configuration.BaseUri;
@@ -422,7 +429,7 @@ public class APIController extends BaseController implements IAPIController {
      * @throws JsonProcessingException on error getting app config
      */
     public void getAppConfigAsync(
-    		final APICallBack<Object> callBack
+    		final APICallBack<HttpResponse> callBack
     ) throws JsonProcessingException {
         //the base uri for api requests
         String _baseUri = Configuration.BaseUri;
@@ -462,9 +469,45 @@ public class APIController extends BaseController implements IAPIController {
         APIHelper.getScheduler().execute(_responseTask);
     }
 
-    public AppConfigModel getCachedAndLoadAppConfig() {
-        // TODO: download new one if necessary
-        return getDefaultAppConfig();
+    private AppConfigModel getCachedAppConfig() {
+        /*if (appConfigModel == null) {
+            trySyncAppConfig();
+            return getDefaultAppConfig();
+        } else {
+            return appConfigModel;
+        }*/
+    }
+
+    public void shouldSyncAppConfig(boolean shouldSync) {
+        shouldSyncAppConfig = shouldSync;
+    }
+
+    private void trySyncAppConfig() {
+        /*long now = new Date().getTime();
+
+        if (shouldSyncAppConfig && lastAppConfigFetch + APP_CONFIG_DEBOUNCE < now) {
+            lastAppConfigFetch = new Date().getTime();
+
+            APICallBack<HttpResponse> callback = new APICallBack<HttpResponse>() {
+                public void onSuccess(HttpContext context, HttpResponse response) {
+                    // Read the response body
+
+                    // ObjectMapper mapper = new ObjectMapper();
+                    // Map<String, Object> jsonMap = mapper.readValue(response.getRawBody(), Map.class);
+                }
+
+                public void onFailure(HttpContext context, Throwable error) {
+                    // fail silently
+                    // try again later
+                }
+            };
+
+            try {
+                getAppConfigAsync(callback);
+            } catch (Exception e) {
+
+            }
+        }*/
     }
 
     public AppConfigModel getDefaultAppConfig() {
@@ -502,7 +545,7 @@ public class APIController extends BaseController implements IAPIController {
     }
 
     public boolean shouldSendSampledEvent() {
-        int sampleRate = getCachedAndLoadAppConfig().getSampleRate();
+        int sampleRate = getCachedAppConfig().getSampleRate();
         double randomPercentage = Math.random() * 100;
 
         return sampleRate >= randomPercentage;
@@ -516,7 +559,7 @@ public class APIController extends BaseController implements IAPIController {
     public void updateCompany(
             final CompanyModel body
     ) throws Throwable {
-        APICallBackCatcher<Object> callback = new APICallBackCatcher<Object>();
+        APICallBackCatcher<HttpResponse> callback = new APICallBackCatcher<HttpResponse>();
         updateCompanyAsync(body, callback);
         if(!callback.isSuccess())
             throw callback.getError();
@@ -531,7 +574,7 @@ public class APIController extends BaseController implements IAPIController {
      */
     public void updateCompanyAsync(
             final CompanyModel body,
-            final APICallBack<Object> callBack
+            final APICallBack<HttpResponse> callBack
     ) throws JsonProcessingException {
         //the base uri for api requests
         String _baseUri = Configuration.BaseUri;
@@ -579,7 +622,7 @@ public class APIController extends BaseController implements IAPIController {
     public void updateCompaniesBatch(
             final List<CompanyModel> body
     ) throws Throwable {
-        APICallBackCatcher<Object> callback = new APICallBackCatcher<Object>();
+        APICallBackCatcher<HttpResponse> callback = new APICallBackCatcher<HttpResponse>();
         updateCompaniesBatchAsync(body, callback);
         if(!callback.isSuccess())
             throw callback.getError();
@@ -594,7 +637,7 @@ public class APIController extends BaseController implements IAPIController {
      */
     public void updateCompaniesBatchAsync(
             final List<CompanyModel> body,
-            final APICallBack<Object> callBack
+            final APICallBack<HttpResponse> callBack
     ) throws JsonProcessingException {
         //the base uri for api requests
         String _baseUri = Configuration.BaseUri;
@@ -634,7 +677,7 @@ public class APIController extends BaseController implements IAPIController {
         APIHelper.getScheduler().execute(_responseTask);
     }
 
-    private APICallBack<HttpResponse> createHttpResponseCallback(final APICallBack<Object> callBack) {
+    private APICallBack<HttpResponse> createHttpResponseCallback(final APICallBack<HttpResponse> callBack) {
 
         return new APICallBack<HttpResponse>() {
             public void onSuccess(HttpContext _context, HttpResponse _response) {
@@ -650,7 +693,7 @@ public class APIController extends BaseController implements IAPIController {
                     validateResponse(_response, _context);
 
                     //let the caller know of the success
-                    callBack.onSuccess(_context, _context);
+                    callBack.onSuccess(_context, _response);
                 } catch (APIException error) {
                     //let the caller know of the error
                     callBack.onFailure(_context, error);
@@ -671,5 +714,4 @@ public class APIController extends BaseController implements IAPIController {
             }
         };
     }
-
 }
