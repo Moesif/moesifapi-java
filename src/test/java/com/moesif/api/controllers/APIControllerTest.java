@@ -14,6 +14,8 @@ import java.util.concurrent.TimeUnit;
 
 import com.moesif.api.http.client.APICallBack;
 import com.moesif.api.http.client.HttpContext;
+import com.moesif.api.http.response.HttpResponse;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -205,8 +207,8 @@ public class APIControllerTest extends ControllerTestBase {
                 .build();
 
 
-        APICallBack<Object> callBack = new APICallBack<Object>() {
-            public void onSuccess(HttpContext context, Object response) {
+        APICallBack<HttpResponse> callBack = new APICallBack<HttpResponse>() {
+            public void onSuccess(HttpContext context, HttpResponse response) {
                 assertEquals("Status is not 201",
                         201, context.getResponse().getStatusCode());
                 lock.countDown();
@@ -382,8 +384,8 @@ public class APIControllerTest extends ControllerTestBase {
         events.add(eventModel);
         events.add(eventModel);
 
-        APICallBack<Object> callBack = new APICallBack<Object>() {
-            public void onSuccess(HttpContext context, Object response) {
+        APICallBack<HttpResponse> callBack = new APICallBack<HttpResponse>() {
+            public void onSuccess(HttpContext context, HttpResponse response) {
                 assertEquals("Status is not 201",
                         201, context.getResponse().getStatusCode());
                 lock.countDown();
@@ -458,8 +460,8 @@ public class APIControllerTest extends ControllerTestBase {
                     "}"))
             .build();
 
-        APICallBack<Object> callBack = new APICallBack<Object>() {
-            public void onSuccess(HttpContext context, Object response) {
+        APICallBack<HttpResponse> callBack = new APICallBack<HttpResponse>() {
+            public void onSuccess(HttpContext context, HttpResponse response) {
                 assertEquals("Status is not 201",
                         201, context.getResponse().getStatusCode());
                 lock.countDown();
@@ -579,8 +581,8 @@ public class APIControllerTest extends ControllerTestBase {
         users.add(userB);
 
 
-        APICallBack<Object> callBack = new APICallBack<Object>() {
-            public void onSuccess(HttpContext context, Object response) {
+        APICallBack<HttpResponse> callBack = new APICallBack<HttpResponse>() {
+            public void onSuccess(HttpContext context, HttpResponse response) {
                 assertEquals("Status is not 201",
                         201, context.getResponse().getStatusCode());
                 lock.countDown();
@@ -674,8 +676,8 @@ public class APIControllerTest extends ControllerTestBase {
                     "}"))
             .build();
 
-        APICallBack<Object> callBack = new APICallBack<Object>() {
-            public void onSuccess(HttpContext context, Object response) {
+        APICallBack<HttpResponse> callBack = new APICallBack<HttpResponse>() {
+            public void onSuccess(HttpContext context, HttpResponse response) {
                 assertEquals("Status is not 201",
                         201, context.getResponse().getStatusCode());
                 lock.countDown();
@@ -772,8 +774,8 @@ public class APIControllerTest extends ControllerTestBase {
         companies.add(companyB);
 
 
-        APICallBack<Object> callBack = new APICallBack<Object>() {
-            public void onSuccess(HttpContext context, Object response) {
+        APICallBack<HttpResponse> callBack = new APICallBack<HttpResponse>() {
+            public void onSuccess(HttpContext context, HttpResponse response) {
                 assertEquals("Status is not 201",
                         201, context.getResponse().getStatusCode());
                 lock.countDown();
