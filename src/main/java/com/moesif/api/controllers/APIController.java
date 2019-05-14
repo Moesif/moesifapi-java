@@ -478,13 +478,12 @@ public class APIController extends BaseController implements IAPIController {
             .build();
     }
 
-    private EventModel buildEvent(
-            EventRequestModel eventRequestModel,
-            EventResponseModel eventResponseModel,
-            String userId,
-            String sessionToken,
-            String tags,
-            Object metadata) {
+    public EventModel buildEventModel(EventRequestModel eventRequestModel,
+                           EventResponseModel eventResponseModel,
+                           String userId,
+                           String sessionToken,
+                           String tags,
+                           Object metadata) {
         EventBuilder eb = new EventBuilder();
         eb.request(eventRequestModel);
         eb.response(eventResponseModel);
@@ -502,8 +501,10 @@ public class APIController extends BaseController implements IAPIController {
             eb.metadata(metadata);
         }
 
-        EventModel event = eb.build();
+        return eb.build();
+    }
 
+    public void sendEvent(EventModel event) {
         // actually send the event here.
         APICallBack<Object> callBack = new APICallBack<Object>() {
             public void onSuccess(HttpContext context, Object response) {
@@ -520,31 +521,44 @@ public class APIController extends BaseController implements IAPIController {
             }
         };
 
-        return event;
-    }
+        try {
+            AppConfigModel appConfig = getCachedAndLoadAppConfig();
 
-    public boolean trySendEvent(EventModel event) {
-        AppConfigModel appConfig = getCachedAndLoadAppConfig();
+            // Generate random number
+            double randomPercentage = Math.random() * 100;
 
-        boolean willSend = appConfig.getSampleRate() >= Math.random() * 100;
+            // Compare percentage to send event
+            if (appConfig.getSampleRate() >= randomPercentage) {
+                // Send Event
+                Map<String, String> eventApiResponse = createEvent(event);
+                // Get the key from the global dict
+//                String cachedConfigEtag = this.configDict.keySet().iterator().next();
+//                // Get the etag from event api response
+//                String eventResponseConfigEtag = eventApiResponse.get("x-moesif-config-etag");
+//
+//                // Check if needed to call the getConfig api to update samplingPercentage
+//                if (eventResponseConfigEtag != null
+//                        && !(eventResponseConfigEtag.equals(cachedConfigEtag))
+//                        && new Date().after(new Date(this.lastUpdatedTime.getTime() + 5 * 60 * 1000))) {
+//                    // Call api to update samplingPercentage
+//                    this.samplingPercentage = getAppConfig(cachedConfigEtag);
+//                 }
 
-        if (willSend) {
-            Map<String, String> eventApiResponse = null;
-
-            try {
-                eventApiResponse = createEvent(event);
-            } catch (Throwable e) {
                 if (debug) {
-                    logger.warning("Send to Moesif failed " + e.toString());
+                    logger.warning("Event successfully sent to Moesif");
+                }
+            }
+            else {
+                if(debug) {
+                    logger.info("Skipped sending event");
                 }
             }
 
-            if (eventApiResponse != null) {
-
+        } catch(Throwable e) {
+            if (debug) {
+                logger.warning("send to Moesif failed " + e.toString());
             }
         }
-
-        return willSend;
     }
     
     /**
@@ -672,6 +686,15 @@ public class APIController extends BaseController implements IAPIController {
         //execute async using thread pool
         APIHelper.getScheduler().execute(_responseTask);
     }
+
+//    public void sendEvent(EventRequestModel eventRequestModel,
+//                          EventResponseModel eventResponseModel,
+//                          String userId,
+//                          String sessionToken,
+//                          String tags,
+//                          Object metadata) {
+//
+//    }
 
     private APICallBack<HttpResponse> createHttpResponseCallback(final APICallBack<Object> callBack) {
 
