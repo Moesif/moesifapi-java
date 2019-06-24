@@ -561,6 +561,7 @@ public class APIController extends BaseController implements IAPIController {
     public EventModel buildEventModel(EventRequestModel eventRequestModel,
                            EventResponseModel eventResponseModel,
                            String userId,
+                           String companyId,
                            String sessionToken,
                            String apiVersion,
                            Object metadata) {
@@ -571,6 +572,9 @@ public class APIController extends BaseController implements IAPIController {
 
         if (userId != null) {
             eb.userId(userId);
+        }
+        if (companyId != null) {
+            eb.companyId(companyId);
         }
         if (sessionToken != null) {
             eb.sessionToken(sessionToken);
