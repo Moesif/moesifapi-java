@@ -5,10 +5,8 @@
  */
 package com.moesif.api.models;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonSetter;
-import com.mashape.unirest.http.utils.MapUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +16,7 @@ public class AppConfigModel
         implements java.io.Serializable {
     private String orgId;
     private String appId;
-    private int sampleRate;
+    private int sampleRate = 100;
     private Map<String, Integer> userSampleRate = new HashMap<String, Integer>();
     private Map<String, Integer> companySampleRate = new HashMap<String, Integer>();
 
