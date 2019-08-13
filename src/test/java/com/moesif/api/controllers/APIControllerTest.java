@@ -12,10 +12,14 @@ import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.moesif.api.Configuration;
 import com.moesif.api.http.client.APICallBack;
+import com.moesif.api.http.client.HttpCallBack;
 import com.moesif.api.http.client.HttpContext;
 import com.moesif.api.http.response.HttpResponse;
 
+import com.moesif.api.testing.HttpCallBackCatcher;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -606,6 +610,7 @@ public class APIControllerTest extends ControllerTestBase {
     public void testGetAppConfig() throws Throwable {
     	// Set callback and perform API call
         controller.setHttpCallBack(httpResponse);
+
         try {
         controller.getAppConfig();
         } catch(APIException e) {};
@@ -617,8 +622,137 @@ public class APIControllerTest extends ControllerTestBase {
         // Test the raw body
         assertNotNull(httpResponse.getResponse().getRawBody());
     }
-    
-	/**
+
+    /**
+     * Get Application Config via Injestion Aysync API
+     * @throws Throwable
+     */
+    @Test
+    public void testGetAppConfigAsync() throws Throwable {
+        final CountDownLatch lock = new CountDownLatch(1);
+
+        APICallBack<HttpResponse> callBack = new APICallBack<HttpResponse>() {
+            public void onSuccess(HttpContext context, HttpResponse response) {
+                // Read the response body
+                ObjectMapper mapper = new ObjectMapper();
+                Map<String, Object> jsonMap = null;
+                AppConfigModel model = null;
+
+                try {
+                    model = mapper.readValue(context.getResponse().getRawBody(), AppConfigModel.class);
+                } catch (Exception e) {
+                    System.out.println("Invalid Json input");
+                }
+
+                System.out.println("App Config Model returned is " + model);
+
+                assertEquals("Status is not 200",
+                        200, context.getResponse().getStatusCode());
+
+                assertNotNull(context.getResponse().getHeaders().get("x-moesif-config-etag"));
+                assertNotNull(context.getResponse().getRawBody());
+                lock.countDown();
+
+            }
+
+            @Override
+            public void onFailure(HttpContext context, Throwable error) {
+                // nothing
+            }
+        };
+
+        try {
+            controller.getAppConfigAsync(callBack);
+        } catch(Exception e) {};
+        assertEquals(true, lock.await(10000, TimeUnit.MILLISECONDS));
+    }
+
+    /**
+     * Test user sample rate is being used correctly
+     * @throws Throwable
+     */
+    @Test
+    public void testUserSampleRate() {
+
+        AppConfigModel appConfigModel = new AppConfigModel();
+        appConfigModel.setOrgId("100:0");
+        appConfigModel.setAppId("10:0");
+        appConfigModel.setUserSampleRate(new HashMap<String, Integer>() {
+            {
+                put("user1", 10); put("user2", 11);
+            }
+        });
+        appConfigModel.setCompanySampleRate(new HashMap<String, Integer>() {
+            {
+                put("c1", 90); put("c2", 99);
+            }
+        });
+        EventModel eventModel1 = new EventBuilder()
+                .request(null)
+                .response(null)
+                .userId("user1")
+                .companyId("c1")
+                .sessionToken("23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f")
+                .build();
+
+        EventModel eventModel2 = new EventBuilder()
+                .request(null)
+                .response(null)
+                .userId("user2")
+                .companyId("c2")
+                .sessionToken("23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f")
+                .build();
+
+        controller.setAppConfig(appConfigModel);
+
+        assertEquals(10, controller.getSampleRateToUse(eventModel1));
+        assertEquals(11, controller.getSampleRateToUse(eventModel2));
+    }
+
+
+    /**
+     * Test company sample rate is being used correctly
+     * @throws Throwable
+     */
+    @Test
+    public void testCompanySampleRate() {
+
+        AppConfigModel appConfigModel = new AppConfigModel();
+        appConfigModel.setOrgId("100:0");
+        appConfigModel.setAppId("10:0");
+        appConfigModel.setUserSampleRate(new HashMap<String, Integer>() {
+            {
+                put("user5", 10); put("user2", 11);
+            }
+        });
+        appConfigModel.setCompanySampleRate(new HashMap<String, Integer>() {
+            {
+                put("c1", 90); put("c2", 99);
+            }
+        });
+        EventModel eventModel1 = new EventBuilder()
+                .request(null)
+                .response(null)
+                .userId("user1")
+                .companyId("c1")
+                .sessionToken("23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f")
+                .build();
+
+        EventModel eventModel2 = new EventBuilder()
+                .request(null)
+                .response(null)
+                .userId("user2")
+                .companyId("c2")
+                .sessionToken("23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f")
+                .build();
+
+        controller.setAppConfig(appConfigModel);
+
+        assertEquals(90, controller.getSampleRateToUse(eventModel1));
+        assertEquals(11, controller.getSampleRateToUse(eventModel2));
+    }
+
+    /**
 	 * Update Single Company via Injestion API
 	 * @throws Throwable
 	 */
