@@ -9,7 +9,6 @@ import java.util.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy.KebabCaseStrategy;
 import com.moesif.api.*;
 import com.moesif.api.models.*;
 import com.moesif.api.exceptions.*;
@@ -50,6 +49,7 @@ public class APIController extends BaseController implements IAPIController {
         return instance;
     }
 
+
     /**
      * Add Single API Event Call
      * @param    body    The event to create
@@ -58,24 +58,11 @@ public class APIController extends BaseController implements IAPIController {
     public Map<String, String> createEvent(
                 final EventModel body
     ) throws Throwable {
-        String _baseUri = Configuration.BaseUri;
 
-        //prepare query string for API call
-        StringBuilder _queryBuilder = new StringBuilder(_baseUri);
-        _queryBuilder.append("/v1/events");
-        //validate and preprocess url
-        String _queryUrl = APIHelper.cleanUrl(_queryBuilder);
-
-        //load all headers for the outgoing API request
-        Map<String, String> _headers = new HashMap<String, String>() {
-            private static final long serialVersionUID = 4703880768413831931L;
-            {
-                    put( "X-Moesif-Application-Id", Configuration.ApplicationId);
-            }
-        };
+        QueryInfo qInfo = getQueryInfo("/v1/events");
 
         //prepare and invoke the API call request to fetch the response
-        final HttpRequest _request = getClientInstance().postBody(_queryUrl, _headers, APIHelper.serialize(body));
+        final HttpRequest _request = getClientInstance().postBody(qInfo._queryUrl, qInfo._headers, APIHelper.serialize(body));
 
         //invoke the callback before request if its not null
         if (getHttpCallBack() != null)
@@ -84,26 +71,10 @@ public class APIController extends BaseController implements IAPIController {
         }
         
         // make the API call
-        HttpResponse _response = getClientInstance().executeAsString(_request);
-        Map<String, String> headers = _response.getHeaders();
-
-        // Wrap the request and the response in an HttpContext object
-        HttpContext _context = new HttpContext(_request, _response);
-        
-        //invoke the callback after response if its not null
-        if (getHttpCallBack() != null)
-        {
-            getHttpCallBack().OnAfterResponse(_context);
-        }
-
-        //handle errors defined at the API level
-        validateResponse(_response, _context);
-
-        checkAppConfigEtag(headers.get(APP_CONFIG_ETAG_HEADER));
-        
-        // Return headers to the client
-        return headers;
+        return executeRequest(_request);
     }
+
+
 
     /**
      * Add Single API Event Call
@@ -115,42 +86,13 @@ public class APIController extends BaseController implements IAPIController {
                 final EventModel body,
                 final APICallBack<HttpResponse> callBack
     ) throws JsonProcessingException {
-        //the base uri for api requests
-        String _baseUri = Configuration.BaseUri;
 
-        //prepare query string for API call
-        StringBuilder _queryBuilder = new StringBuilder(_baseUri);
-        _queryBuilder.append("/v1/events");
-        //validate and preprocess url
-        String _queryUrl = APIHelper.cleanUrl(_queryBuilder);
-
-        //load all headers for the outgoing API request
-        Map<String, String> _headers = new HashMap<String, String>() {
-            private static final long serialVersionUID = 4703880768413831931L;
-            {
-                    put( "X-Moesif-Application-Id", Configuration.ApplicationId);
-            }
-        };
+        QueryInfo qInfo = getQueryInfo("/v1/events");
 
         //prepare and invoke the API call request to fetch the response
-        final HttpRequest _request = getClientInstance().postBody(_queryUrl, _headers, APIHelper.serialize(body));
+        final HttpRequest _request = getClientInstance().postBody(qInfo._queryUrl, qInfo._headers, APIHelper.serialize(body));
 
-        //invoke the callback before request if its not null
-        if (getHttpCallBack() != null)
-        {
-            getHttpCallBack().OnBeforeRequest(_request);
-        }
-
-        //invoke request and get response
-        Runnable _responseTask = new Runnable() {
-            public void run() {
-                //make the API call
-                getClientInstance().executeAsStringAsync(_request, createHttpResponseCallback(callBack));
-            }
-        };
-
-        //execute async using thread pool
-        APIHelper.getScheduler().execute(_responseTask);
+        executeRequestAsync(_request, callBack);
     }
 
     /**
@@ -161,50 +103,13 @@ public class APIController extends BaseController implements IAPIController {
     public Map<String, String> createEventsBatch(
                 final List<EventModel> body
     ) throws Throwable {
-    	//the base uri for api requests
-        String _baseUri = Configuration.BaseUri;
-
-        //prepare query string for API call
-        StringBuilder _queryBuilder = new StringBuilder(_baseUri);
-        _queryBuilder.append("/v1/events/batch");
-        //validate and preprocess url
-        String _queryUrl = APIHelper.cleanUrl(_queryBuilder);
-
-        //load all headers for the outgoing API request
-        Map<String, String> _headers = new HashMap<String, String>() {
-            private static final long serialVersionUID = 5519066674529741692L;
-            {
-                    put( "X-Moesif-Application-Id", Configuration.ApplicationId);
-            }
-        };
+        QueryInfo qInfo = getQueryInfo("/v1/events/batch");
 
         //prepare and invoke the API call request to fetch the response
-        final HttpRequest _request = getClientInstance().postBody(_queryUrl, _headers, APIHelper.serialize(body));
-
-        //invoke the callback before request if its not null
-        if (getHttpCallBack() != null)
-        {
-            getHttpCallBack().OnBeforeRequest(_request);
-        }
+        final HttpRequest _request = getClientInstance().postBody(qInfo._queryUrl, qInfo._headers, APIHelper.serialize(body));
         
         // make the API call
-        HttpResponse _response = getClientInstance().executeAsString(_request);
-        
-        // Wrap the request and the response in an HttpContext object
-        HttpContext _context = new HttpContext(_request, _response);
-        
-        //invoke the callback after response if its not null
-        if (getHttpCallBack() != null)
-        {
-            getHttpCallBack().OnAfterResponse(_context);
-        }
-
-        //handle errors defined at the API level
-        validateResponse(_response, _context);
-        
-        // Return headers to the client
-        return _response.getHeaders();
-        
+        return executeRequest(_request);
     }
 
     /**
@@ -217,42 +122,13 @@ public class APIController extends BaseController implements IAPIController {
                 final List<EventModel> body,
                 final APICallBack<HttpResponse> callBack
     ) throws JsonProcessingException {
-        //the base uri for api requests
-        String _baseUri = Configuration.BaseUri;
 
-        //prepare query string for API call
-        StringBuilder _queryBuilder = new StringBuilder(_baseUri);
-        _queryBuilder.append("/v1/events/batch");
-        //validate and preprocess url
-        String _queryUrl = APIHelper.cleanUrl(_queryBuilder);
-
-        //load all headers for the outgoing API request
-        Map<String, String> _headers = new HashMap<String, String>() {
-            private static final long serialVersionUID = 5519066674529741692L;
-            {
-                    put( "X-Moesif-Application-Id", Configuration.ApplicationId);
-            }
-        };
+        QueryInfo qInfo = getQueryInfo("/v1/events/batch");
 
         //prepare and invoke the API call request to fetch the response
-        final HttpRequest _request = getClientInstance().postBody(_queryUrl, _headers, APIHelper.serialize(body));
+        final HttpRequest _request = getClientInstance().postBody(qInfo._queryUrl, qInfo._headers, APIHelper.serialize(body));
 
-        //invoke the callback before request if its not null
-        if (getHttpCallBack() != null)
-        {
-            getHttpCallBack().OnBeforeRequest(_request);
-        }
-
-        //invoke request and get response
-        Runnable _responseTask = new Runnable() {
-            public void run() {
-                //make the API call
-                getClientInstance().executeAsStringAsync(_request, createHttpResponseCallback(callBack));
-            }
-        };
-
-        //execute async using thread pool
-        APIHelper.getScheduler().execute(_responseTask);
+        executeRequestAsync(_request, callBack);
     }
 
     /**
@@ -280,42 +156,12 @@ public class APIController extends BaseController implements IAPIController {
             final UserModel body,
             final APICallBack<HttpResponse> callBack
     ) throws JsonProcessingException {
-        //the base uri for api requests
-        String _baseUri = Configuration.BaseUri;
-
-        //prepare query string for API call
-        StringBuilder _queryBuilder = new StringBuilder(_baseUri);
-        _queryBuilder.append("/v1/users");
-        //validate and preprocess url
-        String _queryUrl = APIHelper.cleanUrl(_queryBuilder);
-
-        //load all headers for the outgoing API request
-        Map<String, String> _headers = new HashMap<String, String>() {
-            private static final long serialVersionUID = 4703880768413831931L;
-            {
-                put( "X-Moesif-Application-Id", Configuration.ApplicationId);
-            }
-        };
+        QueryInfo qInfo = getQueryInfo("/v1/users");
 
         //prepare and invoke the API call request to fetch the response
-        final HttpRequest _request = getClientInstance().postBody(_queryUrl, _headers, APIHelper.serialize(body));
+        final HttpRequest _request = getClientInstance().postBody(qInfo._queryUrl, qInfo._headers, APIHelper.serialize(body));
 
-        //invoke the callback before request if its not null
-        if (getHttpCallBack() != null)
-        {
-            getHttpCallBack().OnBeforeRequest(_request);
-        }
-
-        //invoke request and get response
-        Runnable _responseTask = new Runnable() {
-            public void run() {
-                //make the API call
-                getClientInstance().executeAsStringAsync(_request, createHttpResponseCallback(callBack));
-            }
-        };
-
-        //execute async using thread pool
-        APIHelper.getScheduler().execute(_responseTask);
+        executeRequestAsync(_request, callBack);
     }
 
     /**
@@ -343,42 +189,81 @@ public class APIController extends BaseController implements IAPIController {
             final List<UserModel> body,
             final APICallBack<HttpResponse> callBack
     ) throws JsonProcessingException {
-        //the base uri for api requests
-        String _baseUri = Configuration.BaseUri;
 
-        //prepare query string for API call
-        StringBuilder _queryBuilder = new StringBuilder(_baseUri);
-        _queryBuilder.append("/v1/users/batch");
-        //validate and preprocess url
-        String _queryUrl = APIHelper.cleanUrl(_queryBuilder);
-
-        //load all headers for the outgoing API request
-        Map<String, String> _headers = new HashMap<String, String>() {
-            private static final long serialVersionUID = 5519066674529741692L;
-            {
-                put( "X-Moesif-Application-Id", Configuration.ApplicationId);
-            }
-        };
+        QueryInfo qInfo = getQueryInfo("/v1/users/batch");
 
         //prepare and invoke the API call request to fetch the response
-        final HttpRequest _request = getClientInstance().postBody(_queryUrl, _headers, APIHelper.serialize(body));
+        final HttpRequest _request = getClientInstance().postBody(qInfo._queryUrl, qInfo._headers, APIHelper.serialize(body));
 
-        //invoke the callback before request if its not null
-        if (getHttpCallBack() != null)
-        {
-            getHttpCallBack().OnBeforeRequest(_request);
-        }
+        executeRequestAsync(_request, callBack);
+    }
 
-        //invoke request and get response
-        Runnable _responseTask = new Runnable() {
-            public void run() {
-                //make the API call
-                getClientInstance().executeAsStringAsync(_request, createHttpResponseCallback(callBack));
-            }
-        };
 
-        //execute async using thread pool
-        APIHelper.getScheduler().execute(_responseTask);
+
+    /**
+     * Update a Single Company
+     * @param    body    The company to update
+     * @throws Throwable on error updating a company
+     */
+    public void updateCompany(
+            final CompanyModel body
+    ) throws Throwable {
+        APICallBackCatcher<HttpResponse> callback = new APICallBackCatcher<HttpResponse>();
+        updateCompanyAsync(body, callback);
+        if(!callback.isSuccess())
+            throw callback.getError();
+        callback.getResult();
+    }
+
+    /**
+     * Update a Single Company async
+     * @param    body    The company to update
+     * @param    callBack Called after the HTTP response is received
+     * @throws JsonProcessingException on error updating a company
+     */
+    public void updateCompanyAsync(
+            final CompanyModel body,
+            final APICallBack<HttpResponse> callBack
+    ) throws JsonProcessingException {
+        QueryInfo qInfo = getQueryInfo("/v1/companies");
+
+        //prepare and invoke the API call request to fetch the response
+        final HttpRequest _request = getClientInstance().postBody(qInfo._queryUrl, qInfo._headers, APIHelper.serialize(body));
+
+        executeRequestAsync(_request, callBack);
+    }
+
+    /**
+     * Update multiple Companies in a single batch
+     * @param    body    The list of companies to update
+     * @throws Throwable on error updating companies
+     */
+    public void updateCompaniesBatch(
+            final List<CompanyModel> body
+    ) throws Throwable {
+        APICallBackCatcher<HttpResponse> callback = new APICallBackCatcher<HttpResponse>();
+        updateCompaniesBatchAsync(body, callback);
+        if(!callback.isSuccess())
+            throw callback.getError();
+        callback.getResult();
+    }
+
+    /**
+     * Update multiple Companies in a single batch async
+     * @param    body    The list of companies to update
+     * @param    callBack Called after the HTTP response is received
+     * @throws JsonProcessingException on error updating companies
+     */
+    public void updateCompaniesBatchAsync(
+            final List<CompanyModel> body,
+            final APICallBack<HttpResponse> callBack
+    ) throws JsonProcessingException {
+        QueryInfo qInfo = getQueryInfo("/v1/companies/batch");
+
+        //prepare and invoke the API call request to fetch the response
+        final HttpRequest _request = getClientInstance().postBody(qInfo._queryUrl, qInfo._headers, APIHelper.serialize(body));
+
+        executeRequestAsync(_request, callBack);
     }
 
     /**
@@ -386,25 +271,10 @@ public class APIController extends BaseController implements IAPIController {
      * @throws Throwable on error getting app config
      */
     public HttpResponse getAppConfig() throws Throwable {
-    	//the base uri for api requests
-        String _baseUri = Configuration.BaseUri;
-
-        //prepare query string for API call
-        StringBuilder _queryBuilder = new StringBuilder(_baseUri);
-        _queryBuilder.append("/v1/config");
-        //validate and preprocess url
-        String _queryUrl = APIHelper.cleanUrl(_queryBuilder);
-
-        //load all headers for the outgoing API request
-        Map<String, String> _headers = new HashMap<String, String>() {
-            private static final long serialVersionUID = 4703880768413831931L;
-            {
-                put( "X-Moesif-Application-Id", Configuration.ApplicationId);
-            }
-        };
+        QueryInfo qInfo = getQueryInfo("/v1/config");
 
         //prepare and invoke the API call request to fetch the response
-        final HttpRequest _request = getClientInstance().get(_queryUrl, _headers, null);
+        final HttpRequest _request = getClientInstance().get(qInfo._queryUrl, qInfo._headers, null);
 
         //invoke the callback before request if its not null
         if (getHttpCallBack() != null)
@@ -429,8 +299,7 @@ public class APIController extends BaseController implements IAPIController {
         
         // Return headers to the client
         return _response;
-        
-        
+
     }
 
     /**
@@ -441,26 +310,66 @@ public class APIController extends BaseController implements IAPIController {
     public void getAppConfigAsync(
     		final APICallBack<HttpResponse> callBack
     ) throws JsonProcessingException {
-        //the base uri for api requests
+        QueryInfo qInfo = getQueryInfo("/v1/config");
+
+        //prepare and invoke the API call request to fetch the response
+        final HttpRequest _request = getClientInstance().get(qInfo._queryUrl, qInfo._headers, null);
+
+        executeRequestAsync(_request, callBack);
+    }
+
+
+    private static class QueryInfo {
+        String _queryUrl;
+        Map<String, String> _headers;
+
+        public QueryInfo(String url, Map<String, String> headers) {
+            _queryUrl = url; _headers = headers;
+        }
+    }
+
+    private QueryInfo getQueryInfo(String url) {
         String _baseUri = Configuration.BaseUri;
 
         //prepare query string for API call
         StringBuilder _queryBuilder = new StringBuilder(_baseUri);
-        _queryBuilder.append("/v1/config");
+        _queryBuilder.append(url);
         //validate and preprocess url
         String _queryUrl = APIHelper.cleanUrl(_queryBuilder);
 
         //load all headers for the outgoing API request
         Map<String, String> _headers = new HashMap<String, String>() {
-            private static final long serialVersionUID = 4703880768413831931L;
             {
                 put( "X-Moesif-Application-Id", Configuration.ApplicationId);
             }
         };
 
-        //prepare and invoke the API call request to fetch the response
-        final HttpRequest _request = getClientInstance().get(_queryUrl, _headers, null);
+        return new QueryInfo(_queryUrl, _headers);
+    }
 
+    private  Map<String, String> executeRequest(final HttpRequest _request) throws Throwable {
+        HttpResponse _response = getClientInstance().executeAsString(_request);
+        Map<String, String> headers = _response.getHeaders();
+
+        // Wrap the request and the response in an HttpContext object
+        HttpContext _context = new HttpContext(_request, _response);
+
+        //invoke the callback after response if its not null
+        if (getHttpCallBack() != null)
+        {
+            getHttpCallBack().OnAfterResponse(_context);
+        }
+
+        //handle errors defined at the API level
+        validateResponse(_response, _context);
+
+        checkAppConfigEtag(headers.get(APP_CONFIG_ETAG_HEADER));
+
+        // Return headers to the client
+        return headers;
+    }
+
+    private void executeRequestAsync(final HttpRequest _request, final APICallBack<HttpResponse> callBack) {
         //invoke the callback before request if its not null
         if (getHttpCallBack() != null)
         {
@@ -471,7 +380,7 @@ public class APIController extends BaseController implements IAPIController {
         Runnable _responseTask = new Runnable() {
             public void run() {
                 //make the API call
-            	getClientInstance().executeAsStringAsync(_request, createHttpResponseCallback(callBack));
+                getClientInstance().executeAsStringAsync(_request, createHttpResponseCallback(callBack));
             }
         };
 
@@ -485,6 +394,12 @@ public class APIController extends BaseController implements IAPIController {
             return getDefaultAppConfig();
         } else {
             return appConfigModel;
+        }
+    }
+
+    public void setAppConfig(AppConfigModel config) {
+        if (config != null) {
+            appConfigModel = config;
         }
     }
 
@@ -521,20 +436,16 @@ public class APIController extends BaseController implements IAPIController {
                     Map<String, Object> jsonMap = null;
 
                     try {
-                        jsonMap = mapper.readValue(response.getRawBody(), Map.class);
+                        appConfigModel = mapper.readValue(response.getRawBody(), AppConfigModel.class);
                     } catch (Exception e) {
-                        logger.warning("Invalid AppConfig JSON");
+                        logger.warning("Invalid AppConfig JSON" + e.getMessage());
                     }
 
-                    appConfigModel = new AppConfigBuilder()
-                        .appId(jsonMap.get("app_id").toString())
-                        .orgId(jsonMap.get("org_id").toString())
-                        .sampleRate(Integer.parseInt(jsonMap.get("sample_rate").toString()))
-                        .build();
+                    System.out.println("App Config Model returned is "+ appConfigModel);
 
                     appConfigEtag = response
-                        .getHeaders()
-                        .get(APP_CONFIG_ETAG_HEADER);
+                            .getHeaders()
+                            .get(APP_CONFIG_ETAG_HEADER);
                 }
 
                 public void onFailure(HttpContext context, Throwable error) {
@@ -554,7 +465,6 @@ public class APIController extends BaseController implements IAPIController {
     public AppConfigModel getDefaultAppConfig() {
         return new AppConfigBuilder()
             .sampleRate(100)
-            .etag("default")
             .build();
     }
 
@@ -595,131 +505,25 @@ public class APIController extends BaseController implements IAPIController {
 
         return sampleRate >= randomPercentage;
     }
-    
-    /**
-     * Update a Single Company
-     * @param    body    The company to update
-     * @throws Throwable on error updating a company
-     */
-    public void updateCompany(
-            final CompanyModel body
-    ) throws Throwable {
-        APICallBackCatcher<HttpResponse> callback = new APICallBackCatcher<HttpResponse>();
-        updateCompanyAsync(body, callback);
-        if(!callback.isSuccess())
-            throw callback.getError();
-        callback.getResult();
+
+    public boolean shouldSendSampledEvent(EventModel eventModel) {
+        int sampleRate = getSampleRateToUse(eventModel);
+        double randomPercentage = Math.random() * 100;
+
+        return sampleRate >= randomPercentage;
     }
 
-    /**
-     * Update a Single Company async
-     * @param    body    The company to update
-     * @param    callBack Called after the HTTP response is received
-     * @throws JsonProcessingException on error updating a company
-     */
-    public void updateCompanyAsync(
-            final CompanyModel body,
-            final APICallBack<HttpResponse> callBack
-    ) throws JsonProcessingException {
-        //the base uri for api requests
-        String _baseUri = Configuration.BaseUri;
+    public int getSampleRateToUse(EventModel eventModel) {
+        AppConfigModel appConfigModel = getCachedAppConfig();
+        int sampleRate = appConfigModel.getSampleRate();
 
-        //prepare query string for API call
-        StringBuilder _queryBuilder = new StringBuilder(_baseUri);
-        _queryBuilder.append("/v1/companies");
-        //validate and preprocess url
-        String _queryUrl = APIHelper.cleanUrl(_queryBuilder);
-
-        //load all headers for the outgoing API request
-        Map<String, String> _headers = new HashMap<String, String>() {
-            private static final long serialVersionUID = 4703880768413831931L;
-            {
-                put( "X-Moesif-Application-Id", Configuration.ApplicationId);
-            }
-        };
-
-        //prepare and invoke the API call request to fetch the response
-        final HttpRequest _request = getClientInstance().postBody(_queryUrl, _headers, APIHelper.serialize(body));
-
-        //invoke the callback before request if its not null
-        if (getHttpCallBack() != null)
-        {
-            getHttpCallBack().OnBeforeRequest(_request);
+        if (eventModel.getUserId() != null && appConfigModel.getUserSampleRate().containsKey(eventModel.getUserId())) {
+            sampleRate = appConfigModel.getUserSampleRate().get(eventModel.getUserId());
+        } else if (eventModel.getCompanyId() != null && appConfigModel.getCompanySampleRate().containsKey(eventModel.getCompanyId())) {
+            sampleRate = appConfigModel.getCompanySampleRate().get(eventModel.getCompanyId());
         }
 
-        //invoke request and get response
-        Runnable _responseTask = new Runnable() {
-            public void run() {
-                //make the API call
-                getClientInstance().executeAsStringAsync(_request, createHttpResponseCallback(callBack));
-            }
-        };
-
-        //execute async using thread pool
-        APIHelper.getScheduler().execute(_responseTask);
-    }
-    
-    /**
-     * Update multiple Companies in a single batch
-     * @param    body    The list of companies to update
-     * @throws Throwable on error updating companies
-     */
-    public void updateCompaniesBatch(
-            final List<CompanyModel> body
-    ) throws Throwable {
-        APICallBackCatcher<HttpResponse> callback = new APICallBackCatcher<HttpResponse>();
-        updateCompaniesBatchAsync(body, callback);
-        if(!callback.isSuccess())
-            throw callback.getError();
-        callback.getResult();
-    }
-
-    /**
-     * Update multiple Companies in a single batch async
-     * @param    body    The list of companies to update
-     * @param    callBack Called after the HTTP response is received
-     * @throws JsonProcessingException on error updating companies
-     */
-    public void updateCompaniesBatchAsync(
-            final List<CompanyModel> body,
-            final APICallBack<HttpResponse> callBack
-    ) throws JsonProcessingException {
-        //the base uri for api requests
-        String _baseUri = Configuration.BaseUri;
-
-        //prepare query string for API call
-        StringBuilder _queryBuilder = new StringBuilder(_baseUri);
-        _queryBuilder.append("/v1/companies/batch");
-        //validate and preprocess url
-        String _queryUrl = APIHelper.cleanUrl(_queryBuilder);
-
-        //load all headers for the outgoing API request
-        Map<String, String> _headers = new HashMap<String, String>() {
-            private static final long serialVersionUID = 5519066674529741692L;
-            {
-                put( "X-Moesif-Application-Id", Configuration.ApplicationId);
-            }
-        };
-
-        //prepare and invoke the API call request to fetch the response
-        final HttpRequest _request = getClientInstance().postBody(_queryUrl, _headers, APIHelper.serialize(body));
-
-        //invoke the callback before request if its not null
-        if (getHttpCallBack() != null)
-        {
-            getHttpCallBack().OnBeforeRequest(_request);
-        }
-
-        //invoke request and get response
-        Runnable _responseTask = new Runnable() {
-            public void run() {
-                //make the API call
-                getClientInstance().executeAsStringAsync(_request, createHttpResponseCallback(callBack));
-            }
-        };
-
-        //execute async using thread pool
-        APIHelper.getScheduler().execute(_responseTask);
+        return sampleRate;
     }
 
     private APICallBack<HttpResponse> createHttpResponseCallback(final APICallBack<HttpResponse> callBack) {
@@ -736,6 +540,8 @@ public class APIController extends BaseController implements IAPIController {
 
                     //handle errors defined at the API level
                     validateResponse(_response, _context);
+
+                    checkAppConfigEtag(_response.getHeaders().get(APP_CONFIG_ETAG_HEADER));
 
                     //let the caller know of the success
                     callBack.onSuccess(_context, _response);

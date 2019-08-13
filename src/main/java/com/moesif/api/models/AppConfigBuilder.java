@@ -1,5 +1,7 @@
 package com.moesif.api.models;
 
+import java.util.Map;
+
 public class AppConfigBuilder {
     private AppConfigModel AppConfigModel;
 
@@ -25,9 +27,14 @@ public class AppConfigBuilder {
       return this;
     }
 
-    public AppConfigBuilder etag(String etag) {
-      AppConfigModel.setEtag(etag);
-      return this;
+    public AppConfigBuilder userSampleRate(Map<String, Integer> userSampleRate) {
+        AppConfigModel.setUserSampleRate(userSampleRate);
+        return this;
+    }
+
+    public AppConfigBuilder companySampleRate(Map<String, Integer> companySampleRate) {
+        AppConfigModel.setCompanySampleRate(companySampleRate);
+        return this;
     }
 
     /**
