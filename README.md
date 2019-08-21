@@ -17,7 +17,7 @@ Add this dependency to your project's POM:
 <dependency>
     <groupId>com.moesif.api</groupId>
     <artifactId>moesifapi</artifactId>
-    <version>1.6.4</version>
+    <version>1.6.5</version>
 </dependency>
 ```
 
@@ -26,7 +26,7 @@ Add this dependency to your project's POM:
 Add this dependency to your project's build file:
 
 ```gradle
-compile 'com.moesif.api:moesifapi:1.6.4'
+compile 'com.moesif.api:moesifapi:1.6.5'
 ```
 
 ## How to Use:
@@ -98,6 +98,7 @@ EventModel eventModel = new EventBuilder()
 				.request(eventReq)
 				.response(eventRsp)
 				.userId("my_user_id")
+				.companyId("my_company_id")
 				.sessionToken("23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f")
 				.build();
 #### 2.a Send the event asynchronously
@@ -196,6 +197,7 @@ EventModel eventModel = new EventBuilder()
 				.request(eventReq)
 				.response(eventRsp)
 				.userId("my_user_id")
+				.companyId("my_company_id")
 				.sessionToken("23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f")
 				.build();
 
@@ -249,6 +251,7 @@ You can update a user _synchronously_ or _asynchronously_ on a background thread
 ```java
 UserModel user = new UserBuilder()
 		.userId("12345")
+		.companyId("67890")
 		.modifiedTime(new Date())
 		.ipAddress("29.80.250.240")
 		.sessionToken("di3hd982h3fubv3yfd94egf")
@@ -309,6 +312,7 @@ List<UserModel> users = new ArrayList<UserModel>();
 
 UserModel userA = new UserBuilder()
 		.userId("12345")
+		.companyId("67890")
 		.modifiedTime(new Date())
 		.ipAddress("29.80.250.240")
 		.sessionToken("di3hd982h3fubv3yfd94egf")
@@ -326,7 +330,8 @@ UserModel userA = new UserBuilder()
 users.add(userA);
 
 UserModel userB = new UserBuilder()
-		.userId("56789")
+		.userId("1234")
+		.companyId("6789")
 		.modifiedTime(new Date())
 		.ipAddress("21.80.11.242")
 		.sessionToken("zceadckekvsfgfpsakvnbfouavsdvds")

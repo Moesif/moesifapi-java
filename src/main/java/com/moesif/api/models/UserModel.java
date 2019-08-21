@@ -16,6 +16,7 @@ public class UserModel
         implements java.io.Serializable {
     private static final long serialVersionUID = -5678430578597637724L;
     private String userId;
+    private String companyId;
     private Date modifiedTime;
     private String ipAddress;
     private String sessionToken;
@@ -37,6 +38,24 @@ public class UserModel
     @JsonSetter("user_id")
     public void setUserId (String value) {
         this.userId = value;
+    }
+
+    /** GETTER
+     * Company_id associated with the user if known
+     * @return the value
+     */
+    @JsonGetter("company_id")
+    public String getCompanyId( ) {
+        return this.companyId;
+    }
+
+    /** SETTER
+     * Company_id associated with the user if known
+     * @param value the value to set
+     */
+    @JsonSetter("company_id")
+    public void setCompanyId (String value) {
+        this.companyId = value;
     }
 
     /** GETTER
