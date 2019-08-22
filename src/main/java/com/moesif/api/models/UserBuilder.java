@@ -29,6 +29,16 @@ public class UserBuilder {
     }
 
     /**
+     * Company_id associated with the user if known
+     * @param companyId the field to set
+     * @return itself
+     */
+    public UserBuilder companyId(String companyId) {
+        UserModel.setCompanyId(companyId);
+        return this;
+    }
+
+    /**
      * Timestamp of when user was updated. (Moesif will use the current time if not set)
      * @param modifiedTime the field to set
      * @return itself

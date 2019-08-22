@@ -83,7 +83,7 @@ public class APIControllerTest extends ControllerTestBase {
                 "}");
 
         Map<String, String> rspHeaders = new HashMap<String, String>();
-        rspHeaders.put("Date", "Tue, 23 Feb 2017 23:46:49 GMT");
+        rspHeaders.put("Date", "Tue, 23 Feb 2019 23:46:49 GMT");
         rspHeaders.put("Vary", "Accept-Encoding");
         rspHeaders.put("Pragma", "no-cache");
         rspHeaders.put("Expires", "-1");
@@ -125,6 +125,7 @@ public class APIControllerTest extends ControllerTestBase {
                 .request(eventReq)
                 .response(eventRsp)
                 .userId("my_user_id")
+                .companyId("my_company_id")
                 .sessionToken("23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f")
                 .metadata(customMetadata)
                 .build();
@@ -172,7 +173,7 @@ public class APIControllerTest extends ControllerTestBase {
                 "}");
 
         Map<String, String> rspHeaders = new HashMap<String, String>();
-        rspHeaders.put("Date", "Tue, 23 Feb 2017 23:46:49 GMT");
+        rspHeaders.put("Date", "Tue, 23 Feb 2019 23:46:49 GMT");
         rspHeaders.put("Vary", "Accept-Encoding");
         rspHeaders.put("Pragma", "no-cache");
         rspHeaders.put("Expires", "-1");
@@ -207,6 +208,7 @@ public class APIControllerTest extends ControllerTestBase {
                 .request(eventReq)
                 .response(eventRsp)
                 .userId("my_user_id")
+                .companyId("my_company_id")
                 .sessionToken("23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f")
                 .build();
 
@@ -257,7 +259,7 @@ public class APIControllerTest extends ControllerTestBase {
                 "}");
 
         Map<String, String> rspHeaders = new HashMap<String, String>();
-        rspHeaders.put("Date", "Tue, 23 Feb 2017 23:46:49 GMT");
+        rspHeaders.put("Date", "Tue, 23 Feb 2019 23:46:49 GMT");
         rspHeaders.put("Vary", "Accept-Encoding");
         rspHeaders.put("Pragma", "no-cache");
         rspHeaders.put("Expires", "-1");
@@ -292,6 +294,7 @@ public class APIControllerTest extends ControllerTestBase {
                 .request(eventReq)
                 .response(eventRsp)
                 .userId("my_user_id")
+                .companyId("my_company_id")
                 .sessionToken("23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f")
                 .build();
 
@@ -344,7 +347,7 @@ public class APIControllerTest extends ControllerTestBase {
                 "}");
 
         Map<String, String> rspHeaders = new HashMap<String, String>();
-        rspHeaders.put("Date", "Tue, 23 Feb 2017 23:46:49 GMT");
+        rspHeaders.put("Date", "Tue, 23 Feb 2019 23:46:49 GMT");
         rspHeaders.put("Vary", "Accept-Encoding");
         rspHeaders.put("Pragma", "no-cache");
         rspHeaders.put("Expires", "-1");
@@ -379,6 +382,7 @@ public class APIControllerTest extends ControllerTestBase {
                 .request(eventReq)
                 .response(eventRsp)
                 .userId("my_user_id")
+                .companyId("my_company_id")
                 .sessionToken("23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f")
                 .build();
 
@@ -413,6 +417,7 @@ public class APIControllerTest extends ControllerTestBase {
 
         UserModel user = new UserBuilder()
             .userId("12345")
+            .companyId("67890")
             .modifiedTime(new Date())
             .ipAddress("29.80.250.240")
             .sessionToken("di3hd982h3fubv3yfd94egf")
@@ -449,6 +454,7 @@ public class APIControllerTest extends ControllerTestBase {
 
         UserModel user = new UserBuilder()
             .userId("12345")
+            .companyId("67890")
             .modifiedTime(new Date())
             .ipAddress("29.80.250.240")
             .sessionToken("di3hd982h3fubv3yfd94egf")
@@ -492,6 +498,7 @@ public class APIControllerTest extends ControllerTestBase {
 
         UserModel userA = new UserBuilder()
             .userId("12345")
+            .companyId("67890")
             .modifiedTime(new Date())
             .ipAddress("29.80.250.240")
             .sessionToken("di3hd982h3fubv3yfd94egf")
@@ -509,7 +516,8 @@ public class APIControllerTest extends ControllerTestBase {
         users.add(userA);
 
         UserModel userB = new UserBuilder()
-            .userId("56789")
+            .userId("1234")
+            .companyId("6789")
             .modifiedTime(new Date())
             .ipAddress("21.80.11.242")
             .sessionToken("zceadckekvsfgfpsakvnbfouavsdvds")
@@ -550,6 +558,7 @@ public class APIControllerTest extends ControllerTestBase {
 
         UserModel userA = new UserBuilder()
                 .userId("12345")
+                .companyId("67890")
                 .modifiedTime(new Date())
                 .ipAddress("29.80.250.240")
                 .sessionToken("di3hd982h3fubv3yfd94egf")
@@ -567,7 +576,8 @@ public class APIControllerTest extends ControllerTestBase {
         users.add(userA);
 
         UserModel userB = new UserBuilder()
-                .userId("56789")
+                .userId("1234")
+                .companyId("6789")
                 .modifiedTime(new Date())
                 .ipAddress("21.80.11.242")
                 .sessionToken("zceadckekvsfgfpsakvnbfouavsdvds")
@@ -760,7 +770,7 @@ public class APIControllerTest extends ControllerTestBase {
     public void testUpdateCompany() throws Throwable {
 
       CompanyModel company = new CompanyBuilder()
-          .companyId("1")
+          .companyId("12345")
           .modifiedTime(new Date())
           .ipAddress("29.80.250.240")
           .sessionToken("di3hd982h3fubv3yfd94egf")
@@ -795,7 +805,7 @@ public class APIControllerTest extends ControllerTestBase {
         final CountDownLatch lock = new CountDownLatch(1);
 
         CompanyModel company = new CompanyBuilder()
-            .companyId("1")
+            .companyId("12345")
             .modifiedTime(new Date())
             .ipAddress("29.80.250.240")
             .sessionToken("di3hd982h3fubv3yfd94egf")
@@ -837,7 +847,7 @@ public class APIControllerTest extends ControllerTestBase {
         List<CompanyModel> companies = new ArrayList<CompanyModel>();
 
         CompanyModel companyA = new CompanyBuilder()
-    		.companyId("1")
+    		.companyId("12345")
             .modifiedTime(new Date())
             .ipAddress("29.80.250.240")
             .companyDomain("moesif")
@@ -845,7 +855,7 @@ public class APIControllerTest extends ControllerTestBase {
         companies.add(companyA);
 
         CompanyModel companyB = new CompanyBuilder()
-            .companyId("2")
+            .companyId("67890")
             .modifiedTime(new Date())
             .ipAddress("21.80.11.242")
             .sessionToken("zceadckekvsfgfpsakvnbfouavsdvds")
@@ -885,14 +895,14 @@ public class APIControllerTest extends ControllerTestBase {
         List<CompanyModel> companies = new ArrayList<CompanyModel>();
 
         CompanyModel companyA = new CompanyBuilder()
-                .companyId("1")
+                .companyId("12345")
                 .modifiedTime(new Date())
                 .companyDomain("moesif")
                 .build();
         companies.add(companyA);
 
         CompanyModel companyB = new CompanyBuilder()
-        		.companyId("2")
+        		.companyId("67890")
                 .modifiedTime(new Date())
                 .companyDomain("moesif")
                 .metadata(APIHelper.deserialize("{" +
