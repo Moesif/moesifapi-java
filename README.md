@@ -63,7 +63,7 @@ Object reqBody = APIHelper.deserialize("{" +
 	"}");
 
 Map<String, String> rspHeaders = new HashMap<String, String>();
-rspHeaders.put("Date", "Tue, 23 Feb 2017 23:46:49 GMT");
+rspHeaders.put("Date", "Tue, 23 Feb 2019 23:46:49 GMT");
 rspHeaders.put("Vary", "Accept-Encoding");
 rspHeaders.put("Pragma", "no-cache");
 rspHeaders.put("Expires", "-1");
@@ -104,7 +104,7 @@ EventModel eventModel = new EventBuilder()
 #### 2.a Send the event asynchronously
 
 ```java
-MoesifAPIClient client = new MoesifAPIClient("my_application_id");
+MoesifAPIClient client = new MoesifAPIClient("your_moesif_application_id");
 APIController api = client.getAPI();
 
 APICallBack<Object> callBack = new APICallBack<Object>() {
@@ -125,7 +125,7 @@ api.createEventAsync(eventModel, callBack);
 #### 2.b Send the event synchronously
 
 ```java
-MoesifAPIClient client = new MoesifAPIClient("my_application_id");
+MoesifAPIClient client = new MoesifAPIClient("your_moesif_application_id");
 APIController api = client.getAPI();
 
 api.createEvent(eventModel, callBack);
@@ -162,7 +162,7 @@ Object reqBody = APIHelper.deserialize("{" +
 	"}");
 
 Map<String, String> rspHeaders = new HashMap<String, String>();
-rspHeaders.put("Date", "Tue, 23 Feb 2017 23:46:49 GMT");
+rspHeaders.put("Date", "Tue, 23 Feb 2019 23:46:49 GMT");
 rspHeaders.put("Vary", "Accept-Encoding");
 rspHeaders.put("Pragma", "no-cache");
 rspHeaders.put("Expires", "-1");
@@ -196,8 +196,8 @@ EventResponseModel eventRsp = new EventResponseBuilder()
 EventModel eventModel = new EventBuilder()
 				.request(eventReq)
 				.response(eventRsp)
-				.userId("my_user_id")
-				.companyId("my_company_id")
+				.userId("12345")
+				.companyId("67890")
 				.sessionToken("23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f")
 				.build();
 
@@ -211,7 +211,7 @@ events.add(eventModel);
 #### 2.a Send the events batch asynchronously
 
 ```java
-MoesifAPIClient client = new MoesifAPIClient("my_application_id");
+MoesifAPIClient client = new MoesifAPIClient("your_moesif_application_id");
 APIController api = client.getAPI();
 
 APICallBack<Object> callBack = new APICallBack<Object>() {
@@ -232,7 +232,7 @@ api.createEventsBatchAsync(events, callBack);
 #### 2.b Send the events batch synchronously
 
 ```java
-MoesifAPIClient client = new MoesifAPIClient("my_application_id");
+MoesifAPIClient client = new MoesifAPIClient("your_moesif_application_id");
 APIController api = getClient().getAPI();
 
 api.createEventsBatch(events, callBack);
@@ -271,7 +271,7 @@ UserModel user = new UserBuilder()
 #### 2.a Update the user asynchronously
 
 ```java
-MoesifAPIClient client = new MoesifAPIClient("my_application_id");
+MoesifAPIClient client = new MoesifAPIClient("your_moesif_application_id");
 APIController api = client.getAPI();
 
 APICallBack<Object> callBack = new APICallBack<Object>() {
@@ -292,7 +292,7 @@ api.updateUserAsync(user, callBack);
 #### 2.b Update the user synchronously
 
 ```java
-MoesifAPIClient client = new MoesifAPIClient("my_application_id");
+MoesifAPIClient client = new MoesifAPIClient("your_moesif_application_id");
 APIController api = getClient().getAPI();
 
 api.updateUser(user, callBack);
@@ -353,7 +353,7 @@ users.add(userB);
 
 
 ```java
-MoesifAPIClient client = new MoesifAPIClient("my_application_id");
+MoesifAPIClient client = new MoesifAPIClient("your_moesif_application_id");
 APIController api = client.getAPI();
 
 APICallBack<Object> callBack = new APICallBack<Object>() {
@@ -374,7 +374,7 @@ api.updateUsersBatchAsync(users, callBack);
 #### 2.b Update the users synchronously
 
 ```java
-MoesifAPIClient client = new MoesifAPIClient("my_application_id");
+MoesifAPIClient client = new MoesifAPIClient("your_moesif_application_id");
 APIController api = getClient().getAPI();
 
 api.updateUsersBatch(users, callBack);
