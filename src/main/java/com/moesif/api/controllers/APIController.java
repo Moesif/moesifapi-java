@@ -329,6 +329,15 @@ public class APIController extends BaseController implements IAPIController {
     }
 
     private QueryInfo getQueryInfo(String url) {
+
+        if (Configuration.ApplicationId == null || Configuration.ApplicationId.equals("")) {
+            throw new IllegalArgumentException("A Moesif Application Id is required. Please obtain it through your settings at www.moesif.com");
+        }
+
+        if (Configuration.BaseUri == null || Configuration.BaseUri.equals("")) {
+            throw new IllegalArgumentException("The API BaseUri is required.");
+        }
+
         String _baseUri = Configuration.BaseUri;
 
         //prepare query string for API call

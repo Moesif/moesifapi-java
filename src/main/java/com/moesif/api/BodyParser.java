@@ -4,9 +4,7 @@ import com.moesif.api.APIHelper;
 import com.moesif.api.Base64;
 import java.util.Map;
 
-/**
- * Created by derric on 4/10/17.
- */
+
 public class BodyParser {
 
     public static BodyWrapper parseBody(Map<String, String> headers, String content) {
