@@ -415,6 +415,11 @@ public class APIControllerTest extends ControllerTestBase {
     @Test
     public void testUpdateUser() throws Throwable {
 
+        CampaignModel campaign = new CampaignBuilder()
+        .utmSource("Newsletter")
+        .utmMedium("Email")
+        .build();
+
         UserModel user = new UserBuilder()
             .userId("12345")
             .companyId("67890")
@@ -431,7 +436,8 @@ public class APIControllerTest extends ControllerTestBase {
                 "\"field_2\": \"value_2\"" +
                 "}" +
                 "}"))
-             .build();
+            .campaign(campaign)
+            .build();
 
         // Set callback and perform API call
         controller.setHttpCallBack(httpResponse);
@@ -769,6 +775,11 @@ public class APIControllerTest extends ControllerTestBase {
     @Test
     public void testUpdateCompany() throws Throwable {
 
+      CampaignModel campaign = new CampaignBuilder()
+          .utmSource("Adwords")
+          .utmMedium("Twitter")
+          .build();
+
       CompanyModel company = new CompanyBuilder()
           .companyId("12345")
           .modifiedTime(new Date())
@@ -783,6 +794,7 @@ public class APIControllerTest extends ControllerTestBase {
               "\"field_2\": \"value_2\"" +
               "}" +
               "}"))
+          .campaign(campaign)
           .build();
 
       // Set callback and perform API call

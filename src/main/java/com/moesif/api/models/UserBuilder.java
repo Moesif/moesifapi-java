@@ -90,6 +90,16 @@ public class UserBuilder {
     }
 
     /**
+     * the campaign
+     * @param campaign the field to set
+     * @return itself
+     */
+    public UserBuilder campaign(CampaignModel campaign) {
+        UserModel.setCampaign(campaign);
+        return this;
+    }
+
+    /**
      * Build the instance with the given values
      * @return The built UserModel
      */

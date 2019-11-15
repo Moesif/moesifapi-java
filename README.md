@@ -17,7 +17,7 @@ Add this dependency to your project's POM:
 <dependency>
     <groupId>com.moesif.api</groupId>
     <artifactId>moesifapi</artifactId>
-    <version>1.6.6</version>
+    <version>1.6.7</version>
 </dependency>
 ```
 
@@ -26,7 +26,7 @@ Add this dependency to your project's POM:
 Add this dependency to your project's build file:
 
 ```gradle
-compile 'com.moesif.api:moesifapi:1.6.6'
+compile 'com.moesif.api:moesifapi:1.6.7'
 ```
 
 ## How to Use:
@@ -249,6 +249,12 @@ You can update a user _synchronously_ or _asynchronously_ on a background thread
 #### 1. Generate the user model
 
 ```java
+
+CampaignModel campaign = new CampaignBuilder()
+        .utmSource("Newsletter")
+        .utmMedium("Email")
+        .build();
+
 UserModel user = new UserBuilder()
 		.userId("12345")
 		.companyId("67890")
@@ -265,7 +271,8 @@ UserModel user = new UserBuilder()
 					"\"field_2\": \"value_2\"" +
 				"}" +
 			"}"))
-		 .build();
+		.campaign(campaign)
+		.build();
 ```
 
 #### 2.a Update the user asynchronously
@@ -380,6 +387,53 @@ APIController api = getClient().getAPI();
 api.updateUsersBatch(users, callBack);
 ```
 
+#### 3. Generate the company model
+
+```java
+
+CampaignModel campaign = new CampaignBuilder()
+		.utmSource("Adwords")
+		.utmMedium("Twitter")
+		.build();
+
+CompanyModel company = new CompanyBuilder()
+		.companyId("12345")
+		.modifiedTime(new Date())
+		.ipAddress("29.80.250.240")
+		.sessionToken("di3hd982h3fubv3yfd94egf")
+		.metadata(APIHelper.deserialize("{" +
+			"\"email\": \"johndoe@acmeinc.com\"," +
+			"\"string_field\": \"value_1\"," +
+			"\"number_field\": 0," +
+			"\"object_field\": {" +
+			"\"field_1\": \"value_1\"," +
+			"\"field_2\": \"value_2\"" +
+			"}" +
+			"}"))
+		.campaign(campaign)
+		.build();
+```
+
+#### 3.a Update the company asynchronously
+
+```java
+MoesifAPIClient client = new MoesifAPIClient("your_moesif_application_id");
+APIController api = client.getAPI();
+
+APICallBack<Object> callBack = new APICallBack<Object>() {
+    public void onSuccess(HttpContext context, Object response) {
+        assertEquals("Status is not 201",
+                201, context.getResponse().getStatusCode());
+        lock.countDown();
+    }
+
+    public void onFailure(HttpContext context, Throwable error) {
+        fail();
+    }
+};
+
+api.updateCompanyAsync(company, callBack);
+```
 
 ## How to build and install manually (Advanced users):
 

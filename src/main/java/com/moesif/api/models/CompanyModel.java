@@ -21,6 +21,7 @@ public class CompanyModel
     private String sessionToken;
     private String companyDomain;
     private Object metadata;
+    private CampaignModel campaign;
     /** GETTER
      * User's company_id string
      * @return the value
@@ -128,6 +129,24 @@ public class CompanyModel
     @JsonSetter("metadata")
     public void setMetadata (Object value) {
         this.metadata = value;
+    }
+
+    /** GETTER
+     * the campaign object
+     * @return the value
+     */
+    @JsonGetter("campaign")
+    public CampaignModel getCampaign ( ) {
+        return this.campaign;
+    }
+    
+    /** SETTER
+     * the campaign object
+     * @param value the value to set
+     */
+    @JsonSetter("campaign")
+    public void setCampaign (CampaignModel value) {
+        this.campaign = value;
     }
 }
  

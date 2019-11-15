@@ -22,6 +22,7 @@ public class UserModel
     private String sessionToken;
     private String userAgentString;
     private Object metadata;
+    private CampaignModel campaign;
     /** GETTER
      * End user's user_id string from your app
      * @return the value
@@ -149,6 +150,24 @@ public class UserModel
     @JsonSetter("metadata")
     public void setMetadata (Object value) {
         this.metadata = value;
+    }
+
+    /** GETTER
+     * the campaign object
+     * @return the value
+     */
+    @JsonGetter("campaign")
+    public CampaignModel getCampaign ( ) {
+        return this.campaign;
+    }
+    
+    /** SETTER
+     * the campaign object
+     * @param value the value to set
+     */
+    @JsonSetter("campaign")
+    public void setCampaign (CampaignModel value) {
+        this.campaign = value;
     }
 }
  
