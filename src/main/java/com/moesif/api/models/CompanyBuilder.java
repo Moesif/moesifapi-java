@@ -78,6 +78,16 @@ public class CompanyBuilder {
         return this;
     }
 
+     /**
+     * the campaign
+     * @param campaign the field to set
+     * @return itself
+     */
+    public CompanyBuilder campaign(CampaignModel campaign) {
+        CompanyModel.setCampaign(campaign);
+        return this;
+    }
+
     /**
      * Build the instance with the given values
      * @return The built UserModel
