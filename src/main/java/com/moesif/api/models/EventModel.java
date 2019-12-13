@@ -18,6 +18,7 @@ public class EventModel
     private String userId;
     private String companyId;
     private Object metadata;
+    private String direction;
     /** GETTER
      * API request object
      * @return the value
@@ -142,6 +143,24 @@ public class EventModel
     @JsonSetter("metadata")
     public void setMetadata (Object value) {
         this.metadata = value;
+    }
+
+    /** GETTER
+     * API direction string
+     * @return the value
+     */
+    @JsonGetter("direction")
+    public String getDirection ( ) { 
+        return this.direction;
+    }
+    
+    /** SETTER
+     * API direction string
+     * @param value the value to set
+     */
+    @JsonSetter("direction")
+    public void setDirection (String value) { 
+        this.direction = value;
     }
 }
  

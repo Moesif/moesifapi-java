@@ -87,6 +87,16 @@ public class EventBuilder {
     }
 
     /**
+     * API direction string
+     * @param direction the field to set
+     * @return itself
+     */
+    public EventBuilder direction(String direction) {
+        eventModel.setDirection(direction);
+        return this;
+    }
+
+    /**
      * Build the instance with the given values
      * @return the built EventModel
      */
