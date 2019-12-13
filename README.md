@@ -238,7 +238,7 @@ APIController api = getClient().getAPI();
 api.createEventsBatch(events, callBack);
 ```
 
-### Update an end user
+### Update a user
 
 Updating an end user will create one if it does not exist,
 also know as [upsert](https://en.wikipedia.org/wiki/Merge_(SQL))
@@ -249,30 +249,36 @@ You can update a user _synchronously_ or _asynchronously_ on a background thread
 #### 1. Generate the user model
 
 ```java
+MoesifAPIClient client = new MoesifAPIClient("your_moesif_application_id");
 
 CampaignModel campaign = new CampaignBuilder()
-        .utmSource("Newsletter")
-        .utmMedium("Email")
+        .utmSource("google")
+        .utmCampaign("cpc")
+        .utmMedium("adwords")
+        .utmTerm("api+tooling")
+        .utmContent("landing")
         .build();
 
+// Only userId is required
+// metadata can be any custom object
 UserModel user = new UserBuilder()
-		.userId("12345")
-		.companyId("67890")
-		.modifiedTime(new Date())
-		.ipAddress("29.80.250.240")
-		.sessionToken("di3hd982h3fubv3yfd94egf")
-		.userAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
-		.metadata(APIHelper.deserialize("{" +
-				"\"email\": \"johndoe@acmeinc.com\"," +
-				"\"string_field\": \"value_1\"," +
-				"\"number_field\": 0," +
-				"\"object_field\": {" +
-					"\"field_1\": \"value_1\"," +
-					"\"field_2\": \"value_2\"" +
-				"}" +
-			"}"))
-		.campaign(campaign)
-		.build();
+    .userId("12345")
+    .companyId("67890")
+    .campaign(campaign)
+    .metadata(APIHelper.deserialize("{" +
+        "\"email\": \"johndoe@acmeinc.com\"," +
+        "\"first_name\": \"John\"," +
+        "\"last_name\": \"Doe\"," +
+        "\"title\": \"Software Engineer\"," +
+        "\"sales_info\": {" +
+            "\"stage\": \"Customer\"," +
+            "\"lifetime_value\": 24000," +
+            "\"account_owner\": \"mary@contoso.com\"" +
+          "}" +
+        "}"))
+    .build();
+
+client.updateUser(user);
 ```
 
 #### 2.a Update the user asynchronously
@@ -302,10 +308,10 @@ api.updateUserAsync(user, callBack);
 MoesifAPIClient client = new MoesifAPIClient("your_moesif_application_id");
 APIController api = getClient().getAPI();
 
-api.updateUser(user, callBack);
+api.updateUser(user);
 ```
 
-### Update a batch of end users
+### Update a batch of users
 Will update all users in a single batch, useful for saving from offline sources like CSV.
 Any user that does not exist will be created, also known as [upsert](https://en.wikipedia.org/wiki/Merge_(SQL))
 The only __required__ field is `user_id`.
@@ -318,40 +324,38 @@ You can update users _synchronously_ or _asynchronously_ on a background thread.
 List<UserModel> users = new ArrayList<UserModel>();
 
 UserModel userA = new UserBuilder()
-		.userId("12345")
-		.companyId("67890")
-		.modifiedTime(new Date())
-		.ipAddress("29.80.250.240")
-		.sessionToken("di3hd982h3fubv3yfd94egf")
-		.userAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
-		.metadata(APIHelper.deserialize("{" +
-				"\"email\": \"johndoe@acmeinc.com\"," +
-				"\"string_field\": \"value_1\"," +
-				"\"number_field\": 0," +
-				"\"object_field\": {" +
-					"\"field_1\": \"value_1\"," +
-					"\"field_2\": \"value_2\"" +
-				"}" +
-			"}"))
+        .userId("12345")
+        .companyId("67890")
+        .campaign(campaign)
+        .metadata(APIHelper.deserialize("{" +
+            "\"email\": \"johndoe@acmeinc.com\"," +
+            "\"first_name\": \"John\"," +
+            "\"last_name\": \"Doe\"," +
+            "\"title\": \"Software Engineer\"," +
+            "\"sales_info\": {" +
+                "\"stage\": \"Customer\"," +
+                "\"lifetime_value\": 24000," +
+                "\"account_owner\": \"mary@contoso.com\"" +
+              "}" +
+            "}"))
 		.build();
 users.add(userA);
 
 UserModel userB = new UserBuilder()
-		.userId("1234")
-		.companyId("6789")
-		.modifiedTime(new Date())
-		.ipAddress("21.80.11.242")
-		.sessionToken("zceadckekvsfgfpsakvnbfouavsdvds")
-		.userAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
-		.metadata(APIHelper.deserialize("{" +
-				"\"email\": \"maryjane@acmeinc.com\"," +
-				"\"string_field\": \"value_1\"," +
-				"\"number_field\": 1," +
-				"\"object_field\": {" +
-					"\"field_1\": \"value_1\"," +
-					"\"field_2\": \"value_2\"" +
-				"}" +
-			"}"))
+        .userId("54321")
+        .companyId("67890")
+        .campaign(campaign)
+        .metadata(APIHelper.deserialize("{" +
+            "\"email\": \"johndoe@acmeinc.com\"," +
+            "\"first_name\": \"John\"," +
+            "\"last_name\": \"Doe\"," +
+            "\"title\": \"Software Engineer\"," +
+            "\"sales_info\": {" +
+                "\"stage\": \"Customer\"," +
+                "\"lifetime_value\": 24000," +
+                "\"account_owner\": \"mary@contoso.com\"" +
+              "}" +
+            "}"))
 		.build();
 users.add(userB);
 ```
@@ -384,7 +388,7 @@ api.updateUsersBatchAsync(users, callBack);
 MoesifAPIClient client = new MoesifAPIClient("your_moesif_application_id");
 APIController api = getClient().getAPI();
 
-api.updateUsersBatch(users, callBack);
+api.updateUsersBatch(users);
 ```
 
 #### 3. Generate the company model
@@ -392,15 +396,15 @@ api.updateUsersBatch(users, callBack);
 ```java
 
 CampaignModel campaign = new CampaignBuilder()
-		.utmSource("Adwords")
-		.utmMedium("Twitter")
-		.build();
+        .utmSource("google")
+        .utmCampaign("cpc")
+        .utmMedium("adwords")
+        .utmTerm("api+tooling")
+        .utmContent("landing")
+        .build();
 
 CompanyModel company = new CompanyBuilder()
-		.companyId("12345")
-		.modifiedTime(new Date())
-		.ipAddress("29.80.250.240")
-		.sessionToken("di3hd982h3fubv3yfd94egf")
+		.companyId("67890")
 		.metadata(APIHelper.deserialize("{" +
 			"\"email\": \"johndoe@acmeinc.com\"," +
 			"\"string_field\": \"value_1\"," +
@@ -433,6 +437,83 @@ APICallBack<Object> callBack = new APICallBack<Object>() {
 };
 
 api.updateCompanyAsync(company, callBack);
+```
+
+#### 3.b Update the company synchronously
+
+```java
+MoesifAPIClient client = new MoesifAPIClient("your_moesif_application_id");
+APIController api = getClient().getAPI();
+
+api.updateCompany(company);
+```
+
+
+### Update a batch of companies
+Will update all users in a single batch, useful for saving from offline sources like CSV.
+Any user that does not exist will be created, also known as [upsert](https://en.wikipedia.org/wiki/Merge_(SQL))
+The only __required__ field is `user_id`.
+
+You can update users _synchronously_ or _asynchronously_ on a background thread. Unless you require synchronous behavior, we recommend the async versions.
+
+#### 4. Generate the list of companies
+
+```java
+List<CompanyModel> companies = new ArrayList<CompanyModel>();
+
+CompanyModel companyA = new CompanyBuilder()
+    .companyId("67890")
+    .companyDomain("contoso.com")
+    .build();
+companies.add(companyA);
+
+CompanyModel companyB = new CompanyBuilder()
+    .companyId("67890")
+    .modifiedTime(new Date())
+    .ipAddress("21.80.11.242")
+    .sessionToken("zceadckekvsfgfpsakvnbfouavsdvds")
+    .companyDomain("acmeinc.com")
+    .metadata(APIHelper.deserialize("{" +
+            "\"email\": \"johndoe@acmeinc.com\"," +
+            "\"string_field\": \"value_1\"," +
+            "\"number_field\": 0," +
+            "\"object_field\": {" +
+            "\"field_1\": \"value_1\"," +
+            "\"field_2\": \"value_2\"" +
+            "}" +
+            "}"))
+    .build();
+companies.add(companyB);
+```
+
+#### 2.a Update the companies asynchronously
+
+```java
+MoesifAPIClient client = new MoesifAPIClient("your_moesif_application_id");
+APIController api = client.getAPI();
+
+APICallBack<Object> callBack = new APICallBack<Object>() {
+    public void onSuccess(HttpContext context, Object response) {
+        assertEquals("Status is not 201",
+                201, context.getResponse().getStatusCode());
+        lock.countDown();
+    }
+
+    public void onFailure(HttpContext context, Throwable error) {
+        fail();
+    }
+};
+
+api.updateCompaniesBatchAsync(companies, callBack);
+```
+
+#### 2.b Update the companies synchronously
+
+```java
+MoesifAPIClient client = new MoesifAPIClient("your_moesif_application_id");
+APIController api = getClient().getAPI();
+
+api.updateCompaniesBatch(companies);
 ```
 
 ## How to build and install manually (Advanced users):

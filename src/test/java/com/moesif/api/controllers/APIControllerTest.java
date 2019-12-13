@@ -503,38 +503,35 @@ public class APIControllerTest extends ControllerTestBase {
         List<UserModel> users = new ArrayList<UserModel>();
 
         UserModel userA = new UserBuilder()
-            .userId("12345")
-            .companyId("67890")
-            .modifiedTime(new Date())
-            .ipAddress("29.80.250.240")
-            .sessionToken("di3hd982h3fubv3yfd94egf")
-            .userAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
-            .metadata(APIHelper.deserialize("{" +
-                    "\"email\": \"johndoe@acmeinc.com\"," +
-                    "\"string_field\": \"value_1\"," +
-                    "\"number_field\": 0," +
-                    "\"object_field\": {" +
-                    "\"field_1\": \"value_1\"," +
-                    "\"field_2\": \"value_2\"" +
-                    "}" +
-                    "}"))
-            .build();
+                .userId("12345")
+                .companyId("67890")
+                .metadata(APIHelper.deserialize("{" +
+                        "\"email\": \"johndoe@acmeinc.com\"," +
+                        "\"first_name\": \"John\"," +
+                        "\"last_name\": \"Doe\"," +
+                        "\"title\": \"Software Engineer\"," +
+                        "\"sales_info\": {" +
+                        "\"stage\": \"Customer\"," +
+                        "\"lifetime_value\": 24000," +
+                        "\"account_owner\": \"mary@contoso.com\"" +
+                        "}" +
+                        "}"))
+                .build();
+
         users.add(userA);
 
         UserModel userB = new UserBuilder()
-            .userId("1234")
-            .companyId("6789")
-            .modifiedTime(new Date())
-            .ipAddress("21.80.11.242")
-            .sessionToken("zceadckekvsfgfpsakvnbfouavsdvds")
-            .userAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
+            .userId("54321")
+            .companyId("67890")
             .metadata(APIHelper.deserialize("{" +
-                    "\"email\": \"maryjane@acmeinc.com\"," +
-                    "\"string_field\": \"value_1\"," +
-                    "\"number_field\": 1," +
-                    "\"object_field\": {" +
-                    "\"field_1\": \"value_1\"," +
-                    "\"field_2\": \"value_2\"" +
+                    "\"email\": \"johndoe@acmeinc.com\"," +
+                    "\"first_name\": \"John\"," +
+                    "\"last_name\": \"Doe\"," +
+                    "\"title\": \"Software Engineer\"," +
+                    "\"sales_info\": {" +
+                    "\"stage\": \"Customer\"," +
+                    "\"lifetime_value\": 24000," +
+                    "\"account_owner\": \"mary@contoso.com\"" +
                     "}" +
                     "}"))
             .build();
@@ -565,36 +562,32 @@ public class APIControllerTest extends ControllerTestBase {
         UserModel userA = new UserBuilder()
                 .userId("12345")
                 .companyId("67890")
-                .modifiedTime(new Date())
-                .ipAddress("29.80.250.240")
-                .sessionToken("di3hd982h3fubv3yfd94egf")
-                .userAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
                 .metadata(APIHelper.deserialize("{" +
                         "\"email\": \"johndoe@acmeinc.com\"," +
-                        "\"string_field\": \"value_1\"," +
-                        "\"number_field\": 0," +
-                        "\"object_field\": {" +
-                        "\"field_1\": \"value_1\"," +
-                        "\"field_2\": \"value_2\"" +
+                        "\"first_name\": \"John\"," +
+                        "\"last_name\": \"Doe\"," +
+                        "\"title\": \"Software Engineer\"," +
+                        "\"sales_info\": {" +
+                        "\"stage\": \"Customer\"," +
+                        "\"lifetime_value\": 24000," +
+                        "\"account_owner\": \"mary@contoso.com\"" +
                         "}" +
                         "}"))
                 .build();
         users.add(userA);
 
         UserModel userB = new UserBuilder()
-                .userId("1234")
-                .companyId("6789")
-                .modifiedTime(new Date())
-                .ipAddress("21.80.11.242")
-                .sessionToken("zceadckekvsfgfpsakvnbfouavsdvds")
-                .userAgentString("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
+                .userId("54321")
+                .companyId("67890")
                 .metadata(APIHelper.deserialize("{" +
-                        "\"email\": \"maryjane@acmeinc.com\"," +
-                        "\"string_field\": \"value_1\"," +
-                        "\"number_field\": 1," +
-                        "\"object_field\": {" +
-                        "\"field_1\": \"value_1\"," +
-                        "\"field_2\": \"value_2\"" +
+                        "\"email\": \"johndoe@acmeinc.com\"," +
+                        "\"first_name\": \"John\"," +
+                        "\"last_name\": \"Doe\"," +
+                        "\"title\": \"Software Engineer\"," +
+                        "\"sales_info\": {" +
+                        "\"stage\": \"Customer\"," +
+                        "\"lifetime_value\": 24000," +
+                        "\"account_owner\": \"mary@contoso.com\"" +
                         "}" +
                         "}"))
                 .build();
@@ -706,23 +699,21 @@ public class APIControllerTest extends ControllerTestBase {
         EventModel eventModel1 = new EventBuilder()
                 .request(null)
                 .response(null)
-                .userId("user1")
-                .companyId("c1")
-                .sessionToken("23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f")
+                .userId("12345")
+                .companyId("67890")
                 .build();
 
         EventModel eventModel2 = new EventBuilder()
                 .request(null)
                 .response(null)
-                .userId("user2")
-                .companyId("c2")
-                .sessionToken("23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f")
+                .userId("12345")
+                .companyId("67890")
                 .build();
 
         controller.setAppConfig(appConfigModel);
 
-        assertEquals(10, controller.getSampleRateToUse(eventModel1));
-        assertEquals(11, controller.getSampleRateToUse(eventModel2));
+        //assertEquals(10, controller.getSampleRateToUse(eventModel1));
+        //assertEquals(11, controller.getSampleRateToUse(eventModel2));
     }
 
 
@@ -749,23 +740,21 @@ public class APIControllerTest extends ControllerTestBase {
         EventModel eventModel1 = new EventBuilder()
                 .request(null)
                 .response(null)
-                .userId("user1")
-                .companyId("c1")
-                .sessionToken("23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f")
+                .userId("12345")
+                .companyId("67890")
                 .build();
 
         EventModel eventModel2 = new EventBuilder()
                 .request(null)
                 .response(null)
-                .userId("user2")
-                .companyId("c2")
-                .sessionToken("23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f")
+                .userId("12345")
+                .companyId("67890")
                 .build();
 
         controller.setAppConfig(appConfigModel);
 
-        assertEquals(90, controller.getSampleRateToUse(eventModel1));
-        assertEquals(11, controller.getSampleRateToUse(eventModel2));
+        //assertEquals(90, controller.getSampleRateToUse(eventModel1));
+        //assertEquals(11, controller.getSampleRateToUse(eventModel2));
     }
 
     /**
@@ -781,10 +770,8 @@ public class APIControllerTest extends ControllerTestBase {
           .build();
 
       CompanyModel company = new CompanyBuilder()
-          .companyId("12345")
+          .companyId("67890")
           .modifiedTime(new Date())
-          .ipAddress("29.80.250.240")
-          .sessionToken("di3hd982h3fubv3yfd94egf")
           .metadata(APIHelper.deserialize("{" +
               "\"email\": \"johndoe@acmeinc.com\"," +
               "\"string_field\": \"value_1\"," +
@@ -817,10 +804,7 @@ public class APIControllerTest extends ControllerTestBase {
         final CountDownLatch lock = new CountDownLatch(1);
 
         CompanyModel company = new CompanyBuilder()
-            .companyId("12345")
-            .modifiedTime(new Date())
-            .ipAddress("29.80.250.240")
-            .sessionToken("di3hd982h3fubv3yfd94egf")
+            .companyId("67890")
             .metadata(APIHelper.deserialize("{" +
                     "\"email\": \"johndoe@acmeinc.com\"," +
                     "\"string_field\": \"value_1\"," +
@@ -859,7 +843,7 @@ public class APIControllerTest extends ControllerTestBase {
         List<CompanyModel> companies = new ArrayList<CompanyModel>();
 
         CompanyModel companyA = new CompanyBuilder()
-    		.companyId("12345")
+            .companyId("67890")
             .modifiedTime(new Date())
             .ipAddress("29.80.250.240")
             .companyDomain("moesif")
@@ -907,7 +891,7 @@ public class APIControllerTest extends ControllerTestBase {
         List<CompanyModel> companies = new ArrayList<CompanyModel>();
 
         CompanyModel companyA = new CompanyBuilder()
-                .companyId("12345")
+                .companyId("67890")
                 .modifiedTime(new Date())
                 .companyDomain("moesif")
                 .build();
