@@ -97,6 +97,16 @@ public class EventBuilder {
     }
 
     /**
+     * Weight of an API call
+     * @param weight the field to set
+     * @return itself
+     */
+    public EventBuilder weight(int weight) {
+        eventModel.setWeight(weight);
+        return this;
+    }
+
+    /**
      * Build the instance with the given values
      * @return the built EventModel
      */
