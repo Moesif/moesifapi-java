@@ -6,7 +6,7 @@
 package com.moesif.api.controllers;
 
 import java.util.*;
-
+import java.lang.Math;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moesif.api.*;
@@ -477,13 +477,18 @@ public class APIController extends BaseController implements IAPIController {
             .build();
     }
 
+    public int calculateWeight(int sampleRate) {
+        return (int)(sampleRate == 0 ? 1 : Math.floor(100.00 / sampleRate));
+    }
+
     public EventModel buildEventModel(EventRequestModel eventRequestModel,
                            EventResponseModel eventResponseModel,
                            String userId,
                            String companyId,
                            String sessionToken,
                            String apiVersion,
-                           Object metadata) {
+                           Object metadata,
+                           String direction) {
         EventBuilder eb = new EventBuilder();
 
         eb.request(eventRequestModel);
@@ -504,6 +509,8 @@ public class APIController extends BaseController implements IAPIController {
         if (metadata != null) {
             eb.metadata(metadata);
         }
+
+        eb.direction(direction);
 
         return eb.build();
     }
