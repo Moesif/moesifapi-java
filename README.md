@@ -17,7 +17,7 @@ Add this dependency to your project's POM:
 <dependency>
     <groupId>com.moesif.api</groupId>
     <artifactId>moesifapi</artifactId>
-    <version>1.6.8</version>
+    <version>1.6.9</version>
 </dependency>
 ```
 
@@ -26,7 +26,7 @@ Add this dependency to your project's POM:
 Add this dependency to your project's build file:
 
 ```gradle
-compile 'com.moesif.api:moesifapi:1.6.8'
+compile 'com.moesif.api:moesifapi:1.6.9'
 ```
 
 ## How to Use:

@@ -19,6 +19,7 @@ public class EventModel
     private String companyId;
     private Object metadata;
     private String direction;
+    private int weight;
     /** GETTER
      * API request object
      * @return the value
@@ -161,6 +162,24 @@ public class EventModel
     @JsonSetter("direction")
     public void setDirection (String value) { 
         this.direction = value;
+    }
+
+    /** GETTER
+     * Weight of an API call
+     * @return the value
+     */
+    @JsonGetter("weight")
+    public int getWeight ( ) {
+        return this.weight;
+    }
+
+    /** SETTER
+     * Weight of an API call
+     * @param value the value to set
+     */
+    @JsonSetter("weight")
+    public void setWeight (int value) {
+        this.weight = value;
     }
 }
  
