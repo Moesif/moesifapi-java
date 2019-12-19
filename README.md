@@ -303,7 +303,7 @@ apiClient.updateUser(user);
 ## Update Users in Batch
 
 Similar to UpdateUser, but used to update a list of users in one batch. 
-Only the `UserId` field is required.
+Only the `userId` field is required.
 For details, visit the [Java API Reference](https://www.moesif.com/docs/api?java#update-users-in-batch).
 
 You can update users _synchronously_ or _asynchronously_ on a background thread. Unless you require synchronous behavior, we recommend the async versions.
@@ -379,7 +379,7 @@ apiClient.updateUsersBatch(users, callBack);
 
 Create or update a company profile in Moesif.
 The metadata field can be any company demographic or other info you want to store.
-Only the `company_id` field is required.
+Only the `companyId` field is required.
 For details, visit the [Java API Reference](https://www.moesif.com/docs/api?java#update-a-company).
 
 ```java
@@ -442,7 +442,7 @@ apiClient.updateCompany(company);
 ## Update Companies in Batch
 
 Similar to updateCompany, but used to update a list of companies in one batch. 
-Only the `company_id` field is required.
+Only the `companyId` field is required.
 For details, visit the [Java API Reference](https://www.moesif.com/docs/api?java#update-companies-in-batch).
 
 
