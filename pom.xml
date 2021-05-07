@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.moesif.api</groupId>
     <artifactId>moesifapi</artifactId>
-    <version>1.7.7</version>
+    <version>1.7.8</version>
     <packaging>jar</packaging>
     <name>moesifapi</name>
     <description>Java API Library for Moesif</description>
@@ -159,16 +159,4 @@
         </plugins>
     </build>
 
-    <distributionManagement>
-        <repository>
-            <id>moesif</id>
-            <url>https://pkgs.dev.azure.com/Moesif/9143e1fb-e3b8-4475-ae87-caec5435d218/_packaging/moesif/maven/v1</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </distributionManagement>
 </project>
