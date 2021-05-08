@@ -50,9 +50,19 @@ public class MoesifAPIClient {
     /**
      * Client initialization constructor
      * @param applicationId The Application Id for authentication
-     */     
+     */
     public MoesifAPIClient(String applicationId) {
         this();
         Configuration.ApplicationId = applicationId;
+    }
+
+    /**
+     * Client initialization constructor
+     * @param applicationId The Application Id for authentication
+     */     
+    public MoesifAPIClient(String applicationId, String baseUri) {
+        this();
+        Configuration.ApplicationId = applicationId;
+        Configuration.BaseUri = baseUri;
     }
 }
