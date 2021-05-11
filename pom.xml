@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.moesif.api</groupId>
     <artifactId>moesifapi</artifactId>
-    <version>1.6.10</version>
+    <version>1.6.11</version>
     <packaging>jar</packaging>
     <name>moesifapi</name>
     <description>Java API Library for Moesif</description>
@@ -39,9 +39,9 @@
 
     <repositories>
         <repository>
-            <id>bintray-moesif-maven</id>
-            <name>bintray</name>
-            <url>http://dl.bintray.com/moesif/maven</url>
+            <id>moesif</id>
+            <name>Moesif</name>
+            <url>https://pkgs.dev.azure.com/Moesif/9143e1fb-e3b8-4475-ae87-caec5435d218/_packaging/moesif/maven/v1</url>
         </repository>
     </repositories>
     <dependencies>
@@ -156,14 +156,22 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.6</version>
+                <extensions>false</extensions>
+                <executions>
+                    <execution>
+                        <id>injected-nexus-deploy</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
-    <distributionManagement>
-        <repository>
-            <id>bintray-moesif-maven</id>
-            <name>moesif-maven</name>
-            <url>https://api.bintray.com/maven/moesif/maven/moesifapi/;publish=1</url>
-        </repository>
-    </distributionManagement>
 </project>
