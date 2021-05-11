@@ -17,7 +17,7 @@ Add this dependency to your project's POM:
 <dependency>
     <groupId>com.moesif.api</groupId>
     <artifactId>moesifapi</artifactId>
-    <version>1.6.10</version>
+    <version>1.6.11</version>
 </dependency>
 ```
 
@@ -26,7 +26,7 @@ Add this dependency to your project's POM:
 Add this dependency to your project's build file:
 
 ```gradle
-compile 'com.moesif.api:moesifapi:1.6.10'
+compile 'com.moesif.api:moesifapi:1.6.11'
 ```
 
 ## How to Use:
@@ -548,6 +548,14 @@ http://help.eclipse.org/mars/topic/org.eclipse.jdt.doc.user/tasks/tasks-33.htm
 
 Using JARs:
 http://help.eclipse.org/juno/topic/org.eclipse.jst.j2ee.doc.user/topics/tjimpapp.html
+
+## How to run JUnit tests for this SDK using `mvn` command
+
+To execute JUnit tests using `mvn` command, the environment variable `MOESIF_APPLICATION_ID` needs to be set
+```
+export MOESIF_APPLICATION_ID="<Set your Moesif Application Id here>"
+mvn test
+```
 
 [ico-built-for]: https://img.shields.io/badge/built%20for-java-blue.svg
 [ico-version]: https://api.bintray.com/packages/moesif/maven/moesifapi/images/download.svg
