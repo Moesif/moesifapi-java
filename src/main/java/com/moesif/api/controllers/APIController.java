@@ -452,8 +452,6 @@ public class APIController extends BaseController implements IAPIController {
                         appConfigModel = parseAppConfigModel(respBodyIs);
                         respBodyIs.close();
                     } catch (Exception e) {
-                        if (e.toString().toLowerCase().contains("Unrecognized field".toLowerCase()))
-                            logger.info("The AppConfig contains value not seen before. Check for newer version of this sdk");
                         logger.warning("Invalid AppConfig JSON: " + e.getMessage());
                     }
                     logger.info("App Config Model returned is " + appConfigModel);

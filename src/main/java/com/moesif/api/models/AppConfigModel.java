@@ -6,12 +6,14 @@
 package com.moesif.api.models;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class AppConfigModel
         implements java.io.Serializable {
     private String orgId;
@@ -108,46 +110,6 @@ public class AppConfigModel
     @JsonSetter("company_sample_rate")
     public void setCompanySampleRate (Map<String, Integer>  value) {
         this.companySampleRate = value;
-    }
-
-    /** SETTER
-     * this value is not used
-     * @param value the value to set
-     */
-    @JsonSetter("block_bot_traffic")
-    public void setBlockBotTraffic(Object value) {
-    }
-
-    /** SETTER
-     * this value is not used
-     * @param value the value to set
-     */
-    @JsonSetter("user_rules")
-    public void setUserRules(Object value) {
-    }
-
-    /** SETTER
-     * this value is not used
-     * @param value the value to set
-     */
-    @JsonSetter("ip_addresses_blocked_by_name")
-    public void setIpAddressBlockedByName(Object value) {
-    }
-
-    /** SETTER
-     * this value is not used
-     * @param value the value to set
-     */
-    @JsonSetter("regex_config")
-    public void setRegexConfig(Object value) {
-    }
-
-    /** SETTER
-     * this value is not used
-     * @param value the value to set
-     */
-    @JsonSetter("company_rules")
-    public void setCompanyRules(Object value) {
     }
 
     @Override
