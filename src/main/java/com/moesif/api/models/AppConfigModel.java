@@ -110,6 +110,46 @@ public class AppConfigModel
         this.companySampleRate = value;
     }
 
+    /** SETTER
+     * this value is not used
+     * @param value the value to set
+     */
+    @JsonSetter("block_bot_traffic")
+    public void setBlockBotTraffic(Object value) {
+    }
+
+    /** SETTER
+     * this value is not used
+     * @param value the value to set
+     */
+    @JsonSetter("user_rules")
+    public void setUserRules(Object value) {
+    }
+
+    /** SETTER
+     * this value is not used
+     * @param value the value to set
+     */
+    @JsonSetter("ip_addresses_blocked_by_name")
+    public void setIpAddressBlockedByName(Object value) {
+    }
+
+    /** SETTER
+     * this value is not used
+     * @param value the value to set
+     */
+    @JsonSetter("regex_config")
+    public void setRegexConfig(Object value) {
+    }
+
+    /** SETTER
+     * this value is not used
+     * @param value the value to set
+     */
+    @JsonSetter("company_rules")
+    public void setCompanyRules(Object value) {
+    }
+
     @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();

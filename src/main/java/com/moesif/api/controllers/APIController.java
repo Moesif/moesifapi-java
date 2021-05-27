@@ -5,6 +5,8 @@
  */
 package com.moesif.api.controllers;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.lang.Math;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -197,7 +199,6 @@ public class APIController extends BaseController implements IAPIController {
 
         executeRequestAsync(_request, callBack);
     }
-
 
 
     /**
@@ -436,21 +437,26 @@ public class APIController extends BaseController implements IAPIController {
         return willFetch;
     }
 
+    public static AppConfigModel parseAppConfigModel(InputStream jsonTxt) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(jsonTxt, AppConfigModel.class);
+    }
+
     private void syncAppConfig() {
         if (shouldSyncAppConfig) {
             APICallBack<HttpResponse> callback = new APICallBack<HttpResponse>() {
                 public void onSuccess(HttpContext context, HttpResponse response) {
                     // Read the response body
-                    ObjectMapper mapper = new ObjectMapper();
-                    Map<String, Object> jsonMap = null;
-
                     try {
-                        appConfigModel = mapper.readValue(response.getRawBody(), AppConfigModel.class);
+                        InputStream respBodyIs = response.getRawBody();
+                        appConfigModel = parseAppConfigModel(respBodyIs);
+                        respBodyIs.close();
                     } catch (Exception e) {
-                        logger.warning("Invalid AppConfig JSON" + e.getMessage());
+                        if (e.toString().toLowerCase().contains("Unrecognized field".toLowerCase()))
+                            logger.info("The AppConfig contains value not seen before. Check for newer version of this sdk");
+                        logger.warning("Invalid AppConfig JSON: " + e.getMessage());
                     }
-
-                    System.out.println("App Config Model returned is "+ appConfigModel);
+                    logger.info("App Config Model returned is " + appConfigModel);
 
                     appConfigEtag = response
                             .getHeaders()
