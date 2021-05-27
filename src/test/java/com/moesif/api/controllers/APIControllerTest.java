@@ -629,7 +629,12 @@ public class APIControllerTest extends ControllerTestBase {
         // Test the header x-moesif-config-etag
         assertNotNull(httpResponse.getResponse().getHeaders().get("x-moesif-config-etag"));
         // Test the raw body
-        assertNotNull(httpResponse.getResponse().getRawBody());
+        InputStream bodyIs = httpResponse.getResponse().getRawBody();
+        assertNotNull(bodyIs);
+        AppConfigModel appConfig = APIController.parseAppConfigModel(bodyIs);
+        bodyIs.close();
+        assertNotNull(appConfig);
+
     }
 
     /**

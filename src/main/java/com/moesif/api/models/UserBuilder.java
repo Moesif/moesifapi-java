@@ -44,7 +44,7 @@ public class UserBuilder {
      * @return itself
      */
     public UserBuilder modifiedTime(Date modifiedTime) {
-        UserModel.setMetadata(modifiedTime);
+        UserModel.setModifiedTime(modifiedTime);
         return this;
     }
 

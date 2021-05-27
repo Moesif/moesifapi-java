@@ -12,6 +12,10 @@ import com.moesif.api.http.client.HttpCallBack;
 import com.moesif.api.http.client.UnirestClient;
 import com.moesif.api.http.response.HttpResponse;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.stream.Collectors;
+
 public abstract class BaseController {
     /**
      * Private variable to keep shared reference of client instance
@@ -75,7 +79,15 @@ public abstract class BaseController {
             throws APIException {
         //get response status code to validate
         int responseCode = response.getStatusCode();
-        if ((responseCode < 200) || (responseCode > 206)) //[200,206] = HTTP OK
-            throw new APIException("HTTP Response Not OK", context);
+        if ((responseCode < 200) || (responseCode > 206)) {//[200,206] = HTTP OK
+            String responseBody = "";
+            try {
+                String b = new BufferedReader(new InputStreamReader(response.getRawBody()))
+                                            .lines().collect(Collectors.joining("\n"));
+                if (null != b)
+                    responseBody = b.length() > 400 ? b.substring(0, 400) : b;
+            } catch (Exception ex) {}
+            throw new APIException("HTTP Response [" + responseCode + "] Not OK: " + responseBody, context);
+        }
     }
 }
