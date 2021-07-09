@@ -13,6 +13,6 @@ public class EnvVarsTest {
     public void testMoesifApplicationIdSet(){
         String msg = "For tests, environment variable must be set: " + EnvVars.MOESIF_APPLICATION_ID;
         assertNotNull(msg, EnvVars.readMoesifApplicationId());
-        assertFalse(msg, EnvVars.readMoesifApplicationId().isBlank());
+        assertFalse(msg, EnvVars.readMoesifApplicationId().isEmpty());
     }
 }

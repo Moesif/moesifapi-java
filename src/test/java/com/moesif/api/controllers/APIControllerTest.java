@@ -12,14 +12,12 @@ import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.moesif.api.Configuration;
 import com.moesif.api.http.client.APICallBack;
-import com.moesif.api.http.client.HttpCallBack;
 import com.moesif.api.http.client.HttpContext;
 import com.moesif.api.http.response.HttpResponse;
 
-import com.moesif.api.testing.HttpCallBackCatcher;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -677,6 +675,76 @@ public class APIControllerTest extends ControllerTestBase {
 
         try {
             controller.getAppConfigAsync(callBack);
+        } catch(Exception e) {};
+        assertEquals(true, lock.await(10000, TimeUnit.MILLISECONDS));
+    }
+
+    /**
+     * Get Governance Rules via Injestion API
+     * @throws Throwable
+     */
+    @Test
+    public void testGovernanceRules() throws Throwable {
+        // Set callback and perform API call
+        controller.setHttpCallBack(httpResponse);
+
+        try {
+            controller.getGovernanceRules();
+        } catch(APIException e) {};
+
+        // Test response code
+        assertEquals("Status is not 200", 200, httpResponse.getResponse().getStatusCode());
+        // Test the header x-moesif-config-etag
+        assertNotNull(httpResponse.getResponse().getHeaders().get("x-moesif-rules-tag"));
+        // Test the raw body
+        InputStream bodyIs = httpResponse.getResponse().getRawBody();
+        assertNotNull(bodyIs);
+        List<GovernanceRulesModel> rules = APIController.parseGovernanceRulesModel(bodyIs);
+        bodyIs.close();
+        assertNotNull(rules);
+
+    }
+
+    /**
+     * Get Governance Rules via Injection Aysnc API
+     * @throws Throwable
+     */
+    @Test
+    public void testGetGovernanceRulesAsync() throws Throwable {
+        final CountDownLatch lock = new CountDownLatch(1);
+
+        APICallBack<HttpResponse> callBack = new APICallBack<HttpResponse>() {
+            public void onSuccess(HttpContext context, HttpResponse response) {
+                // Read the response body
+                ObjectMapper mapper = new ObjectMapper();
+                Map<String, Object> jsonMap = null;
+                List<GovernanceRulesModel> rules = null;
+
+                try {
+                    rules = mapper.readValue(context.getResponse().getRawBody(), new TypeReference<List<GovernanceRulesModel>>(){});
+                } catch (Exception e) {
+                    System.out.println("Invalid Json input");
+                }
+
+                System.out.println("Governance Rule Model returned is " + rules);
+
+                assertEquals("Status is not 200",
+                        200, context.getResponse().getStatusCode());
+
+                assertNotNull(context.getResponse().getHeaders().get("x-moesif-rules-tag"));
+                assertNotNull(context.getResponse().getRawBody());
+                lock.countDown();
+
+            }
+
+            @Override
+            public void onFailure(HttpContext context, Throwable error) {
+                // nothing
+            }
+        };
+
+        try {
+            controller.getGovernanceRulesAsync(callBack);
         } catch(Exception e) {};
         assertEquals(true, lock.await(10000, TimeUnit.MILLISECONDS));
     }
