@@ -92,6 +92,19 @@ public interface IAPIController {
      * @throws JsonProcessingException on error getting app config
      */
     void getAppConfigAsync(final APICallBack<HttpResponse> callBack) throws JsonProcessingException;
+
+    /**
+     * Get the Governance rules
+     * @throws Throwable on error getting governance rules
+     */
+    HttpResponse getGovernanceRules() throws Throwable;
+
+    /**
+     * Get the Governance rules async
+     * @param    callBack Called after the HTTP response is received
+     * @throws JsonProcessingException on error getting governance rules
+     */
+    void getGovernanceRulesAsync(final APICallBack<HttpResponse> callBack) throws JsonProcessingException;
     
     /**
      * Update a Single Company

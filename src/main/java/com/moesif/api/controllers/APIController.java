@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.util.*;
 import java.lang.Math;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moesif.api.*;
 import com.moesif.api.models.*;
@@ -319,6 +320,57 @@ public class APIController extends BaseController implements IAPIController {
         executeRequestAsync(_request, callBack);
     }
 
+    /**
+     * Get the Governance rules
+     * @throws Throwable on error getting app config
+     */
+    public HttpResponse getGovernanceRules() throws Throwable {
+        QueryInfo qInfo = getQueryInfo("/v1/rules");
+
+        //prepare and invoke the API call request to fetch the response
+        final HttpRequest _request = getClientInstance().get(qInfo._queryUrl, qInfo._headers, null);
+
+        //invoke the callback before request if its not null
+        if (getHttpCallBack() != null)
+        {
+            getHttpCallBack().OnBeforeRequest(_request);
+        }
+        
+        // make the API call
+        HttpResponse _response = getClientInstance().executeAsString(_request);
+        
+        // Wrap the request and the response in an HttpContext object
+        HttpContext _context = new HttpContext(_request, _response);
+        
+        //invoke the callback after response if its not null
+        if (getHttpCallBack() != null)
+        {
+            getHttpCallBack().OnAfterResponse(_context);
+        }
+
+        //handle errors defined at the API level
+        validateResponse(_response, _context);
+        
+        // Return headers to the client
+        return _response;
+    }
+
+    /**
+     * Get the Governance rules
+     * @param    callBack Called after the HTTP response is received
+     * @throws JsonProcessingException on error getting app config
+     */
+    public void getGovernanceRulesAsync(
+    		final APICallBack<HttpResponse> callBack
+    ) throws JsonProcessingException {
+        QueryInfo qInfo = getQueryInfo("/v1/rules");
+
+        //prepare and invoke the API call request to fetch the response
+        final HttpRequest _request = getClientInstance().get(qInfo._queryUrl, qInfo._headers, null);
+
+        executeRequestAsync(_request, callBack);
+    }
+
 
     private static class QueryInfo {
         String _queryUrl;
@@ -435,6 +487,11 @@ public class APIController extends BaseController implements IAPIController {
         }
 
         return willFetch;
+    }
+
+    public static List<GovernanceRulesModel> parseGovernanceRulesModel(InputStream jsonTxt) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(jsonTxt, new TypeReference<List<GovernanceRulesModel>>(){});
     }
 
     public static AppConfigModel parseAppConfigModel(InputStream jsonTxt) throws IOException {
