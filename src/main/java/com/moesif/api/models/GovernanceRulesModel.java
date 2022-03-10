@@ -2,6 +2,7 @@ package com.moesif.api.models;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -18,6 +19,7 @@ public class GovernanceRulesModel
     private String type;
     private List<GovernanceRulesVariableModel> variables;
     private List<GovernanceRuleRegexRuleModel> regexConfig;
+    private List<GovernanceRuleCohortModel> cohorts;
     private GovernanceRulesResponseModel response;
 
     /** GETTER
@@ -179,6 +181,20 @@ public class GovernanceRulesModel
     public void setRegexConfig (List<GovernanceRuleRegexRuleModel> value) {
         this.regexConfig = value;
     }
+
+    /** GETTER
+     * regexConfig
+     * @return the value
+     */
+    @JsonGetter("cohorts")
+    public List<GovernanceRuleCohortModel> getCohorts () { return this.cohorts; }
+
+    /** SETTER
+     * regexConfig
+     * @param cohorts the list of cohort IDs to set
+     */
+    @JsonSetter("cohorts")
+    public void setCohorts (List<GovernanceRuleCohortModel> cohorts) { this.cohorts = cohorts; }
 
     /** GETTER
      * Response object
