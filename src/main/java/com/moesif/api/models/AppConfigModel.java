@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -21,6 +22,8 @@ public class AppConfigModel
     private int sampleRate = 100;
     private Map<String, Integer> userSampleRate = new HashMap<String, Integer>();
     private Map<String, Integer> companySampleRate = new HashMap<String, Integer>();
+    private Map<String, List<EntityRuleModel>> userRules = new HashMap<String, List<EntityRuleModel>>();
+    private Map<String, List<EntityRuleModel>> companyRules = new HashMap<String, List<EntityRuleModel>>();
 
     /** GETTER
      * Config's org_id string
@@ -110,6 +113,26 @@ public class AppConfigModel
     @JsonSetter("company_sample_rate")
     public void setCompanySampleRate (Map<String, Integer>  value) {
         this.companySampleRate = value;
+    }
+
+    @JsonGetter("user_rules")
+    public Map<String, List<EntityRuleModel>> getUserRules() {
+        return userRules;
+    }
+
+    @JsonSetter("user_rules")
+    public void setUserRules(Map<String, List<EntityRuleModel>> userRules) {
+        this.userRules = userRules;
+    }
+
+    @JsonGetter("company_rules")
+    public Map<String, List<EntityRuleModel>> getCompanyRules() {
+        return companyRules;
+    }
+
+    @JsonSetter("company_rules")
+    public void setCompanyRules(Map<String, List<EntityRuleModel>> companyRules) {
+        this.companyRules = companyRules;
     }
 
     @Override
