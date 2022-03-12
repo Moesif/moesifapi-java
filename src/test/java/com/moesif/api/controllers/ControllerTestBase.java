@@ -68,7 +68,7 @@ public class ControllerTestBase {
         if(client == null)
             synchronized (clientSync) {
                 // replace this ID with your own Moesif App ID
-                client = new MoesifAPIClient(EnvVars.readMoesifApplicationId());
+                client = new MoesifAPIClient(EnvVars.readMoesifApplicationId(), EnvVars.readMoesifBaseUri());
             }
         return client;
     }
