@@ -101,6 +101,7 @@ EventModel eventModel = new EventBuilder()
 				.companyId("my_company_id")
 				.sessionToken("23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f")
 				.build();
+```
 #### 2.a Send the event asynchronously
 
 ```java
