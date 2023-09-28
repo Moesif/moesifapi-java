@@ -68,6 +68,7 @@ public class MoesifAPIClient {
     /**
      * Client initialization constructor
      * @param applicationId The Application Id for authentication
+     * @param baseUri The base Uri for API calls
      */     
     public MoesifAPIClient(String applicationId, String baseUri) {
         this();
