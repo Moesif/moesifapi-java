@@ -26,8 +26,6 @@ import java.util.logging.Logger;
 public class APIController extends BaseController implements IAPIController {
     //private static variables for the singleton pattern
     private static Object syncObject = new Object();
-    private static APIController instance = null;
-
     private static final Logger logger = Logger.getLogger(APIController.class.toString());
 
     private static final String APP_CONFIG_ETAG_HEADER = "x-moesif-config-etag";
@@ -38,19 +36,6 @@ public class APIController extends BaseController implements IAPIController {
     private boolean shouldSyncAppConfig = false;
     private AppConfigModel appConfigModel;
     private String appConfigEtag;
-
-    /**
-     * Singleton pattern implementation 
-     * @return The singleton instance of the APIController class
-     */
-    public static APIController getInstance() {
-        synchronized (syncObject) {
-            if (null == instance) {
-                instance = new APIController();
-            }
-        }
-        return instance;
-    }
 
 
     /**

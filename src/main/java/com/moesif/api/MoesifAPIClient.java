@@ -10,12 +10,13 @@ import com.moesif.api.http.client.HttpClient;
 
 public class MoesifAPIClient {
     /**
-     * Singleton access to API controller
      * @return	Returns the APIController instance
      */
     public APIController getAPI() {
-        return APIController.getInstance();
+        return controller;
     }
+
+    private APIController controller;
 
     /**
      * Singleton access to Health controller
@@ -45,6 +46,7 @@ public class MoesifAPIClient {
      * Default constructor 
      */     
     private MoesifAPIClient() {
+        controller = new APIController();
 	}
 
     /**
