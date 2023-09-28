@@ -21,10 +21,6 @@ import com.moesif.api.http.client.APICallBack;
 import com.moesif.api.controllers.syncwrapper.APICallBackCatcher;
 
 public class HealthController extends BaseController implements IHealthController {
-    //private static variables for the singleton pattern
-    private static Object syncObject = new Object();
-    private static HealthController instance = null;
-
     private Configuration config;
 
     public HealthController() {
@@ -51,7 +47,7 @@ public class HealthController extends BaseController implements IHealthControlle
                 final APICallBack<StatusModel> callBack
     ) {
         //the base uri for api requests
-        String _baseUri = Configuration.BaseUri;
+        String _baseUri = config.baseUri;
 
         //prepare query string for API call
         StringBuilder _queryBuilder = new StringBuilder(_baseUri);
