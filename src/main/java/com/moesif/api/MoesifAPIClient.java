@@ -10,20 +10,22 @@ import com.moesif.api.http.client.HttpClient;
 
 public class MoesifAPIClient {
     /**
-     * Singleton access to API controller
      * @return	Returns the APIController instance
      */
     public APIController getAPI() {
-        return APIController.getInstance();
+        return controller;
     }
 
-    /**
-     * Singleton access to Health controller
-     * @return	Returns the HealthController instance 
-     */
-    public HealthController getHealth() {
-        return HealthController.getInstance();
+    private APIController controller;
+
+    private Configuration config;
+
+    private HealthController healthController;
+
+    public HealthController getHealthController() {
+        return healthController;
     }
+
 
     /**
      * Get the shared http client currently being used for API calls
@@ -45,6 +47,10 @@ public class MoesifAPIClient {
      * Default constructor 
      */     
     private MoesifAPIClient() {
+
+        controller = new APIController();
+        config = new Configuration();
+        healthController = new HealthController();
 	}
 
     /**
@@ -53,16 +59,22 @@ public class MoesifAPIClient {
      */
     public MoesifAPIClient(String applicationId) {
         this();
-        Configuration.ApplicationId = applicationId;
+        config.applicationId = applicationId;
+        config.baseUri = Configuration.BaseUri;
+        controller.setConfig(config);
+        healthController.setConfig(config);
     }
 
     /**
      * Client initialization constructor
      * @param applicationId The Application Id for authentication
+     * @param baseUri The base Uri for API calls
      */     
     public MoesifAPIClient(String applicationId, String baseUri) {
         this();
-        Configuration.ApplicationId = applicationId;
-        Configuration.BaseUri = baseUri;
+        config.applicationId = applicationId;
+        config.baseUri = baseUri;
+        controller.setConfig(config);
+        healthController.setConfig(config);
     }
 }

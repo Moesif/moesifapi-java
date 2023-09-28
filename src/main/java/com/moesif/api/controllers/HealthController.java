@@ -21,23 +21,11 @@ import com.moesif.api.http.client.APICallBack;
 import com.moesif.api.controllers.syncwrapper.APICallBackCatcher;
 
 public class HealthController extends BaseController implements IHealthController {
-    //private static variables for the singleton pattern
-    private static Object syncObject = new Object();
-    private static HealthController instance = null;
+    private Configuration config;
 
-    /**
-     * Singleton pattern implementation 
-     * @return The singleton instance of the HealthController class 
-     */
-    public static HealthController getInstance() {
-        synchronized (syncObject) {
-            if (null == instance) {
-                instance = new HealthController();
-            }
-        }
-        return instance;
+    public HealthController() {
+
     }
-
     /**
      * Health Probe
      * @return  The health probe
@@ -59,7 +47,7 @@ public class HealthController extends BaseController implements IHealthControlle
                 final APICallBack<StatusModel> callBack
     ) {
         //the base uri for api requests
-        String _baseUri = Configuration.BaseUri;
+        String _baseUri = config.baseUri;
 
         //prepare query string for API call
         StringBuilder _queryBuilder = new StringBuilder(_baseUri);
@@ -72,7 +60,7 @@ public class HealthController extends BaseController implements IHealthControlle
             private static final long serialVersionUID = 5262405786134955276L;
             {
                     put( "accept", "application/json" );
-                    put( "X-Moesif-Application-Id", Configuration.ApplicationId);
+                    put( "X-Moesif-Application-Id", config.applicationId);
             }
         };
 
@@ -138,4 +126,7 @@ public class HealthController extends BaseController implements IHealthControlle
         APIHelper.getScheduler().execute(_responseTask);
     }
 
+    public void setConfig(Configuration config) {
+        this.config = config;
+    }
 }

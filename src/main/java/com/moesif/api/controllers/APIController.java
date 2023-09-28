@@ -26,8 +26,6 @@ import java.util.logging.Logger;
 public class APIController extends BaseController implements IAPIController {
     //private static variables for the singleton pattern
     private static Object syncObject = new Object();
-    private static APIController instance = null;
-
     private static final Logger logger = Logger.getLogger(APIController.class.toString());
 
     private static final String APP_CONFIG_ETAG_HEADER = "x-moesif-config-etag";
@@ -39,18 +37,7 @@ public class APIController extends BaseController implements IAPIController {
     private AppConfigModel appConfigModel;
     private String appConfigEtag;
 
-    /**
-     * Singleton pattern implementation 
-     * @return The singleton instance of the APIController class
-     */
-    public static APIController getInstance() {
-        synchronized (syncObject) {
-            if (null == instance) {
-                instance = new APIController();
-            }
-        }
-        return instance;
-    }
+    private Configuration config;
 
 
     /**
@@ -371,6 +358,10 @@ public class APIController extends BaseController implements IAPIController {
         executeRequestAsync(_request, callBack);
     }
 
+    public void setConfig(Configuration config) {
+        this.config = config;
+    }
+
 
     private static class QueryInfo {
         String _queryUrl;
@@ -383,15 +374,15 @@ public class APIController extends BaseController implements IAPIController {
 
     private QueryInfo getQueryInfo(String url) {
 
-        if (Configuration.ApplicationId == null || Configuration.ApplicationId.equals("")) {
+        if (config.applicationId == null || config.applicationId.equals("")) {
             throw new IllegalArgumentException("A Moesif Application Id is required. Please obtain it through your settings at www.moesif.com");
         }
 
-        if (Configuration.BaseUri == null || Configuration.BaseUri.equals("")) {
+        if (config.baseUri == null || config.baseUri.equals("")) {
             throw new IllegalArgumentException("The API BaseUri is required.");
         }
 
-        String _baseUri = Configuration.BaseUri;
+        String _baseUri = config.baseUri;
 
         //prepare query string for API call
         StringBuilder _queryBuilder = new StringBuilder(_baseUri);
@@ -402,7 +393,7 @@ public class APIController extends BaseController implements IAPIController {
         //load all headers for the outgoing API request
         Map<String, String> _headers = new HashMap<String, String>() {
             {
-                put( "X-Moesif-Application-Id", Configuration.ApplicationId);
+                put( "X-Moesif-Application-Id", config.applicationId);
             }
         };
 
