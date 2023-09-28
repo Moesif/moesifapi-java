@@ -18,13 +18,14 @@ public class MoesifAPIClient {
 
     private APIController controller;
 
-    /**
-     * Singleton access to Health controller
-     * @return	Returns the HealthController instance 
-     */
-    public HealthController getHealth() {
-        return HealthController.getInstance();
+    private Configuration config;
+
+    private HealthController healthController;
+
+    public HealthController getHealthController() {
+        return healthController;
     }
+
 
     /**
      * Get the shared http client currently being used for API calls
@@ -46,7 +47,10 @@ public class MoesifAPIClient {
      * Default constructor 
      */     
     private MoesifAPIClient() {
+
         controller = new APIController();
+        config = new Configuration();
+        healthController = new HealthController();
 	}
 
     /**
@@ -55,7 +59,10 @@ public class MoesifAPIClient {
      */
     public MoesifAPIClient(String applicationId) {
         this();
-        Configuration.ApplicationId = applicationId;
+        config.applicationId = applicationId;
+        config.baseUri = Configuration.BaseUri;
+        controller.setConfig(config);
+        healthController.setConfig(config);
     }
 
     /**
@@ -64,7 +71,9 @@ public class MoesifAPIClient {
      */     
     public MoesifAPIClient(String applicationId, String baseUri) {
         this();
-        Configuration.ApplicationId = applicationId;
-        Configuration.BaseUri = baseUri;
+        config.applicationId = applicationId;
+        config.baseUri = baseUri;
+        controller.setConfig(config);
+        healthController.setConfig(config);
     }
 }

@@ -37,6 +37,8 @@ public class APIController extends BaseController implements IAPIController {
     private AppConfigModel appConfigModel;
     private String appConfigEtag;
 
+    private Configuration config;
+
 
     /**
      * Add Single API Event Call
@@ -356,6 +358,10 @@ public class APIController extends BaseController implements IAPIController {
         executeRequestAsync(_request, callBack);
     }
 
+    public void setConfig(Configuration config) {
+        this.config = config;
+    }
+
 
     private static class QueryInfo {
         String _queryUrl;
@@ -368,15 +374,15 @@ public class APIController extends BaseController implements IAPIController {
 
     private QueryInfo getQueryInfo(String url) {
 
-        if (Configuration.ApplicationId == null || Configuration.ApplicationId.equals("")) {
+        if (config.applicationId == null || config.applicationId.equals("")) {
             throw new IllegalArgumentException("A Moesif Application Id is required. Please obtain it through your settings at www.moesif.com");
         }
 
-        if (Configuration.BaseUri == null || Configuration.BaseUri.equals("")) {
+        if (config.baseUri == null || config.baseUri.equals("")) {
             throw new IllegalArgumentException("The API BaseUri is required.");
         }
 
-        String _baseUri = Configuration.BaseUri;
+        String _baseUri = config.baseUri;
 
         //prepare query string for API call
         StringBuilder _queryBuilder = new StringBuilder(_baseUri);
@@ -387,7 +393,7 @@ public class APIController extends BaseController implements IAPIController {
         //load all headers for the outgoing API request
         Map<String, String> _headers = new HashMap<String, String>() {
             {
-                put( "X-Moesif-Application-Id", Configuration.ApplicationId);
+                put( "X-Moesif-Application-Id", config.applicationId);
             }
         };
 
