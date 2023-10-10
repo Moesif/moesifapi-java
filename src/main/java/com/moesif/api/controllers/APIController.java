@@ -584,12 +584,13 @@ public class APIController extends BaseController implements IAPIController {
     }
 
     public int getSampleRateToUse(EventModel eventModel, AppConfigModel appConfigModel) {
-        int sampleRate = appConfigModel.getSampleRate();
+        List<Integer> sampleRates = new ArrayList();
+        sampleRates.add(appConfigModel.getSampleRate());
 
         if (eventModel.getUserId() != null && appConfigModel.getUserSampleRate().containsKey(eventModel.getUserId())) {
-            sampleRate = appConfigModel.getUserSampleRate().get(eventModel.getUserId());
+            sampleRates.add(appConfigModel.getUserSampleRate().get(eventModel.getUserId()));
         } else if (eventModel.getCompanyId() != null && appConfigModel.getCompanySampleRate().containsKey(eventModel.getCompanyId())) {
-            sampleRate = appConfigModel.getCompanySampleRate().get(eventModel.getCompanyId());
+            sampleRates.add(appConfigModel.getCompanySampleRate().get(eventModel.getCompanyId()));
         }
         if(!appConfigModel.getRegex_config().isEmpty()) {
             Map<String, String> regexMap = eventModel.getRegexMap();
@@ -607,12 +608,12 @@ public class APIController extends BaseController implements IAPIController {
                     }
                 }
                 if (match) {
-                    sampleRate = regexConfigModel.sampeleRate;
+                    sampleRates.add(regexConfigModel.sampeleRate);
                     break;
                 }
             }
         }
-        return sampleRate;
+        return Collections.min(sampleRates);
 
     }
 
