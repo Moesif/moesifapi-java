@@ -589,7 +589,8 @@ public class APIController extends BaseController implements IAPIController {
 
         if (eventModel.getUserId() != null && appConfigModel.getUserSampleRate().containsKey(eventModel.getUserId())) {
             sampleRates.add(appConfigModel.getUserSampleRate().get(eventModel.getUserId()));
-        } else if (eventModel.getCompanyId() != null && appConfigModel.getCompanySampleRate().containsKey(eventModel.getCompanyId())) {
+        }
+        if (eventModel.getCompanyId() != null && appConfigModel.getCompanySampleRate().containsKey(eventModel.getCompanyId())) {
             sampleRates.add(appConfigModel.getCompanySampleRate().get(eventModel.getCompanyId()));
         }
         if(!appConfigModel.getRegex_config().isEmpty()) {
