@@ -585,12 +585,10 @@ public class APIController extends BaseController implements IAPIController {
 
     public int getSampleRateToUse(EventModel eventModel, AppConfigModel appConfigModel) {
         List<Integer> sampleRates = new ArrayList();
-        sampleRates.add(appConfigModel.getSampleRate());
 
         if (eventModel.getUserId() != null && appConfigModel.getUserSampleRate().containsKey(eventModel.getUserId())) {
             sampleRates.add(appConfigModel.getUserSampleRate().get(eventModel.getUserId()));
-        }
-        if (eventModel.getCompanyId() != null && appConfigModel.getCompanySampleRate().containsKey(eventModel.getCompanyId())) {
+        } else if (eventModel.getCompanyId() != null && appConfigModel.getCompanySampleRate().containsKey(eventModel.getCompanyId())) {
             sampleRates.add(appConfigModel.getCompanySampleRate().get(eventModel.getCompanyId()));
         }
         if(!appConfigModel.getRegex_config().isEmpty()) {
@@ -614,7 +612,7 @@ public class APIController extends BaseController implements IAPIController {
                 }
             }
         }
-        return Collections.min(sampleRates);
+        return sampleRates.isEmpty()?  appConfigModel.getSampleRate() : Collections.min(sampleRates);
 
     }
 
