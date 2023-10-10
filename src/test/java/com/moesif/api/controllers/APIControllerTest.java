@@ -754,19 +754,19 @@ public class APIControllerTest extends ControllerTestBase {
      * @throws Throwable
      */
     @Test
-    public void testUserSampleRate() {
+    public void testUserAndCompanySampleRate() {
 
         AppConfigModel appConfigModel = new AppConfigModel();
         appConfigModel.setOrgId("100:0");
         appConfigModel.setAppId("10:0");
         appConfigModel.setUserSampleRate(new HashMap<String, Integer>() {
             {
-                put("user1", 10); put("user2", 11);
+                put("12345", 10); put("user2", 11);
             }
         });
         appConfigModel.setCompanySampleRate(new HashMap<String, Integer>() {
             {
-                put("c1", 90); put("c2", 99);
+                put("67890", 90); put("c2", 99);
             }
         });
         EventModel eventModel1 = new EventBuilder()
@@ -779,55 +779,52 @@ public class APIControllerTest extends ControllerTestBase {
         EventModel eventModel2 = new EventBuilder()
                 .request(null)
                 .response(null)
-                .userId("12345")
                 .companyId("67890")
                 .build();
 
         controller.setAppConfig(appConfigModel);
 
-        //assertEquals(10, controller.getSampleRateToUse(eventModel1));
-        //assertEquals(11, controller.getSampleRateToUse(eventModel2));
+        assertEquals(10, controller.getSampleRateToUse(eventModel1,appConfigModel));
+        assertEquals(90, controller.getSampleRateToUse(eventModel2, appConfigModel));
     }
 
 
     /**
-     * Test company sample rate is being used correctly
+     * Test regex sample rate is being used correctly
      * @throws Throwable
      */
     @Test
-    public void testCompanySampleRate() {
+    public void testRegexSampleRate() {
 
         AppConfigModel appConfigModel = new AppConfigModel();
         appConfigModel.setOrgId("100:0");
         appConfigModel.setAppId("10:0");
-        appConfigModel.setUserSampleRate(new HashMap<String, Integer>() {
-            {
-                put("user5", 10); put("user2", 11);
-            }
-        });
-        appConfigModel.setCompanySampleRate(new HashMap<String, Integer>() {
-            {
-                put("c1", 90); put("c2", 99);
-            }
-        });
+        RegexConfigModel regexConfigModel = new RegexConfigModel();
+        regexConfigModel.sampeleRate = 12;
+        GovernanceRuleRegexConditionModel regexConditionModel = new GovernanceRuleRegexConditionModel();
+        regexConditionModel.setPath("response.status");
+        regexConditionModel.setValue("400");
+        regexConfigModel.conditions = new ArrayList<>();
+        regexConfigModel.conditions.add(regexConditionModel);
+        List<RegexConfigModel> regexConfig = new ArrayList<>();
+        regexConfig.add(regexConfigModel);
+        appConfigModel.setRegex_config(regexConfig);
+
+
+        EventResponseModel eventResponseModel = new EventResponseModel();
+        eventResponseModel.setStatus(400);
         EventModel eventModel1 = new EventBuilder()
-                .request(null)
-                .response(null)
-                .userId("12345")
-                .companyId("67890")
+                .response(eventResponseModel)
                 .build();
 
+        EventResponseModel eventResponseModel1 = new EventResponseModel();
+        eventResponseModel1.setStatus(200);
         EventModel eventModel2 = new EventBuilder()
-                .request(null)
-                .response(null)
-                .userId("12345")
-                .companyId("67890")
+                .response(eventResponseModel1)
                 .build();
 
-        controller.setAppConfig(appConfigModel);
-
-        //assertEquals(90, controller.getSampleRateToUse(eventModel1));
-        //assertEquals(11, controller.getSampleRateToUse(eventModel2));
+        assertEquals(12, controller.getSampleRateToUse(eventModel1, appConfigModel));
+        assertEquals(100, controller.getSampleRateToUse(eventModel2, appConfigModel));
     }
 
     /**

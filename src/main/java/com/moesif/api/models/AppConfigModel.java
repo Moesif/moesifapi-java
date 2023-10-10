@@ -8,7 +8,9 @@ package com.moesif.api.models;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +26,8 @@ public class AppConfigModel
     private Map<String, Integer> companySampleRate = new HashMap<String, Integer>();
     private Map<String, List<EntityRuleModel>> userRules = new HashMap<String, List<EntityRuleModel>>();
     private Map<String, List<EntityRuleModel>> companyRules = new HashMap<String, List<EntityRuleModel>>();
+
+    private List<RegexConfigModel> regex_config = new ArrayList<RegexConfigModel>();
 
     /** GETTER
      * Config's org_id string
@@ -137,22 +141,24 @@ public class AppConfigModel
 
     @Override
     public String toString(){
-        StringBuilder sb = new StringBuilder();
-        sb.append("***** AppConfigModel Details *****\n");
-        sb.append("OrgId="+getOrgId()+"\n");
-        sb.append("AppId="+getAppId()+"\n");
-        sb.append("SampleRate="+getSampleRate()+"\n");
-        sb.append("UserSampleRate="+convertWithStream(getUserSampleRate())+"\n");
-        sb.append("CompanySampleRate="+convertWithStream(getCompanySampleRate())+"\n");
-        sb.append("*****************************");
-        return sb.toString();
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.writeValueAsString(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
     }
 
-    private String convertWithStream(Map<String, Integer> map) {
-        String mapAsString = map.keySet().stream()
-                .map(key -> key + "=" + map.get(key))
-                .collect(Collectors.joining(", ", "{", "}"));
-        return mapAsString;
+
+    @JsonGetter("regex_config")
+    public List<RegexConfigModel> getRegex_config() {
+        return regex_config;
+    }
+    @JsonSetter("regex_config")
+    public void setRegex_config(List<RegexConfigModel> regex_config) {
+        this.regex_config = regex_config;
     }
 }
  

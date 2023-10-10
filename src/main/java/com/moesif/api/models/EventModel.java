@@ -8,6 +8,11 @@ package com.moesif.api.models;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class EventModel
         implements java.io.Serializable {
     private static final long serialVersionUID = 5526151489602879126L;
@@ -180,6 +185,30 @@ public class EventModel
     @JsonSetter("weight")
     public void setWeight (int value) {
         this.weight = value;
+    }
+
+    public Map<String, String> getRegexMap() {
+        Map<String, String> map = new HashMap<String, String>();
+        if(request != null && request.getVerb() != null) {
+            map.put("request.verb", request.getVerb());
+        }
+        if(request != null && request.getIpAddress() != null) {
+            map.put("request.ip_address", request.getIpAddress());
+        }
+        if(request != null && request.getUri() != null) {
+            String route = "/";
+            Pattern p = Pattern.compile("http[s]?://[^/]+(/[^?]+)", Pattern.CASE_INSENSITIVE);
+            Matcher m = p.matcher(request.getUri());
+            if(m.groupCount() == 2) {
+                route = m.group(1);
+            }
+            map.put("request.route", route);
+        }
+        if(response != null) {
+            map.put("response.status", response.getStatus() + "");
+        }
+
+        return map;
     }
 }
  
