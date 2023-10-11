@@ -6,7 +6,7 @@ import java.util.List;
 
 public class RegexConfigModel implements java.io.Serializable {
     @JsonProperty("sample_rate")
-    private int sampeleRate;
+    public int sampeleRate;
     @JsonProperty("conditions")
-    private List<GovernanceRuleRegexConditionModel> conditions;
+    public List<GovernanceRuleRegexConditionModel> conditions;
 }

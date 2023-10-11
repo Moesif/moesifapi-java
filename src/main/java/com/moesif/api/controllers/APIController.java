@@ -22,6 +22,8 @@ import com.moesif.api.http.client.APICallBack;
 import com.moesif.api.controllers.syncwrapper.APICallBackCatcher;
 
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class APIController extends BaseController implements IAPIController {
     //private static variables for the singleton pattern
@@ -307,6 +309,8 @@ public class APIController extends BaseController implements IAPIController {
         executeRequestAsync(_request, callBack);
     }
 
+
+
     /**
      * Get the Governance rules
      * @throws Throwable on error getting app config
@@ -567,12 +571,6 @@ public class APIController extends BaseController implements IAPIController {
         return eb.build();
     }
 
-    public boolean shouldSendSampledEvent() {
-        int sampleRate = getCachedAppConfig().getSampleRate();
-        double randomPercentage = Math.random() * 100;
-
-        return sampleRate >= randomPercentage;
-    }
 
     public boolean shouldSendSampledEvent(EventModel eventModel) {
         int sampleRate = getSampleRateToUse(eventModel);
@@ -582,17 +580,42 @@ public class APIController extends BaseController implements IAPIController {
     }
 
     public int getSampleRateToUse(EventModel eventModel) {
-        AppConfigModel appConfigModel = getCachedAppConfig();
-        int sampleRate = appConfigModel.getSampleRate();
+        return getSampleRateToUse(eventModel, getCachedAppConfig());
+    }
+
+    public int getSampleRateToUse(EventModel eventModel, AppConfigModel appConfigModel) {
+        List<Integer> sampleRates = new ArrayList();
 
         if (eventModel.getUserId() != null && appConfigModel.getUserSampleRate().containsKey(eventModel.getUserId())) {
-            sampleRate = appConfigModel.getUserSampleRate().get(eventModel.getUserId());
+            sampleRates.add(appConfigModel.getUserSampleRate().get(eventModel.getUserId()));
         } else if (eventModel.getCompanyId() != null && appConfigModel.getCompanySampleRate().containsKey(eventModel.getCompanyId())) {
-            sampleRate = appConfigModel.getCompanySampleRate().get(eventModel.getCompanyId());
+            sampleRates.add(appConfigModel.getCompanySampleRate().get(eventModel.getCompanyId()));
         }
+        if(!appConfigModel.getRegex_config().isEmpty()) {
+            Map<String, String> regexMap = eventModel.getRegexMap();
+            for (RegexConfigModel regexConfigModel : appConfigModel.getRegex_config()) {
+                Boolean match = false;
+                for(GovernanceRuleRegexConditionModel con: regexConfigModel.conditions) {
+                    if (regexMap.containsKey(con.getPath())) {
+                        Pattern pattern = Pattern.compile(con.getValue(), Pattern.CASE_INSENSITIVE);
+                        Matcher matcher = pattern.matcher(regexMap.get(con.getPath()));
+                        if (matcher.find()) {
+                            match = true;
+                        } else {
+                            match = false;
+                        }
+                    }
+                }
+                if (match) {
+                    sampleRates.add(regexConfigModel.sampeleRate);
+                    break;
+                }
+            }
+        }
+        return sampleRates.isEmpty()?  appConfigModel.getSampleRate() : Collections.min(sampleRates);
 
-        return sampleRate;
     }
+
 
     private APICallBack<HttpResponse> createHttpResponseCallback(final APICallBack<HttpResponse> callBack) {
 
