@@ -629,7 +629,7 @@ public class APIControllerTest extends ControllerTestBase {
         // Test the raw body
         InputStream bodyIs = httpResponse.getResponse().getRawBody();
         assertNotNull(bodyIs);
-        AppConfigModel appConfig = APIController.parseAppConfigModel(bodyIs);
+        AppConfigModel appConfig = controller.parseAppConfigModel(bodyIs);
         bodyIs.close();
         assertNotNull(appConfig);
 
@@ -699,7 +699,7 @@ public class APIControllerTest extends ControllerTestBase {
         // Test the raw body
         InputStream bodyIs = httpResponse.getResponse().getRawBody();
         assertNotNull(bodyIs);
-        List<GovernanceRulesModel> rules = APIController.parseGovernanceRulesModel(bodyIs);
+        List<GovernanceRulesModel> rules = controller.parseGovernanceRulesModel(bodyIs);
         bodyIs.close();
         assertNotNull(rules);
 
@@ -782,7 +782,6 @@ public class APIControllerTest extends ControllerTestBase {
                 .companyId("67890")
                 .build();
 
-        controller.setAppConfig(appConfigModel);
 
         assertEquals(10, controller.getSampleRateToUse(eventModel1,appConfigModel));
         assertEquals(90, controller.getSampleRateToUse(eventModel2, appConfigModel));
