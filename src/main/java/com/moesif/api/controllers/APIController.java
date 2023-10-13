@@ -27,19 +27,24 @@ import java.util.regex.Pattern;
 
 public class APIController extends BaseController implements IAPIController {
     //private static variables for the singleton pattern
-    private static Object syncObject = new Object();
     private static final Logger logger = Logger.getLogger(APIController.class.toString());
 
     private static final String APP_CONFIG_ETAG_HEADER = "x-moesif-config-etag";
 
     // wait 5 minutes before grabbing the new config (different servers might have different states)
     private static final int APP_CONFIG_DEBOUNCE = 1000 * 60 * 5; // 5 minutes
-    private long lastAppConfigFetch;
-    private boolean shouldSyncAppConfig = false;
-    private AppConfigModel appConfigModel;
-    private String appConfigEtag;
+    private volatile long lastAppConfigFetch;
+    private boolean shouldSyncAppConfig = true;
+    private volatile AppConfigModel appConfigModel;
+    private volatile String appConfigEtag;
 
     private Configuration config;
+
+    private ObjectMapper objectMapper = new ObjectMapper();
+
+    public APIController() {
+        getInitAppConfigModel();
+    }
 
 
     /**
@@ -293,6 +298,25 @@ public class APIController extends BaseController implements IAPIController {
 
     }
 
+    private void getInitAppConfigModel() {
+        try {
+            HttpResponse response =  getAppConfig();
+            String newAppConfigEtag = response.getHeaders().get(APP_CONFIG_ETAG_HEADER);
+            InputStream respBodyIs = response.getRawBody();
+            appConfigModel = parseAppConfigModel(respBodyIs);
+            respBodyIs.close();
+            logger.info("App Config Model returned is " + appConfigModel);
+
+            appConfigEtag = newAppConfigEtag;
+            lastAppConfigFetch = new Date().getTime();
+
+        } catch( Throwable e){
+            logger.warning("Error getting AppConfig: " + e.getMessage());
+            appConfigModel = getDefaultAppConfig();
+            lastAppConfigFetch = new Date().getTime();
+        }
+    }
+
     /**
      * Get the Application config async
      * @param    callBack Called after the HTTP response is received
@@ -446,71 +470,78 @@ public class APIController extends BaseController implements IAPIController {
     }
 
     private AppConfigModel getCachedAppConfig() {
-        if (appConfigModel == null) {
-            trySyncAppConfig();
-            return getDefaultAppConfig();
-        } else {
-            return appConfigModel;
-        }
+            trySyncAppConfig(true);
+            return  appConfigModel;
     }
 
-    public void setAppConfig(AppConfigModel config) {
-        if (config != null) {
-            appConfigModel = config;
-        }
-    }
-
-    public void setShouldSyncAppConfig(boolean shouldSync) {
-        shouldSyncAppConfig = shouldSync;
-    }
 
     private void checkAppConfigEtag(String newAppConfigEtag) {
         if (newAppConfigEtag != null && !newAppConfigEtag.equals(appConfigEtag)) {
             // only update the etag once we've gotten the new config
-            trySyncAppConfig();
+            trySyncAppConfig(false);
         }
     }
 
-    private boolean trySyncAppConfig() {
+    private void trySyncAppConfig(Boolean timeCheck) {
         long now = new Date().getTime();
-        boolean willFetch = shouldSyncAppConfig && lastAppConfigFetch + APP_CONFIG_DEBOUNCE < now;
+        if (timeCheck) {
+            boolean willFetch = lastAppConfigFetch + APP_CONFIG_DEBOUNCE < now;
 
-        if (willFetch) {
-            lastAppConfigFetch = now;
-
-            syncAppConfig();
+            if (willFetch) {
+                syncAppConfig(timeCheck);
+            }
+        }
+        else
+        {
+            syncAppConfig(timeCheck);
         }
 
-        return willFetch;
     }
 
-    public static List<GovernanceRulesModel> parseGovernanceRulesModel(InputStream jsonTxt) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(jsonTxt, new TypeReference<List<GovernanceRulesModel>>(){});
+    public  List<GovernanceRulesModel> parseGovernanceRulesModel(InputStream jsonTxt) throws IOException {
+        return objectMapper.readValue(jsonTxt, new TypeReference<List<GovernanceRulesModel>>(){});
     }
 
-    public static AppConfigModel parseAppConfigModel(InputStream jsonTxt) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(jsonTxt, AppConfigModel.class);
+    public AppConfigModel parseAppConfigModel(InputStream jsonTxt) throws IOException {
+        return objectMapper.readValue(jsonTxt, AppConfigModel.class);
     }
 
-    private void syncAppConfig() {
+    private void syncAppConfig(Boolean etagCheck) {
         if (shouldSyncAppConfig) {
             APICallBack<HttpResponse> callback = new APICallBack<HttpResponse>() {
                 public void onSuccess(HttpContext context, HttpResponse response) {
-                    // Read the response body
-                    try {
-                        InputStream respBodyIs = response.getRawBody();
-                        appConfigModel = parseAppConfigModel(respBodyIs);
-                        respBodyIs.close();
-                    } catch (Exception e) {
-                        logger.warning("Invalid AppConfig JSON: " + e.getMessage());
-                    }
-                    logger.info("App Config Model returned is " + appConfigModel);
+                    if(etagCheck) {
+                        String newAppConfigEtag = response.getHeaders().get(APP_CONFIG_ETAG_HEADER);
+                        if (newAppConfigEtag != null && !newAppConfigEtag.equals(appConfigEtag)) {
 
-                    appConfigEtag = response
-                            .getHeaders()
-                            .get(APP_CONFIG_ETAG_HEADER);
+                            // Read the response body
+                            try {
+                                InputStream respBodyIs = response.getRawBody();
+                                appConfigModel = parseAppConfigModel(respBodyIs);
+                                respBodyIs.close();
+                            } catch (Exception e) {
+                                logger.warning("Invalid AppConfig JSON: " + e.getMessage());
+                            }
+                            logger.info("App Config Model returned is " + appConfigModel);
+
+                            appConfigEtag = newAppConfigEtag;
+                            lastAppConfigFetch = new Date().getTime();
+                        }
+                    }
+                    else {
+                        try {
+                            InputStream respBodyIs = response.getRawBody();
+                            appConfigModel = parseAppConfigModel(respBodyIs);
+                            respBodyIs.close();
+                        } catch (Exception e) {
+                            logger.warning("Invalid AppConfig JSON: " + e.getMessage());
+                        }
+                        logger.info("App Config Model returned is " + appConfigModel);
+
+                        appConfigEtag = response.getHeaders().get(APP_CONFIG_ETAG_HEADER);
+                        lastAppConfigFetch = new Date().getTime();
+
+                    }
                 }
 
                 public void onFailure(HttpContext context, Throwable error) {
