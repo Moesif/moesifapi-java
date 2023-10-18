@@ -13,6 +13,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moesif.api.*;
+import com.moesif.api.Base64;
 import com.moesif.api.models.*;
 import com.moesif.api.exceptions.*;
 import com.moesif.api.http.client.HttpContext;
@@ -24,12 +25,15 @@ import com.moesif.api.controllers.syncwrapper.APICallBackCatcher;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class APIController extends BaseController implements IAPIController {
     //private static variables for the singleton pattern
     private static final Logger logger = Logger.getLogger(APIController.class.toString());
 
     private static final String APP_CONFIG_ETAG_HEADER = "x-moesif-config-etag";
+
+    private static final String RULES_ETAG_HEADER = "x-moesif-rules-tag";
 
     // wait 5 minutes before grabbing the new config (different servers might have different states)
     private static final int APP_CONFIG_DEBOUNCE = 1000 * 60 * 5; // 5 minutes
@@ -38,12 +42,18 @@ public class APIController extends BaseController implements IAPIController {
     private volatile AppConfigModel appConfigModel;
     private volatile String appConfigEtag;
 
+    private volatile List<GovernanceRulesModel> governanceRules;
+
+    private volatile String rulesEtag;
+
     private Configuration config;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public APIController() {
+    public APIController(Configuration config) {
+        this.config = config;
         getInitAppConfigModel();
+        getGovernanceRulesModel();
     }
 
 
@@ -311,9 +321,26 @@ public class APIController extends BaseController implements IAPIController {
             lastAppConfigFetch = new Date().getTime();
 
         } catch( Throwable e){
+            e.printStackTrace();
             logger.warning("Error getting AppConfig: " + e.getMessage());
             appConfigModel = getDefaultAppConfig();
             lastAppConfigFetch = new Date().getTime();
+        }
+    }
+
+    private void getGovernanceRulesModel() {
+        try {
+            HttpResponse response =  getGovernanceRules();
+            this.rulesEtag = response.getHeaders().get(RULES_ETAG_HEADER);
+            InputStream respBodyIs = response.getRawBody();
+            this.governanceRules = parseGovernanceRulesModel(respBodyIs);
+            respBodyIs.close();
+            logger.info("App Config Model returned is " + appConfigModel);
+
+
+        } catch( Throwable e){
+            logger.warning("Error getting GovernanceRules: " + e.getMessage());
+             this.governanceRules = new ArrayList<>();
         }
     }
 
@@ -386,10 +413,6 @@ public class APIController extends BaseController implements IAPIController {
         executeRequestAsync(_request, callBack);
     }
 
-    public void setConfig(Configuration config) {
-        this.config = config;
-    }
-
 
     private static class QueryInfo {
         String _queryUrl;
@@ -446,6 +469,8 @@ public class APIController extends BaseController implements IAPIController {
 
         checkAppConfigEtag(headers.get(APP_CONFIG_ETAG_HEADER));
 
+        checkRulesEtag(_response.getHeaders().get(RULES_ETAG_HEADER));
+
         // Return headers to the client
         return headers;
     }
@@ -479,6 +504,12 @@ public class APIController extends BaseController implements IAPIController {
         if (newAppConfigEtag != null && !newAppConfigEtag.equals(appConfigEtag)) {
             // only update the etag once we've gotten the new config
             trySyncAppConfig(false);
+        }
+    }
+
+    private void checkRulesEtag(String newRulesEtag) {
+        if(newRulesEtag != null && !newRulesEtag.equals(rulesEtag)) {
+            getGovernanceRulesModel();
         }
     }
 
@@ -602,6 +633,149 @@ public class APIController extends BaseController implements IAPIController {
         return eb.build();
     }
 
+    public boolean isBlockedByGovernanceRules(EventModel eventModel) {
+        return isBlockedByGovernanceRules(eventModel, this.governanceRules, getCachedAppConfig());
+    }
+
+    public boolean isBlockedByGovernanceRules(EventModel eventModel, List<GovernanceRulesModel> rules, AppConfigModel appConfig) {
+        if(rules.isEmpty()) {
+            return false;
+        }
+        Map<String, String> regexMap = eventModel.getRegexMap();
+        List<Tuple2<GovernanceRulesModel,EntityRuleModel>> users = getMatchingEntityRules(eventModel.getUserId(), "user", appConfig, rules);
+        Tuple2<GovernanceRulesModel,EntityRuleModel> userTuple = users.stream().filter(tuple -> isRegexMatch(tuple.a, regexMap)).findFirst().orElse(null);
+        if(userTuple != null) {
+            updateEventModel(eventModel, userTuple);
+            return true;
+        }
+
+        List<Tuple2<GovernanceRulesModel,EntityRuleModel>> companies = getMatchingEntityRules(eventModel.getCompanyId(), "company", appConfig, rules);
+        Tuple2<GovernanceRulesModel,EntityRuleModel> companyTuple = companies.stream().filter(tuple -> isRegexMatch(tuple.a, regexMap)).findFirst().orElse(null);
+        if(companyTuple != null) {
+            updateEventModel(eventModel, companyTuple);
+            return true;
+        }
+
+        List<GovernanceRulesModel> regexRules = rules.stream().filter(r -> r.getType().equals("regex")).collect(Collectors.toList());
+        GovernanceRulesModel regexRule = regexRules.stream().filter(r -> isRegexMatch(r, regexMap)).findFirst().orElse(null);
+        if(regexRule != null) {
+            updateEventModel(eventModel, new Tuple2(regexRule, null));
+            return true;
+        }
+
+        return false;
+    }
+
+    private List<Tuple2<GovernanceRulesModel, EntityRuleModel>> getMatchingEntityRules(String entityId, String type, AppConfigModel appConfig, List<GovernanceRulesModel> rules) {
+        List<Tuple2<GovernanceRulesModel, EntityRuleModel>> matching = new ArrayList<>();
+        Map<String, List<EntityRuleModel>> entityRules = type.equals("user") ? appConfig.getUserRules() : appConfig.getCompanyRules();
+        if(entityId == null) {
+            for (GovernanceRulesModel m : rules) {
+               if(m.isAppliedToUnidentified() && m.getType().equals(type)) {
+                   matching.add(new Tuple2<>(m, null));
+               }
+            }
+            return matching;
+        }
+
+        if(entityRules.containsKey(entityId)) {
+            for (EntityRuleModel e : entityRules.get(entityId)) {
+                for (GovernanceRulesModel m : rules) {
+                    if(m.getId().equals(e.getRules()) && m.getType().equals(type) &&  m.getAppliedTo().equals("matching")) {
+                        matching.add(new Tuple2<>(m, e));
+                    }
+                }
+            }
+            return matching;
+
+        } else {
+
+            for (GovernanceRulesModel m : rules) {
+                if( m.getAppliedTo().equals("not_matching") && m.getType().equals(type)) {
+                    matching.add(new Tuple2<>(m, null));
+                }
+            }
+            return matching;
+        }
+    }
+
+    private boolean isRegexMatch(GovernanceRulesModel m, Map<String, String> regexMap) {
+
+       List<GovernanceRuleRegexRuleModel> regexModels = m.getRegexConfig();
+       if(regexModels == null || regexModels.isEmpty())
+        return true;
+       for(GovernanceRuleRegexRuleModel r : regexModels) {
+           Boolean match = false;
+           for(GovernanceRuleRegexConditionModel con: r.getConditions()) {
+               if (regexMap.containsKey(con.getPath())) {
+                   Pattern pattern = Pattern.compile(con.getValue(), Pattern.CASE_INSENSITIVE);
+                   Matcher matcher = pattern.matcher(regexMap.get(con.getPath()));
+                   if (matcher.find()) {
+                       match = true;
+                   } else {
+                       match = false;
+                   }
+               }
+           }
+           if (match) {
+               return true;
+           }
+       }
+       return false;
+
+    }
+
+    private void updateEventModel(EventModel eventModel, Tuple2<GovernanceRulesModel, EntityRuleModel> tuple) {
+        if(tuple.b == null) {
+           updateEventModel(eventModel, tuple.a.getId(), tuple.a.getResponse());
+        }
+        else {
+            String body = tuple.a.getResponse().getBody().toString();
+            List<GovernanceRulesVariableModel> variableModels = tuple.a.getVariables().stream().map(m -> {
+                GovernanceRulesVariableModel v = new GovernanceRulesVariableModel();
+                v.setName(String.format("{{{{{%s}}}}}" ,m.getName()));
+                v.setPath(m.getPath());
+                return v;
+            }).collect(Collectors.toList());
+
+            for (GovernanceRulesVariableModel v : variableModels) {
+                body = body.replace(v.getName(), v.getPath());
+            }
+            tuple.a.getResponse().setBody(body);
+
+            Map<String, String> headers = tuple.a.getResponse().getHeaders().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey,
+                    e -> {
+                        String value = e.getValue();
+                        for (GovernanceRulesVariableModel v : variableModels) {
+                            value = value.replace(v.getName(), v.getPath());
+                        }
+                        return value;
+                    }));
+            tuple.a.getResponse().setHeaders(headers);
+            updateEventModel(eventModel, tuple.a.getId(), tuple.a.getResponse());
+
+        }
+
+    }
+
+    private void updateEventModel(EventModel eventModel, String ruleId, GovernanceRulesResponseModel response) {
+        eventModel.setBlockedBy(ruleId);
+        EventResponseModel eventResponseModel = new EventResponseModel();
+        eventResponseModel.setTime(new Date());
+        eventResponseModel.setStatus(response.getStatus());
+        eventResponseModel.setHeaders(response.getHeaders());
+        try {
+            Object body = APIHelper.deserialize(response.getBody().toString(),new TypeReference<Object>() {});
+            eventResponseModel.setBody(body);
+            eventResponseModel.setTransferEncoding("json");
+        } catch (Exception e) {
+            byte[] encodedBytes = Base64.encode(response.getBody().toString().getBytes(), Base64.DEFAULT);
+            eventResponseModel.setBody(new String(encodedBytes));
+            eventResponseModel.setTransferEncoding("base64");
+        }
+        eventModel.setResponse(eventResponseModel);
+    }
+
 
     public boolean shouldSendSampledEvent(EventModel eventModel) {
         int sampleRate = getSampleRateToUse(eventModel);
@@ -665,6 +839,8 @@ public class APIController extends BaseController implements IAPIController {
 
                     checkAppConfigEtag(_response.getHeaders().get(APP_CONFIG_ETAG_HEADER));
 
+                    checkRulesEtag(_response.getHeaders().get(RULES_ETAG_HEADER));
+
                     //let the caller know of the success
                     callBack.onSuccess(_context, _response);
                 } catch (APIException error) {
@@ -686,5 +862,15 @@ public class APIController extends BaseController implements IAPIController {
                 callBack.onFailure(_context, _error);
             }
         };
+    }
+
+    static final class Tuple2<A, B> {
+        final A a;
+        final B b;
+
+        public Tuple2(A a, B b) {
+            this.a = a;
+            this.b = b;
+        }
     }
 }

@@ -25,6 +25,18 @@ public class EventModel
     private Object metadata;
     private String direction;
     private int weight;
+
+    @JsonGetter("blocked_by")
+    public String getBlockedBy() {
+        return blockedBy;
+    }
+
+    @JsonSetter("blocked_by")
+    public void setBlockedBy(String blockedBy) {
+        this.blockedBy = blockedBy;
+    }
+
+    private String blockedBy;
     /** GETTER
      * API request object
      * @return the value

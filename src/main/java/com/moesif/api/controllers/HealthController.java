@@ -23,7 +23,8 @@ import com.moesif.api.controllers.syncwrapper.APICallBackCatcher;
 public class HealthController extends BaseController implements IHealthController {
     private Configuration config;
 
-    public HealthController() {
+    public HealthController(Configuration config) {
+        this.config = config;
 
     }
     /**
