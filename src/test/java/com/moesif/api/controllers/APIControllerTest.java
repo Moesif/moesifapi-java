@@ -1041,4 +1041,59 @@ public class APIControllerTest extends ControllerTestBase {
         assertEquals(500, eventModel.getResponse().getStatus());
 
     }
+
+    @Test
+    public void shouldNotBlockonWhenNoGovernanceRule() throws Throwable {
+        assertFalse(controller.isBlockedByGovernanceRules(new EventModel(), new ArrayList<>(), controller.getDefaultAppConfig()));
+    }
+
+    @Test
+    public void shouldBlockonRegexRule() throws Throwable {
+        String governanceJson = "[{\"_id\":\"62f69205ec701a4f0400a377\",\"created_at\":\"2022-08-12T17:46:45.670\",\"org_id\":\"421:67\",\"app_id\":\"46:73\",\"name\":\"my gov\",\"block\":true,\"type\":\"company\",\"regex_config\":[{\"conditions\":[{\"path\":\"request.verb\",\"value\":\"POST\"}]}],\"response\":{\"status\":203,\"headers\":{},\"body\":{\"ok\":1}}},{\"_id\":\"62f6c661ac3331776950eba1\",\"created_at\":\"2022-08-12T21:30:09.523\",\"org_id\":\"421:67\",\"app_id\":\"46:73\",\"name\":\"my regex\",\"block\":true,\"type\":\"regex\",\"regex_config\":[{\"conditions\":[{\"path\":\"request.verb\",\"value\":\"POST\"}]}],\"response\":{\"status\":203,\"headers\":{},\"body\":{\"ok\":1}}},{\"_id\":\"62fd061e51f905712d73f72d\",\"created_at\":\"2022-08-17T15:15:42.909\",\"org_id\":\"421:67\",\"app_id\":\"46:73\",\"name\":\"user\",\"block\":true,\"type\":\"user\",\"regex_config\":[{\"conditions\":[{\"path\":\"request.body.operationName\",\"value\":\"Get.*\"}]}],\"response\":{\"status\":203,\"headers\":{},\"body\":{\"error\":\"this is a test\"}}},{\"_id\":\"62fe6f3bf199ee4cf35762d7\",\"created_at\":\"2022-08-18T16:56:27.767\",\"org_id\":\"421:67\",\"app_id\":\"46:73\",\"name\":\"company rule 2\",\"block\":true,\"type\":\"company\",\"regex_config\":[{\"conditions\":[{\"path\":\"request.verb\",\"value\":\"DELETE\"}]}],\"response\":{\"status\":401,\"headers\":{},\"body\":{\"error\":\"test\"}}},{\"_id\":\"62ffc2e77a9aca1bfdefc3e3\",\"created_at\":\"2022-08-19T17:05:43.321\",\"org_id\":\"421:67\",\"app_id\":\"46:73\",\"name\":\"graphql2\",\"block\":true,\"type\":\"regex\",\"regex_config\":[{\"conditions\":[{\"path\":\"request.body.query\",\"value\":\".*Get.*\"}]}],\"response\":{\"status\":401,\"headers\":{},\"body\":{\"test\":\"graph2\"}}},{\"_id\":\"62fff3367a9aca1bfdefc3f1\",\"created_at\":\"2022-08-19T20:31:50.765\",\"org_id\":\"421:67\",\"app_id\":\"46:73\",\"name\":\"company rule no regex\",\"block\":true,\"type\":\"company\",\"regex_config\":[],\"response\":{\"status\":402,\"headers\":{},\"body\":{\"status\":\"make payment\"}}},{\"_id\":\"6317c7ba63501c63e3ff4ee0\",\"created_at\":\"2022-09-06T22:20:42.060\",\"org_id\":\"421:67\",\"app_id\":\"46:73\",\"name\":\"user rule\",\"block\":true,\"type\":\"user\",\"variables\":[{\"name\":\"0\",\"path\":\"cohort_names\"},{\"name\":\"1\",\"path\":\"created\"},{\"name\":\"2\",\"path\":\"identified_user_id\"},{\"name\":\"3\",\"path\":\"company_id\"}],\"regex_config\":[],\"response\":{\"status\":204,\"headers\":{\"my header\":\"{{0}}\",\"my header2\":\"{{1}}\",\"header3\":\"{{2}}\"},\"body\":{\"yes\":true,\"{{3}}\":\"yes\"}}}]";
+        String appConfigJson = "{\"org_id\":\"421:67\",\"app_id\":\"46:73\",\"sample_rate\":100,\"block_bot_traffic\":false,\"user_sample_rate\":{\"sean-user-11\":70,\"sean-user-10\":70,\"sean-user-9\":70},\"company_sample_rate\":{\"sean-company-5\":50,\"67890\":50,\"sean-company-9\":50,\"sean-company-6\":50,\"sean-company-10\":50,\"sean-company-11\":50,\"company_1234\":50},\"user_rules\":{\"sean-user-11\":[{\"rules\":\"6317c7ba63501c63e3ff4ee0\",\"values\":{\"0\":\"cohort_names\",\"1\":\"created\",\"2\":\"identified_user_id\",\"3\":\"sean-company-11\"}}],\"sean-user-10\":[{\"rules\":\"6317c7ba63501c63e3ff4ee0\",\"values\":{\"0\":\"cohort_names\",\"1\":\"created\",\"2\":\"identified_user_id\",\"3\":\"sean-company-10\"}}],\"sean-user-9\":[{\"rules\":\"6317c7ba63501c63e3ff4ee0\",\"values\":{\"0\":\"cohort_names\",\"1\":\"created\",\"2\":\"identified_user_id\",\"3\":\"sean-company-9\"}}]},\"company_rules\":{\"sean-company-5\":[{\"rules\":\"62fe6f3bf199ee4cf35762d7\"},{\"rules\":\"62fff3367a9aca1bfdefc3f1\"}],\"67890\":[{\"rules\":\"62fe6f3bf199ee4cf35762d7\"},{\"rules\":\"62fff3367a9aca1bfdefc3f1\"}],\"sean-company-9\":[{\"rules\":\"62fe6f3bf199ee4cf35762d7\"},{\"rules\":\"62fff3367a9aca1bfdefc3f1\"}],\"sean-company-6\":[{\"rules\":\"62fe6f3bf199ee4cf35762d7\"},{\"rules\":\"62fff3367a9aca1bfdefc3f1\"}],\"sean-company-10\":[{\"rules\":\"62fe6f3bf199ee4cf35762d7\"},{\"rules\":\"62fff3367a9aca1bfdefc3f1\"}],\"sean-company-11\":[{\"rules\":\"62fe6f3bf199ee4cf35762d7\"},{\"rules\":\"62fff3367a9aca1bfdefc3f1\"}],\"company_1234\":[{\"rules\":\"62fe6f3bf199ee4cf35762d7\"},{\"rules\":\"62fff3367a9aca1bfdefc3f1\"}]},\"ip_addresses_blocked_by_name\":{},\"regex_config\":[{\"conditions\":[{\"path\":\"request.verb\",\"value\":\"post\"}],\"sample_rate\":20}],\"billing_config_jsons\":{}}";
+        AppConfigModel appConfig = APIHelper.deserialize(appConfigJson, AppConfigModel.class);
+        List<GovernanceRulesModel> rules = APIHelper.deserialize(governanceJson, new TypeReference<List<GovernanceRulesModel>>(){});
+
+
+        EventRequestModel requestModel = new EventRequestModel();
+        requestModel.setUri("https://www.google.com/search");
+        requestModel.setVerb("POST");
+        requestModel.setTime(new Date());
+        requestModel.setHeaders(new HashMap<String, String>());
+        EventModel eventModel = new EventModel();
+        eventModel.setRequest(requestModel);
+
+        assertTrue(controller.isBlockedByGovernanceRules(eventModel, rules, appConfig));
+        assertEquals("62f6c661ac3331776950eba1", eventModel.getBlockedBy());
+        assertEquals(203, eventModel.getResponse().getStatus());
+
+    }
+
+    @Test
+    public void shouldRespsectRegexRules() throws Exception {
+        String appConfigJson = "{\"org_id\":\"640:128\",\"app_id\":\"487:163\",\"sample_rate\":80,\"block_bot_traffic\":false,\"user_sample_rate\":{},\"company_sample_rate\":{},\"user_rules\":{},\"company_rules\":{},\"ip_addresses_blocked_by_name\":{},\"regex_config\":[{\"conditions\":[{\"path\":\"request.verb\",\"value\":\"GET\"}],\"sample_rate\":90}],\"billing_config_jsons\":{}}";
+        String governanceJson = "[{\"_id\":\"631d6d065ef7bb0f43ccd3f8\",\"created_at\":\"2022-09-11T05:07:18.679\",\"org_id\":\"640:128\",\"app_id\":\"487:163\",\"name\":\"regex 1\",\"block\":true,\"type\":\"regex\",\"regex_config\":[{\"conditions\":[{\"path\":\"request.route\",\"value\":\"/api/*\"},{\"path\":\"request.verb\",\"value\":\"POST\"}]},{\"conditions\":[{\"path\":\"request.ip_address\",\"value\":\"120.110.10.11\"}]}],\"response\":{\"status\":401,\"headers\":{},\"body\":{\"test\":1}}}]";
+        AppConfigModel appConfig = APIHelper.deserialize(appConfigJson, AppConfigModel.class);
+        List<GovernanceRulesModel> rules = APIHelper.deserialize(governanceJson, new TypeReference<List<GovernanceRulesModel>>(){});
+
+
+        EventRequestModel eventReq = new EventRequestModel();
+        eventReq.setUri("https://localhost:5001/api/Employee");
+        eventReq.setVerb("Get");
+
+
+        EventModel eventModel = new EventModel();
+        eventModel.setRequest(eventReq);
+
+        assertFalse(controller.isBlockedByGovernanceRules(eventModel, rules, appConfig));
+
+
+        eventReq.setVerb("POST");
+        assertTrue(controller.isBlockedByGovernanceRules(eventModel, rules, appConfig));
+
+        eventReq.setVerb("GET");
+        eventReq.setIpAddress("120.110.10.11");
+        assertTrue(controller.isBlockedByGovernanceRules(eventModel, rules, appConfig));
+
+    }
 }
