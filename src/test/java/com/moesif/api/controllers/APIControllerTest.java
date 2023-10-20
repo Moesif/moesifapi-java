@@ -1088,9 +1088,6 @@ public class APIControllerTest extends ControllerTestBase {
         assertFalse(controller.isBlockedByGovernanceRules(eventModel, rules, appConfig));
 
 
-        eventReq.setVerb("POST");
-        assertTrue(controller.isBlockedByGovernanceRules(eventModel, rules, appConfig));
-
         eventReq.setVerb("GET");
         eventReq.setIpAddress("120.110.10.11");
         assertTrue(controller.isBlockedByGovernanceRules(eventModel, rules, appConfig));

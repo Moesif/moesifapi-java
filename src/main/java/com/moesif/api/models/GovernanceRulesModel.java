@@ -176,7 +176,8 @@ public class GovernanceRulesModel
      * @return the value
      */
     @JsonGetter("variables")
-    public List<GovernanceRulesVariableModel> getVariables ( ) { return this.variables; }
+    public List<GovernanceRulesVariableModel> getVariables ( ) {
+        return this.variables == null? new ArrayList<>(): this.variables; }
 
     /** SETTER
      * type

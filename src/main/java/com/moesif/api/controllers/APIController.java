@@ -335,7 +335,7 @@ public class APIController extends BaseController implements IAPIController {
             InputStream respBodyIs = response.getRawBody();
             this.governanceRules = parseGovernanceRulesModel(respBodyIs);
             respBodyIs.close();
-            logger.info("App Config Model returned is " + appConfigModel);
+            logger.info("Governance model returned is  " + this.governanceRules);
 
 
         } catch( Throwable e){
@@ -714,7 +714,12 @@ public class APIController extends BaseController implements IAPIController {
                        match = true;
                    } else {
                        match = false;
+                       break;
                    }
+               }
+               else {
+                   match = false;
+                   break;
                }
            }
            if (match) {
