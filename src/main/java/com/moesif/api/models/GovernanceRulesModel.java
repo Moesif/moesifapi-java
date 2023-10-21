@@ -15,7 +15,32 @@ public class GovernanceRulesModel
     private String appId;
     private String name;
     private boolean block;
+
+    @JsonGetter("applied_to_unidentified")
+    public boolean isAppliedToUnidentified() {
+        return appliedToUnidentified;
+    }
+
+    @JsonSetter("applied_to_unidentified")
+    public void setAppliedToUnidentified(boolean appliedToUnidentified) {
+        this.appliedToUnidentified = appliedToUnidentified;
+    }
+
+    private boolean appliedToUnidentified;
+
+    @JsonGetter("applied_to")
+    public String getAppliedTo() {
+        return appliedTo == null ? "matching" : appliedTo;
+    }
+
+    @JsonSetter("applied_to")
+    public void setAppliedTo(String appliedTo) {
+        this.appliedTo = appliedTo;
+    }
+
     private String type;
+
+    private String appliedTo;
     private List<GovernanceRulesVariableModel> variables;
     private List<GovernanceRuleRegexRuleModel> regexConfig;
     private GovernanceRulesResponseModel response;
@@ -151,7 +176,8 @@ public class GovernanceRulesModel
      * @return the value
      */
     @JsonGetter("variables")
-    public List<GovernanceRulesVariableModel> getVariables ( ) { return this.variables; }
+    public List<GovernanceRulesVariableModel> getVariables ( ) {
+        return this.variables == null? new ArrayList<>(): this.variables; }
 
     /** SETTER
      * type
@@ -209,6 +235,8 @@ public class GovernanceRulesModel
         sb.append("Name="+getName()+"\n");
         sb.append("Block="+getBlock()+"\n");
         sb.append("Type="+getType()+"\n");
+        sb.append("AppliedTo="+getAppliedTo()+"\n");
+        sb.append("AppliedToUnidentified="+isAppliedToUnidentified()+"\n");
         List<GovernanceRulesVariableModel> variableList = getVariables();
         if (variableList != null) {
             sb.append("Variables=" + convertVariables(variableList) + "\n");

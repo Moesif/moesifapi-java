@@ -43,26 +43,13 @@ public class MoesifAPIClient {
         BaseController.setClientInstance(httpClient);
     }
 
-    /**
-     * Default constructor 
-     */     
-    private MoesifAPIClient() {
-
-        controller = new APIController();
-        config = new Configuration();
-        healthController = new HealthController();
-	}
 
     /**
      * Client initialization constructor
      * @param applicationId The Application Id for authentication
      */
     public MoesifAPIClient(String applicationId) {
-        this();
-        config.applicationId = applicationId;
-        config.baseUri = Configuration.BaseUri;
-        controller.setConfig(config);
-        healthController.setConfig(config);
+        this(applicationId, Configuration.BaseUri);
     }
 
     /**
@@ -71,10 +58,10 @@ public class MoesifAPIClient {
      * @param baseUri The base Uri for API calls
      */     
     public MoesifAPIClient(String applicationId, String baseUri) {
-        this();
+        config = new Configuration();
         config.applicationId = applicationId;
         config.baseUri = baseUri;
-        controller.setConfig(config);
-        healthController.setConfig(config);
+        controller = new APIController(config);
+        healthController = new HealthController(config);
     }
 }

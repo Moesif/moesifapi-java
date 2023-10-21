@@ -8,6 +8,7 @@ package com.moesif.api.models;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -25,6 +26,18 @@ public class EventModel
     private Object metadata;
     private String direction;
     private int weight;
+
+    @JsonGetter("blocked_by")
+    public String getBlockedBy() {
+        return blockedBy;
+    }
+
+    @JsonSetter("blocked_by")
+    public void setBlockedBy(String blockedBy) {
+        this.blockedBy = blockedBy;
+    }
+
+    private String blockedBy;
     /** GETTER
      * API request object
      * @return the value
@@ -197,10 +210,10 @@ public class EventModel
         }
         if(request != null && request.getUri() != null) {
             String route = "/";
-            Pattern p = Pattern.compile("http[s]?://[^/]+(/[^?]+)", Pattern.CASE_INSENSITIVE);
-            Matcher m = p.matcher(request.getUri());
-            if(m.groupCount() == 2) {
-                route = m.group(1);
+            try {
+                URL url = new URL(request.getUri());
+                route = url.getPath();
+            }catch (Exception e) {
             }
             map.put("request.route", route);
         }
