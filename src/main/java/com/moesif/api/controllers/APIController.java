@@ -5,6 +5,7 @@
  */
 package com.moesif.api.controllers;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -26,6 +27,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.zip.GZIPOutputStream;
 
 public class APIController extends BaseController implements IAPIController {
     //private static variables for the singleton pattern
@@ -125,17 +127,33 @@ public class APIController extends BaseController implements IAPIController {
      * @param    callBack Called after the HTTP response is received
      * @throws JsonProcessingException on error creating event
      */
+
+
     public void createEventsBatchAsync(
-                final List<EventModel> body,
-                final APICallBack<HttpResponse> callBack
-    ) throws JsonProcessingException {
+            final List<EventModel> body,
+            final APICallBack<HttpResponse> callBack,
+            boolean userGzip
+    ) throws IOException {
 
         QueryInfo qInfo = getQueryInfo("/v1/events/batch");
+        byte[] compressedBody = null;
+
+        if(userGzip){
+            qInfo._headers.put("Content-Encoding", "gzip");
+            compressedBody = gzip(APIHelper.serialize(body).getBytes());
+        }
 
         //prepare and invoke the API call request to fetch the response
-        final HttpRequest _request = getClientInstance().postBody(qInfo._queryUrl, qInfo._headers, APIHelper.serialize(body));
-
+        String requestBody = userGzip ? new String(compressedBody) : APIHelper.serialize(body);
+        final HttpRequest _request = getClientInstance().postBody(qInfo._queryUrl, qInfo._headers, requestBody);
         executeRequestAsync(_request, callBack);
+    }
+
+    public void createEventsBatchAsync(
+            final List<EventModel> body,
+            final APICallBack<HttpResponse> callBack
+    ) throws IOException {
+        createEventsBatchAsync(body, callBack,false);
     }
 
     /**
@@ -867,6 +885,16 @@ public class APIController extends BaseController implements IAPIController {
                 callBack.onFailure(_context, _error);
             }
         };
+    }
+
+    private byte[] gzip(byte[] input) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(input.length);
+        GZIPOutputStream gzip = new GZIPOutputStream(bos);
+        gzip.write(input);
+        gzip.close();
+        byte[] compressed = bos.toByteArray();
+        bos.close();
+        return compressed;
     }
 
     static final class Tuple2<A, B> {
