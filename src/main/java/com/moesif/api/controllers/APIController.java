@@ -5,7 +5,6 @@
  */
 package com.moesif.api.controllers;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -121,6 +120,13 @@ public class APIController extends BaseController implements IAPIController {
         return executeRequest(_request);
     }
 
+    public void createEventsBatchAsync(
+            final List<EventModel> body,
+            final APICallBack<HttpResponse> callBack
+    ) throws JsonProcessingException {
+        createEventsBatchAsync(body, callBack,false);
+    }
+
     /**
      * Add multiple API Events in a single batch
      * @param    body    The events to create
@@ -132,28 +138,17 @@ public class APIController extends BaseController implements IAPIController {
     public void createEventsBatchAsync(
             final List<EventModel> body,
             final APICallBack<HttpResponse> callBack,
-            boolean userGzip
-    ) throws IOException {
+            boolean useGzip
+    ) throws JsonProcessingException {
 
         QueryInfo qInfo = getQueryInfo("/v1/events/batch");
-        byte[] compressedBody = null;
+        final HttpRequest _request = getClientInstance().postBody(qInfo._queryUrl, qInfo._headers, APIHelper.serialize(body));
 
-        if(userGzip){
-            qInfo._headers.put("Content-Encoding", "gzip");
-            compressedBody = gzip(APIHelper.serialize(body).getBytes());
+        if(useGzip){
+            executeRequestAsync(_request, callBack, true);
         }
 
-        //prepare and invoke the API call request to fetch the response
-        String requestBody = userGzip ? new String(compressedBody) : APIHelper.serialize(body);
-        final HttpRequest _request = getClientInstance().postBody(qInfo._queryUrl, qInfo._headers, requestBody);
         executeRequestAsync(_request, callBack);
-    }
-
-    public void createEventsBatchAsync(
-            final List<EventModel> body,
-            final APICallBack<HttpResponse> callBack
-    ) throws IOException {
-        createEventsBatchAsync(body, callBack,false);
     }
 
     /**
@@ -494,6 +489,11 @@ public class APIController extends BaseController implements IAPIController {
     }
 
     private void executeRequestAsync(final HttpRequest _request, final APICallBack<HttpResponse> callBack) {
+        executeRequestAsync(_request, callBack, false);
+    }
+
+    // Add the isBinary option to support binary async for gzip request
+    private void executeRequestAsync(final HttpRequest _request, final APICallBack<HttpResponse> callBack, boolean isBinary) {
         //invoke the callback before request if its not null
         if (getHttpCallBack() != null)
         {
@@ -504,7 +504,12 @@ public class APIController extends BaseController implements IAPIController {
         Runnable _responseTask = new Runnable() {
             public void run() {
                 //make the API call
-                getClientInstance().executeAsStringAsync(_request, createHttpResponseCallback(callBack));
+                if(isBinary){
+                    getClientInstance().executeAsBinaryAsync(_request, createHttpResponseCallback(callBack));
+                }
+                else {
+                    getClientInstance().executeAsStringAsync(_request, createHttpResponseCallback(callBack));
+                }
             }
         };
 
@@ -885,16 +890,6 @@ public class APIController extends BaseController implements IAPIController {
                 callBack.onFailure(_context, _error);
             }
         };
-    }
-
-    private byte[] gzip(byte[] input) throws IOException {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(input.length);
-        GZIPOutputStream gzip = new GZIPOutputStream(bos);
-        gzip.write(input);
-        gzip.close();
-        byte[] compressed = bos.toByteArray();
-        bos.close();
-        return compressed;
     }
 
     static final class Tuple2<A, B> {

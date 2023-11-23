@@ -405,6 +405,96 @@ public class APIControllerTest extends ControllerTestBase {
         controller.createEventsBatchAsync(events, callBack);
         assertEquals(true, lock.await(10000, TimeUnit.MILLISECONDS));
     }
+    @Test
+    public void testAddBatchedEventsGzipAsync() throws Throwable {
+        final CountDownLatch lock = new CountDownLatch(1);
+
+        // Parameters for the API call
+        Map<String, String> reqHeaders = new HashMap<String, String>();
+        reqHeaders.put("Host", "api.acmeinc.com");
+        reqHeaders.put("Accept", "*/*");
+        reqHeaders.put("Connection", "Keep-Alive");
+        reqHeaders.put("User-Agent", "Dalvik/2.1.0 (Linux; U; Android 5.0.2; C6906 Build/14.5.A.0.242)");
+        reqHeaders.put("Content-Type", "application/json");
+        reqHeaders.put("Content-Length", "126");
+        reqHeaders.put("Accept-Encoding", "gzip");
+
+        Object reqBody = APIHelper.deserialize("{" +
+                "\"items\": [" +
+                "{" +
+                "\"type\": 1," +
+                "\"id\": \"fwfrf\"" +
+                "}," +
+                "{" +
+                "\"type\": 2," +
+                "\"id\": \"d43d3f\"" +
+                "}" +
+                "]" +
+                "}");
+
+        Map<String, String> rspHeaders = new HashMap<String, String>();
+        rspHeaders.put("Date", "Tue, 23 Feb 2019 23:46:49 GMT");
+        rspHeaders.put("Vary", "Accept-Encoding");
+        rspHeaders.put("Pragma", "no-cache");
+        rspHeaders.put("Expires", "-1");
+        rspHeaders.put("Content-Type", "application/json; charset=utf-8");
+        rspHeaders.put("Cache-Control","no-cache");
+
+        Object rspBody = APIHelper.deserialize("{" +
+                "\"Error\": \"InvalidArgumentException\"," +
+                "\"Message\": \"Missing field field_a\"" +
+                "}");
+
+
+        EventRequestModel eventReq = new EventRequestBuilder()
+                .time(new Date())
+                .uri("https://api.acmeinc.com/items/feed/")
+                .verb("PATCH")
+                .apiVersion("1.1.0")
+                .ipAddress("61.48.220.123")
+                .headers(reqHeaders)
+                .body(reqBody)
+                .build();
+
+
+        EventResponseModel eventRsp = new EventResponseBuilder()
+                .time(new Date(System.currentTimeMillis() + 1000))
+                .status(500)
+                .headers(rspHeaders)
+                .body(rspBody)
+                .build();
+
+
+        APICallBack<HttpResponse> callBack = new APICallBack<HttpResponse>() {
+            public void onSuccess(HttpContext context, HttpResponse response) {
+                assertEquals("Status is not 201",
+                        201, context.getResponse().getStatusCode());
+                lock.countDown();
+            }
+
+            public void onFailure(HttpContext context, Throwable error) {
+                fail();
+            }
+        };
+
+        EventModel eventModelForGzip = new EventBuilder()
+                .request(eventReq)
+                .response(eventRsp)
+                .userId("my_user_id4gzip")
+                .companyId("my_company_id4gzip")
+                .sessionToken("23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f")
+                .build();
+
+        List<EventModel> events4Gzip = new ArrayList<EventModel>();
+        events4Gzip.add(eventModelForGzip);
+        events4Gzip.add(eventModelForGzip);
+        events4Gzip.add(eventModelForGzip);
+        events4Gzip.add(eventModelForGzip);
+
+        controller.createEventsBatchAsync(events4Gzip, callBack, true);
+        assertEquals(true, lock.await(10000, TimeUnit.MILLISECONDS));
+
+    }
 
     /**
      * Update Single User via Injestion API
