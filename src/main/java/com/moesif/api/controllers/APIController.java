@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.zip.GZIPOutputStream;
 
 public class APIController extends BaseController implements IAPIController {
     //private static variables for the singleton pattern
@@ -119,23 +120,30 @@ public class APIController extends BaseController implements IAPIController {
         return executeRequest(_request);
     }
 
+    public void createEventsBatchAsync(
+            final List<EventModel> body,
+            final APICallBack<HttpResponse> callBack
+    ) throws JsonProcessingException {
+        createEventsBatchAsync(body, callBack,false);
+    }
+
     /**
      * Add multiple API Events in a single batch
      * @param    body    The events to create
      * @param    callBack Called after the HTTP response is received
      * @throws JsonProcessingException on error creating event
      */
+
+
     public void createEventsBatchAsync(
-                final List<EventModel> body,
-                final APICallBack<HttpResponse> callBack
+            final List<EventModel> body,
+            final APICallBack<HttpResponse> callBack,
+            boolean useGzip
     ) throws JsonProcessingException {
 
         QueryInfo qInfo = getQueryInfo("/v1/events/batch");
-
-        //prepare and invoke the API call request to fetch the response
         final HttpRequest _request = getClientInstance().postBody(qInfo._queryUrl, qInfo._headers, APIHelper.serialize(body));
-
-        executeRequestAsync(_request, callBack);
+        executeRequestAsync(_request, callBack, useGzip);
     }
 
     /**
@@ -476,6 +484,11 @@ public class APIController extends BaseController implements IAPIController {
     }
 
     private void executeRequestAsync(final HttpRequest _request, final APICallBack<HttpResponse> callBack) {
+        executeRequestAsync(_request, callBack, false);
+    }
+
+    // Add the isBinary option to support binary async for gzip request
+    private void executeRequestAsync(final HttpRequest _request, final APICallBack<HttpResponse> callBack, boolean isBinary) {
         //invoke the callback before request if its not null
         if (getHttpCallBack() != null)
         {
@@ -486,7 +499,12 @@ public class APIController extends BaseController implements IAPIController {
         Runnable _responseTask = new Runnable() {
             public void run() {
                 //make the API call
-                getClientInstance().executeAsStringAsync(_request, createHttpResponseCallback(callBack));
+                if(isBinary){
+                    getClientInstance().executeAsBinaryAsync(_request, createHttpResponseCallback(callBack));
+                }
+                else {
+                    getClientInstance().executeAsStringAsync(_request, createHttpResponseCallback(callBack));
+                }
             }
         };
 

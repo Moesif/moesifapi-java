@@ -5,6 +5,7 @@
  */
 package com.moesif.api;
 
+import java.io.IOException;
 import java.util.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -46,7 +47,19 @@ public interface IAPIController {
      * @throws JsonProcessingException on error creating event
      */
     void createEventsBatchAsync(final List<EventModel> body,
-                                final APICallBack<HttpResponse> callBack) throws JsonProcessingException;
+                                final APICallBack<HttpResponse> callBack) throws IOException;
+
+
+    /**
+     * Add multiple API Events in a single batch
+     * @param    body    The events to create
+     * @param    callBack Called after the HTTP response is received
+     * @param    useGzip Option to convert body to gzip type
+     * @throws JsonProcessingException on error creating event
+     */
+    void createEventsBatchAsync(final List<EventModel> body,
+                                final APICallBack<HttpResponse> callBack,
+                                boolean useGzip) throws IOException;
 
     /**
      * Update a Single User
