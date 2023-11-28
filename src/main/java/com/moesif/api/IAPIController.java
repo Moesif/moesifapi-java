@@ -58,7 +58,8 @@ public interface IAPIController {
      * @throws JsonProcessingException on error creating event
      */
     void createEventsBatchAsync(final List<EventModel> body,
-                                final APICallBack<HttpResponse> callBack, boolean useGzip) throws IOException;
+                                final APICallBack<HttpResponse> callBack,
+                                boolean useGzip) throws IOException;
 
     /**
      * Update a Single User

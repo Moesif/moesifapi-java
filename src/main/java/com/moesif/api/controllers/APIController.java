@@ -143,12 +143,7 @@ public class APIController extends BaseController implements IAPIController {
 
         QueryInfo qInfo = getQueryInfo("/v1/events/batch");
         final HttpRequest _request = getClientInstance().postBody(qInfo._queryUrl, qInfo._headers, APIHelper.serialize(body));
-
-        if(useGzip){
-            executeRequestAsync(_request, callBack, true);
-        }
-
-        executeRequestAsync(_request, callBack);
+        executeRequestAsync(_request, callBack, useGzip);
     }
 
     /**
