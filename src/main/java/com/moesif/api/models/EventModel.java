@@ -200,8 +200,8 @@ public class EventModel
         this.weight = value;
     }
 
-    public Map<String, String> getRegexMap() {
-        Map<String, String> map = new HashMap<String, String>();
+    public Map<String, Object> getRegexMap() {
+        Map<String, Object> map = new HashMap<>();
         if(request != null && request.getVerb() != null) {
             map.put("request.verb", request.getVerb());
         }
@@ -219,6 +219,9 @@ public class EventModel
         }
         if(response != null) {
             map.put("response.status", response.getStatus() + "");
+        }
+        if(request != null && "json".equals(request.getTransferEncoding())) {
+            map.put("request.body", request.getBody());
         }
 
         return map;
