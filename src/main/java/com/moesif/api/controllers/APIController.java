@@ -820,7 +820,7 @@ public class APIController extends BaseController implements IAPIController {
             headers = new HashMap<>();
         }
         Map<String, String> variables = rule.b == null? new HashMap<>() : rule.b.getValues().entrySet().stream().collect(Collectors.toMap(
-                entry -> String.format("{{{{{%s}}}}}",entry.getKey()),
+                entry -> String.format("{{%s}}", entry.getKey()),
                 entry -> entry.getValue())
         );
         for (String key : variables.keySet()) {
