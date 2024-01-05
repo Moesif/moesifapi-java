@@ -7,6 +7,7 @@ package com.moesif.api.http.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mashape.unirest.http.options.*;
 
@@ -28,7 +29,8 @@ import java.util.logging.Logger;
 public class UnirestClient implements HttpClient {
     private static final Logger logger = Logger.getLogger(UnirestClient.class.toString());
 
-    static ObjectMapper objectMapper = new ObjectMapper();
+    static ObjectMapper objectMapper = new ObjectMapper().disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+
     /**
      * Private variables to implement singleton pattern
      */
@@ -94,14 +96,14 @@ public class UnirestClient implements HttpClient {
             com.mashape.unirest.request.HttpRequest uniRequest = UnirestClient.convertRequest(request);
 
 
-            if(debug){
-                if(uniRequest == null){
-                    logger.warning("[DEBUG] uniRequestJson is null | executeAsBinaryAsync");
-                } else {
-                    String uniRequestJson = objectMapper.writeValueAsString(uniRequest);
-                    logger.warning("[DEBUG] uniRequestJson : " + uniRequestJson + " | executeAsBinaryAsync");
-                }
-            }
+//            if(debug){
+//                if(uniRequest == null){
+//                    logger.warning("[DEBUG] uniRequestJson is null | executeAsBinaryAsync");
+//                } else {
+//                    String uniRequestJson = objectMapper.writeValueAsString(uniRequest);
+//                    logger.warning("[DEBUG] uniRequestJson : " + uniRequestJson + " | executeAsBinaryAsync");
+//                }
+//            }
 
             com.mashape.unirest.http.HttpResponse<InputStream> response = uniRequest.asBinary();
 
@@ -262,7 +264,7 @@ public class UnirestClient implements HttpClient {
             httpResponse = new HttpStringResponse(response.getStatus(),
                     response.getHeaders().getFlatHeaders(), response.getRawBody(), (String)response.getBody());
             if(debug){
-                logger.warning("[DEBUG] response body is string " + response.getBody() + "| convertResponse");
+                logger.warning("[DEBUG] response body is string " + response.getBody() + " | convertResponse");
             }
 
         }
@@ -277,10 +279,10 @@ public class UnirestClient implements HttpClient {
 
         if(debug){
             if(httpResponse == null){
-                logger.warning("[DEBUG] httpResponse is null | convertResponse");
+                logger.warning("[DEBUG] convertHttpResponse is null | convertResponse");
             } else {
                 String httpResponseJson = objectMapper.writeValueAsString(httpResponse);
-                logger.warning("[DEBUG] httpResponse " + httpResponseJson + "| convertResponse");
+                logger.warning("[DEBUG] convertHttpResponse " + httpResponseJson + " | convertResponse");
             }
         }
 
