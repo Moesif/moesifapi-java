@@ -58,9 +58,31 @@ public class MoesifAPIClient {
      * @param baseUri The base Uri for API calls
      */     
     public MoesifAPIClient(String applicationId, String baseUri) {
+        this(applicationId, baseUri, false);
+    }
+
+    /**
+     * Client initialization constructor
+     * @param applicationId The Application Id for authentication
+     * @param baseUri The base Uri for API calls
+     * @param debug flag to enable debug logs
+     */
+    public MoesifAPIClient(String applicationId, String baseUri, boolean debug) {
         config = new Configuration();
         config.applicationId = applicationId;
         config.baseUri = baseUri;
+        config.debug = debug;
+        controller = new APIController(config);
+        healthController = new HealthController(config);
+    }
+
+    /**
+     * Client initialization constructor
+     * @param configParam
+     */
+
+    public MoesifAPIClient(Configuration configParam) {
+        config = configParam;
         controller = new APIController(config);
         healthController = new HealthController(config);
     }

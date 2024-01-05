@@ -26,7 +26,6 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.zip.GZIPOutputStream;
 
 public class APIController extends BaseController implements IAPIController {
     //private static variables for the singleton pattern
@@ -500,7 +499,13 @@ public class APIController extends BaseController implements IAPIController {
             public void run() {
                 //make the API call
                 if(isBinary){
-                    getClientInstance().executeAsBinaryAsync(_request, createHttpResponseCallback(callBack));
+                    try {
+                        getClientInstance().executeAsBinaryAsync(_request, createHttpResponseCallback(callBack), config.debug);
+                    } catch (JsonProcessingException e) {
+                        if(config.debug){
+                            logger.warning( "[DEBUG] Error when Json parse objects: " + e.getMessage() + " | executeRequestAsync");
+                        }
+                    }
                 }
                 else {
                     getClientInstance().executeAsStringAsync(_request, createHttpResponseCallback(callBack));

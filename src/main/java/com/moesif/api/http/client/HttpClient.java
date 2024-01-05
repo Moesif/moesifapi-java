@@ -5,6 +5,7 @@
  */
 package com.moesif.api.http.client;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.moesif.api.exceptions.APIException;
 import com.moesif.api.http.request.HttpBodyRequest;
 import com.moesif.api.http.request.HttpRequest;
@@ -26,6 +27,7 @@ public interface HttpClient {
      * @param   callBack    Callback after execution
      */
     public void executeAsBinaryAsync(final HttpRequest request, final APICallBack<HttpResponse> callBack);
+    public void executeAsBinaryAsync(final HttpRequest request, final APICallBack<HttpResponse> callBack, boolean debug) throws JsonProcessingException;
 
     /**
      * Execute a given HttpRequest to get binary response back

@@ -17,4 +17,5 @@ public class Configuration {
 
     public String baseUri;
 
+    public boolean debug = false;
 }
