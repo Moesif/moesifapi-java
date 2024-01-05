@@ -95,16 +95,6 @@ public class UnirestClient implements HttpClient {
             }
             com.mashape.unirest.request.HttpRequest uniRequest = UnirestClient.convertRequest(request);
 
-
-//            if(debug){
-//                if(uniRequest == null){
-//                    logger.warning("[DEBUG] uniRequestJson is null | executeAsBinaryAsync");
-//                } else {
-//                    String uniRequestJson = objectMapper.writeValueAsString(uniRequest);
-//                    logger.warning("[DEBUG] uniRequestJson : " + uniRequestJson + " | executeAsBinaryAsync");
-//                }
-//            }
-
             com.mashape.unirest.http.HttpResponse<InputStream> response = uniRequest.asBinary();
 
             if(debug){

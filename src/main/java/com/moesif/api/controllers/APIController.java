@@ -26,7 +26,6 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.zip.GZIPOutputStream;
 
 public class APIController extends BaseController implements IAPIController {
     //private static variables for the singleton pattern
@@ -144,18 +143,6 @@ public class APIController extends BaseController implements IAPIController {
         QueryInfo qInfo = getQueryInfo("/v1/events/batch");
         final HttpRequest _request = getClientInstance().postBody(qInfo._queryUrl, qInfo._headers, APIHelper.serialize(body));
         executeRequestAsync(_request, callBack, useGzip);
-    }
-
-    public void createEventsBatchAsync(
-            final List<EventModel> body,
-            final APICallBack<HttpResponse> callBack,
-            boolean useGzip,
-            boolean debug
-    ) throws JsonProcessingException {
-
-        QueryInfo qInfo = getQueryInfo("/v1/events/batch");
-        final HttpRequest _request = getClientInstance().postBody(qInfo._queryUrl, qInfo._headers, APIHelper.serialize(body));
-        executeRequestAsync(_request, callBack, useGzip, debug);
     }
 
     /**
@@ -512,34 +499,10 @@ public class APIController extends BaseController implements IAPIController {
             public void run() {
                 //make the API call
                 if(isBinary){
-                    getClientInstance().executeAsBinaryAsync(_request, createHttpResponseCallback(callBack));
-                }
-                else {
-                    getClientInstance().executeAsStringAsync(_request, createHttpResponseCallback(callBack));
-                }
-            }
-        };
-
-        //execute async using thread pool
-        APIHelper.getScheduler().execute(_responseTask);
-    }
-
-    private void executeRequestAsync(final HttpRequest _request, final APICallBack<HttpResponse> callBack, boolean isBinary, boolean debug) {
-        //invoke the callback before request if its not null
-        if (getHttpCallBack() != null)
-        {
-            getHttpCallBack().OnBeforeRequest(_request);
-        }
-
-        //invoke request and get response
-        Runnable _responseTask = new Runnable() {
-            public void run() {
-                //make the API call
-                if(isBinary){
                     try {
-                        getClientInstance().executeAsBinaryAsync(_request, createHttpResponseCallback(callBack), debug);
+                        getClientInstance().executeAsBinaryAsync(_request, createHttpResponseCallback(callBack), config.debug);
                     } catch (JsonProcessingException e) {
-                        if(debug){
+                        if(config.debug){
                             logger.warning( "[DEBUG] Error when Json parse objects: " + e.getMessage() + " | executeRequestAsync");
                         }
                     }
