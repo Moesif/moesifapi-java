@@ -8,6 +8,7 @@ package com.moesif.api.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mashape.unirest.http.Unirest;
 import com.moesif.api.APIHelper;
 import com.moesif.api.Configuration;
 import com.moesif.api.IAPIController;
@@ -18,6 +19,7 @@ import com.moesif.api.http.client.HttpContext;
 import com.moesif.api.http.request.HttpRequest;
 import com.moesif.api.http.response.HttpResponse;
 import com.moesif.api.models.*;
+import org.apache.http.client.HttpRequestRetryHandler;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,6 +56,10 @@ public class APIController extends BaseController implements IAPIController {
         this.config = config;
         getInitAppConfigModel();
         getGovernanceRulesModel();
+    }
+
+    public void setHttpRequestRetryHandler(HttpRequestRetryHandler httpRequestRetryHandler) {
+        Unirest.setHttpRequestRetryHandler(httpRequestRetryHandler);
     }
 
 
