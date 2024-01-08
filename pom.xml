@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.moesif.api</groupId>
     <artifactId>moesifapi</artifactId>
-    <version>1.7.7-2</version>
+    <version>1.7.7-3</version>
     <packaging>jar</packaging>
     <name>moesifapi</name>
     <description>Java API Library for Moesif</description>
@@ -41,7 +41,7 @@
         <dependency>
             <groupId>com.moesif.unirest</groupId>
             <artifactId>unirest-java</artifactId>
-            <version>1.0.8-1</version>
+            <version>1.0.8-2</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
