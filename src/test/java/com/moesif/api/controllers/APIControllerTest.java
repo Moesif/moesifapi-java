@@ -51,6 +51,19 @@ public class APIControllerTest extends ControllerTestBase {
     }
 
     /**
+     * EventModel has non-null TransactionId
+     * @throws Throwable
+     */
+    @Test
+    public void testTransactionId() throws Throwable {
+        EventModel eventModel = new EventBuilder()
+                .build();
+
+        // check transaction id is not null
+        assertNotNull("EventModel.transactionId is not null", eventModel.getTransactionId());
+    }
+
+    /**
      * Add Single Event via Injestion API
      * @throws Throwable
      */

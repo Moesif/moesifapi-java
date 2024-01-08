@@ -11,11 +11,11 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class EventModel
-        implements java.io.Serializable {
+public class EventModel implements java.io.Serializable {
     private static final long serialVersionUID = 5526151489602879126L;
     private EventRequestModel request;
     private EventResponseModel response;
@@ -25,6 +25,7 @@ public class EventModel
     private String companyId;
     private Object metadata;
     private String direction;
+    private String transactionId = UUID.randomUUID().toString();;
     private int weight;
 
     @JsonGetter("blocked_by")
@@ -142,8 +143,26 @@ public class EventModel
      * @param value the value to set
      */
     @JsonSetter("company_id")
-    public void setCompanyId (String value) { 
+    public void setCompanyId (String value) {
         this.companyId = value;
+    }
+
+    /** GETTER
+     * Events's transaction_id string
+     * @return the value
+     */
+    @JsonGetter("transaction_id")
+    public String getTransactionId ( ) {
+        return this.transactionId;
+    }
+
+    /** SETTER
+     * Events's transaction_id string
+     * @param value the value to set
+     */
+    @JsonSetter("transaction_id")
+    public void setTransactionId (String value) {
+        this.transactionId = value;
     }
 
     /** GETTER
