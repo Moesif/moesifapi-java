@@ -328,7 +328,9 @@ public class APIController extends BaseController implements IAPIController {
             InputStream respBodyIs = response.getRawBody();
             appConfigModel = parseAppConfigModel(respBodyIs);
             respBodyIs.close();
-            logger.info("App Config Model returned is " + appConfigModel);
+            if (config.debug) {
+                logger.info("App Config Model returned is " + appConfigModel);
+            }
 
             appConfigEtag = newAppConfigEtag;
             lastAppConfigFetch = new Date().getTime();
@@ -348,8 +350,9 @@ public class APIController extends BaseController implements IAPIController {
             InputStream respBodyIs = response.getRawBody();
             this.governanceRules = parseGovernanceRulesModel(respBodyIs);
             respBodyIs.close();
-            logger.info("Governance model returned is  " + this.governanceRules);
-
+            if (config.debug) {
+                logger.info("Governance model returned is  " + this.governanceRules);
+            }
 
         } catch( Throwable e){
             logger.warning("Error getting GovernanceRules: " + e.getMessage());
@@ -582,7 +585,10 @@ public class APIController extends BaseController implements IAPIController {
                             } catch (Exception e) {
                                 logger.warning("Invalid AppConfig JSON: " + e.getMessage());
                             }
-                            logger.info("App Config Model returned is " + appConfigModel);
+
+                            if (config.debug) {
+                                logger.info("App Config Model returned is " + appConfigModel);
+                            }
 
                             appConfigEtag = newAppConfigEtag;
                             lastAppConfigFetch = new Date().getTime();
@@ -596,7 +602,10 @@ public class APIController extends BaseController implements IAPIController {
                         } catch (Exception e) {
                             logger.warning("Invalid AppConfig JSON: " + e.getMessage());
                         }
-                        logger.info("App Config Model returned is " + appConfigModel);
+
+                        if (config.debug) {
+                            logger.info("App Config Model returned is " + appConfigModel);
+                        }
 
                         appConfigEtag = response.getHeaders().get(APP_CONFIG_ETAG_HEADER);
                         lastAppConfigFetch = new Date().getTime();
