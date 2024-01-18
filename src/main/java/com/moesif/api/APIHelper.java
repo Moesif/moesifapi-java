@@ -54,7 +54,7 @@ public class APIHelper {
     public static ExecutorService getScheduler() {
         synchronized(syncRoot) {
             if(null == scheduler) {
-                scheduler = Executors.newCachedThreadPool();
+                scheduler = Executors.newSingleThreadExecutor();
             }
             return scheduler;
         }

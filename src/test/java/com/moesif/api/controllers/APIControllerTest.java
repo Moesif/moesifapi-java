@@ -12,6 +12,7 @@ import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moesif.api.http.client.APICallBack;
@@ -37,7 +38,7 @@ public class APIControllerTest extends ControllerTestBase {
      * Setup test class
      */
     @BeforeClass
-    public static void setUpClass() {
+    public static void setUpClass() throws JsonProcessingException {
         controller = getClient().getAPI();
     }
 

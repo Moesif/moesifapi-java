@@ -5,6 +5,7 @@
  */
 package com.moesif.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.moesif.api.controllers.*;
 import com.moesif.api.http.client.HttpClient;
 
@@ -48,7 +49,7 @@ public class MoesifAPIClient {
      * Client initialization constructor
      * @param applicationId The Application Id for authentication
      */
-    public MoesifAPIClient(String applicationId) {
+    public MoesifAPIClient(String applicationId) throws JsonProcessingException {
         this(applicationId, Configuration.BaseUri);
     }
 
@@ -57,7 +58,7 @@ public class MoesifAPIClient {
      * @param applicationId The Application Id for authentication
      * @param baseUri The base Uri for API calls
      */     
-    public MoesifAPIClient(String applicationId, String baseUri) {
+    public MoesifAPIClient(String applicationId, String baseUri) throws JsonProcessingException {
         this(applicationId, baseUri, false);
     }
 
@@ -67,7 +68,7 @@ public class MoesifAPIClient {
      * @param baseUri The base Uri for API calls
      * @param debug flag to enable debug logs
      */
-    public MoesifAPIClient(String applicationId, String baseUri, boolean debug) {
+    public MoesifAPIClient(String applicationId, String baseUri, boolean debug) throws JsonProcessingException {
         config = new Configuration();
         config.applicationId = applicationId;
         config.baseUri = baseUri;
@@ -81,7 +82,7 @@ public class MoesifAPIClient {
      * @param configParam
      */
 
-    public MoesifAPIClient(Configuration configParam) {
+    public MoesifAPIClient(Configuration configParam) throws JsonProcessingException {
         config = configParam;
         controller = new APIController(config);
         healthController = new HealthController(config);

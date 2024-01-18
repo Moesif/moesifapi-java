@@ -5,6 +5,7 @@
  */
 package com.moesif.api.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -64,7 +65,7 @@ public class ControllerTestBase {
      * Get client instance
      * @return
      */
-    protected static MoesifAPIClient getClient() {
+    protected static MoesifAPIClient getClient() throws JsonProcessingException {
         if(client == null)
             synchronized (clientSync) {
                 // replace this ID with your own Moesif App ID
