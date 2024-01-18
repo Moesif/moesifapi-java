@@ -52,10 +52,17 @@ public class APIController extends BaseController implements IAPIController {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public APIController(Configuration config) {
+    public APIController(Configuration config) throws JsonProcessingException {
         this.config = config;
         getInitAppConfigModel();
         getGovernanceRulesModel();
+        logger.warning("=============== Initial appConfig ===============");
+        logger.warning(objectMapper.writeValueAsString(appConfigModel));
+        logger.warning("=============== End: appConfig ===============");
+
+        logger.warning("=============== rules ================");
+        logger.warning(objectMapper.writeValueAsString(governanceRules));
+        logger.warning("=============== End: rules ===============");
     }
 
     public void setHttpRequestRetryHandler(HttpRequestRetryHandler httpRequestRetryHandler) {
@@ -532,15 +539,26 @@ public class APIController extends BaseController implements IAPIController {
     }
 
 
-    private void checkAppConfigEtag(String newAppConfigEtag) {
+    private void checkAppConfigEtag(String newAppConfigEtag) throws JsonProcessingException {
+        logger.warning("newAppConfigEtag: " + newAppConfigEtag);
+        logger.warning("appConfigEtag:    " + appConfigEtag);
         if (newAppConfigEtag != null && !newAppConfigEtag.equals(appConfigEtag)) {
             // only update the etag once we've gotten the new config
+//            appConfigModel
+            logger.warning("---------------- appConfig ---------------");
+            logger.warning(objectMapper.writeValueAsString(appConfigModel));
+            logger.warning("---------------- End: appConfig ---------------");
             trySyncAppConfig(false);
         }
     }
 
-    private void checkRulesEtag(String newRulesEtag) {
+    private void checkRulesEtag(String newRulesEtag) throws JsonProcessingException {
+        logger.warning("newRulesEtag: " + newRulesEtag);
+        logger.warning("rulesEtag:    " + rulesEtag);
         if(newRulesEtag != null && !newRulesEtag.equals(rulesEtag)) {
+            logger.warning("---------------- rule ---------------");
+            logger.warning(objectMapper.writeValueAsString(governanceRules));
+            logger.warning("---------------- End: appConfig ---------------");
             getGovernanceRulesModel();
         }
     }
@@ -918,13 +936,20 @@ public class APIController extends BaseController implements IAPIController {
                     checkRulesEtag(_response.getHeaders().get(RULES_ETAG_HEADER));
 
                     //let the caller know of the success
-                    callBack.onSuccess(_context, _response);
+                    if(callBack != null){
+                        callBack.onSuccess(_context, _response);
+                    }
                 } catch (APIException error) {
                     //let the caller know of the error
-                    callBack.onFailure(_context, error);
+                    if(callBack != null){
+                        callBack.onFailure(_context, error);
+                    }
+
                 } catch (Exception exception) {
                     //let the caller know of the caught Exception
-                    callBack.onFailure(_context, exception);
+                    if(callBack != null){
+                        callBack.onFailure(_context, exception);
+                    }
                 }
             }
             public void onFailure(HttpContext _context, Throwable _error) {
@@ -935,7 +960,9 @@ public class APIController extends BaseController implements IAPIController {
                 }
 
                 //let the caller know of the failure
-                callBack.onFailure(_context, _error);
+                if(callBack != null){
+                    callBack.onFailure(_context, _error);
+                }
             }
         };
     }
