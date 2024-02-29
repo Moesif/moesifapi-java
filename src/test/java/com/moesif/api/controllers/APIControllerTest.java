@@ -1126,21 +1126,18 @@ public class APIControllerTest extends ControllerTestBase {
                         "}" +
                         "}"))
                 .build();
+              // Set callback and perform API call
+              controller.setHttpCallBack(httpResponse);
+              try {
+                  controller.updateSubscription(subscription);
+              } catch (APIException e) {
+              }
+              ;
 
-        APICallBack<HttpResponse> callBack = new APICallBack<HttpResponse>() {
-            public void onSuccess(HttpContext context, HttpResponse response) {
-                assertEquals("Status is not 201",
-                        201, context.getResponse().getStatusCode());
-                lock.countDown();
-            }
-
-            public void onFailure(HttpContext context, Throwable error) {
-                fail();
-            }
-        };
-
-        controller.updateSubscriptionAsync(subscription, callBack);
-        assertEquals(true, lock.await(10000, TimeUnit.MILLISECONDS));
+              // Test response code
+              assertEquals("Status is not 201",
+                      201, httpResponse.getResponse().getStatusCode());
+                
     }
 
     @Test
