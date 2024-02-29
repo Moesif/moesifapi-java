@@ -503,6 +503,83 @@ apiClient.updateCompaniesBatchAsync(companies, callBack);
 apiClient.updateCompaniesBatch(companies);
 ```
 
+## Update a Single Subscription
+
+Create or update a subscription in Moesif. The metadata field can store any subscription-related information you want to keep. The `subscriptionId`, `companyId`, and `status` fields are required. For more details, visit the [Java API Reference](https://www.moesif.com/docs/api?java#update-a-subscription).
+
+```java
+MoesifAPIClient apiClient = new MoesifAPIClient("YOUR_COLLECTOR_APPLICATION_ID").Api;
+
+// Create a subscription model with required and optional fields
+SubscriptionModel subscription = new SubscriptionBuilder()
+    .subscriptionId("sub_12345")
+    .companyId("67890")
+    .currentPeriodStart(new Date())
+    .currentPeriodEnd(new Date())
+    .status("active")
+    .metadata(APIHelper.deserialize("{" +
+            "\"email\": \"johndoe@acmeinc.com\"," +
+            "\"string_field\": \"value_1\"," +
+            "\"number_field\": 0," +
+            "\"object_field\": {" +
+            "\"field_1\": \"value_1\"," +
+            "\"field_2\": \"value_2\"" +
+            "}" +
+            "}"))
+    .build();
+```
+
+### Update the Subscription Asynchronously
+
+```java
+APICallBack<HttpResponse> callBack = new APICallBack<HttpResponse>() {
+    public void onSuccess(HttpContext context, HttpResponse response) {
+        // Handle success
+    }
+
+    public void onFailure(HttpContext context, Throwable error) {
+        // Handle failure
+    }
+};
+
+apiClient.updateSubscriptionAsync(subscription, callBack);
+```
+
+### Update the Subscription Synchronously
+
+```java
+apiClient.updateSubscription(subscription);
+```
+
+## Update Subscriptions in Batch
+
+Similar to updating a single subscription, but used to update a list of subscriptions in one batch. The `subscriptionId`, `companyId`, and `status` fields are required for each subscription in the list.
+
+### Update the Subscriptions Asynchronously
+
+```java
+List<SubscriptionModel> subscriptions = new ArrayList<>();
+subscriptions.add(subscription); // Assuming 'subscription' is previously defined
+
+APICallBack<HttpResponse> callBack = new APICallBack<HttpResponse>() {
+    public void onSuccess(HttpContext context, HttpResponse response) {
+        // Handle success
+    }
+
+    public void onFailure(HttpContext context, Throwable error) {
+        // Handle failure
+    }
+};
+
+apiClient.updateSubscriptionsBatchAsync(subscriptions, callBack);
+```
+
+### Update the Subscriptions Synchronously
+
+```java
+apiClient.updateSubscriptionsBatch(subscriptions);
+```
+
 ## How to build and install manually (Advanced users):
 
 
@@ -552,9 +629,10 @@ http://help.eclipse.org/juno/topic/org.eclipse.jst.j2ee.doc.user/topics/tjimpapp
 
 ## How to run JUnit tests for this SDK using `mvn` command
 
-To execute JUnit tests using `mvn` command, the environment variable `MOESIF_APPLICATION_ID` needs to be set
+To execute JUnit tests using `mvn` command, the environment variable `MOESIF_APPLICATION_ID` needs to be set. You'll also need to set the `MOESIF_BASE_URI`. Below is the URI for testing against Moesif production, if testing against a local API, change accordingly.
 ```
 export MOESIF_APPLICATION_ID="<Set your Moesif Application Id here>"
+export MOESIF_BASE_URI="https://api.moesif.net"
 mvn test
 ```
 

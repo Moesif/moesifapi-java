@@ -1102,6 +1102,185 @@ public class APIControllerTest extends ControllerTestBase {
         assertEquals(true, lock.await(10000, TimeUnit.MILLISECONDS));
     }
 
+    /**
+     * Update Single Subscription via Injestion API
+     * @throws Throwable
+     */
+    @Test
+    public void testUpdateSubscription() throws Throwable {
+        final CountDownLatch lock = new CountDownLatch(1);
+
+        SubscriptionModel subscription = new SubscriptionBuilder()
+                .subscriptionId("sub_12345")
+                .companyId("67890")
+                .currentPeriodStart(new Date())
+                .currentPeriodEnd(new Date())
+                .status("active")
+                .metadata(APIHelper.deserialize("{" +
+                        "\"email\": \"johndoe@acmeinc.com\"," +
+                        "\"string_field\": \"value_1\"," +
+                        "\"number_field\": 0," +
+                        "\"object_field\": {" +
+                        "\"field_1\": \"value_1\"," +
+                        "\"field_2\": \"value_2\"" +
+                        "}" +
+                        "}"))
+                .build();
+              // Set callback and perform API call
+              controller.setHttpCallBack(httpResponse);
+              try {
+                  controller.updateSubscription(subscription);
+              } catch (APIException e) {
+              }
+              ;
+
+              // Test response code
+              assertEquals("Status is not 201",
+                      201, httpResponse.getResponse().getStatusCode());
+                
+    }
+
+    @Test
+    public void testUpdateSubscriptionAsync() throws Throwable {
+        final CountDownLatch lock = new CountDownLatch(1);
+
+        SubscriptionModel subscription = new SubscriptionBuilder()
+                .subscriptionId("sub_12345")
+                .companyId("67890")
+                .currentPeriodStart(new Date())
+                .currentPeriodEnd(new Date())
+                .status("active")
+                .metadata(APIHelper.deserialize("{" +
+                        "\"email\": \"johndoe@acmeinc.com\"," +
+                        "\"string_field\": \"value_1\"," +
+                        "\"number_field\": 0," +
+                        "\"object_field\": {" +
+                        "\"field_1\": \"value_1\"," +
+                        "\"field_2\": \"value_2\"" +
+                        "}" +
+                        "}"))
+                .build();
+
+        APICallBack<HttpResponse> callBack = new APICallBack<HttpResponse>() {
+            public void onSuccess(HttpContext context, HttpResponse response) {
+                assertEquals("Status is not 201",
+                        201, context.getResponse().getStatusCode());
+                lock.countDown();
+            }
+
+            public void onFailure(HttpContext context, Throwable error) {
+                fail();
+            }
+        };
+
+        controller.updateSubscriptionAsync(subscription, callBack);
+        assertEquals(true, lock.await(10000, TimeUnit.MILLISECONDS));
+    }
+
+    /**
+     * Update Batched Subscriptions via Ingestion API
+     * @throws Throwable
+     */
+    @Test
+    public void testUpdateBatchedSubscriptions() throws Throwable {
+        final CountDownLatch lock = new CountDownLatch(1);
+
+        // Parameters for the API call
+        List<SubscriptionModel> subscriptions = new ArrayList<SubscriptionModel>();
+
+        SubscriptionModel subscriptionA = new SubscriptionBuilder()
+                .subscriptionId("sub_12345")
+                .companyId("67890")
+                .currentPeriodStart(new Date())
+                .currentPeriodEnd(new Date())
+                .status("active")
+                .build();
+        subscriptions.add(subscriptionA);
+
+        SubscriptionModel subscriptionB = new SubscriptionBuilder()
+                .subscriptionId("sub_54321")
+                .companyId("67890")
+                .currentPeriodStart(new Date())
+                .currentPeriodEnd(new Date())
+                .status("active")
+                .metadata(APIHelper.deserialize("{" +
+                        "\"email\": \"johndoe@acmeinc.com\"," +
+                        "\"string_field\": \"value_1\"," +
+                        "\"number_field\": 0," +
+                        "\"object_field\": {" +
+                        "\"field_1\": \"value_1\"," +
+                        "\"field_2\": \"value_2\"" +
+                        "}" +
+                        "}"))
+                .build();
+        subscriptions.add(subscriptionB);
+
+        // Set callback and perform API call
+        controller.setHttpCallBack(httpResponse);
+        try {
+            controller.updateSubscriptionsBatch(subscriptions);
+        } catch(APIException e) {};
+
+        // Test response code
+        assertEquals("Status is not 201",
+                201, httpResponse.getResponse().getStatusCode());
+    }
+
+    /**
+     * Update Batched Subscriptions Async via Ingestion API
+     * @throws Throwable
+     */
+    @Test
+    public void testUpdateBatchedSubscriptionsAsync() throws Throwable {
+        final CountDownLatch lock = new CountDownLatch(1);
+
+        // Parameters for the API call
+        List<SubscriptionModel> subscriptions = new ArrayList<SubscriptionModel>();
+
+        SubscriptionModel subscriptionA = new SubscriptionBuilder()
+                .subscriptionId("sub_12345")
+                .companyId("67890")
+                .currentPeriodStart(new Date())
+                .currentPeriodEnd(new Date())
+                .status("active")
+                .build();
+        subscriptions.add(subscriptionA);
+
+        SubscriptionModel subscriptionB = new SubscriptionBuilder()
+                .subscriptionId("sub_54321")
+                .companyId("67890")
+                .currentPeriodStart(new Date())
+                .currentPeriodEnd(new Date())
+                .status("active")
+                .metadata(APIHelper.deserialize("{" +
+                        "\"email\": \"johndoe@acmeinc.com\"," +
+                        "\"string_field\": \"value_1\"," +
+                        "\"number_field\": 0," +
+                        "\"object_field\": {" +
+                        "\"field_1\": \"value_1\"," +
+                        "\"field_2\": \"value_2\"" +
+                        "}" +
+                        "}"))
+                .build();
+
+        subscriptions.add(subscriptionB);
+
+        APICallBack<HttpResponse> callBack = new APICallBack<HttpResponse>() {
+            public void onSuccess(HttpContext context, HttpResponse response) {
+                assertEquals("Status is not 201",
+                        201, context.getResponse().getStatusCode());
+                lock.countDown();
+            }
+
+            public void onFailure(HttpContext context, Throwable error) {
+                fail();
+            }
+        };
+
+        controller.updateSubscriptionsBatchAsync(subscriptions, callBack);
+        assertEquals(true, lock.await(10000, TimeUnit.MILLISECONDS));
+    }
+
     @Test
     public void shouldBlockonUserRule() throws Throwable {
         String appConfigJson = "{\"org_id\":\"640:128\",\"app_id\":\"617:473\",\"sample_rate\":99,\"block_bot_traffic\":false,\"user_sample_rate\":{\"azure_user_id\":100,\"tyk-bearer-token\":100,\"basic-auth-test\":100,\"abc\":60,\"masked_user_id\":100,\"keyur@moesif.com\":100,\"385\":99,\"tyk-basic-auth\":100,\"outgoing_user_id\":90,\"tyk-user\":100,\"keyur\":100,\"nginxapiuser\":95,\"Jason\":100,\"8ce866a1-1ba1-47ec-9130-f046bd8e3df5\":99,\"1234\":0,\"tyk-jwt-token\":100,\"jwt-token\":100,\"2d45bf73-bfa2-4b0a-918a-ee4010dfb5a3\":92,\"dev_user_id\":100,\"12345\":100,\"7ab8b13c-866d-4587-b99d-a8166391171b\":94,\"OAuth\":100,\"my_user_id\":97,\"bearer-token\":100,\"deva-1\":70},\"company_sample_rate\":{\"67890\":98,\"34\":100,\"12\":100,\"8\":100,\"678\":100,\"40\":100,\"9\":100,\"26\":100,\"123\":82,\"37\":100,\"13\":100,\"46\":100,\"24\":100,\"16\":100,\"48\":100,\"43\":100,\"32\":100,\"36\":100,\"39\":100,\"47\":100,\"20\":100,\"27\":100,\"2\":100,\"azure_company_id\":100,\"18\":100,\"3\":100,\"undefined\":80},\"user_rules\":{\"masked_user_id\":[{\"rules\":\"5f4910ab5f09092bd0e4ec79\",\"values\":{\"8\":\"body.phone\",\"4\":\"San Francisco\",\"5\":\"body.title\",\"1\":\"company_id\",\"0\":\"masked_user_id\",\"2\":\"name\",\"7\":\"body.age\",\"3\":\"2021-01-08T19:05:38.482Z\"}}]},\"company_rules\":{\"tyk-company\":[{\"rules\":\"5f49118a5f09092bd0e4ec7a\",\"values\":{\"0\":\"tyk-company\",\"1\":\"2020-11-02T20:22:42.845Z\",\"2\":\"body.age\",\"3\":\"campaign.utm_term\"}}],\"azure_company_id\":[{\"rules\":\"5f49118a5f09092bd0e4ec7a\",\"values\":{\"0\":\"azure_company_id\",\"1\":\"2020-08-28T15:11:32.402Z\",\"2\":\"42\",\"3\":\"campaign.utm_term\"}}]},\"ip_addresses_blocked_by_name\":{},\"regex_config\":[],\"billing_config_jsons\":{}}";
