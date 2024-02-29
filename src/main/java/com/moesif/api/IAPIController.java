@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.moesif.api.http.client.APICallBack;
 import com.moesif.api.models.CompanyModel;
 import com.moesif.api.models.EventModel;
+import com.moesif.api.models.SubscriptionModel;
 import com.moesif.api.models.UserModel;
 import com.moesif.api.http.response.HttpResponse;
 
@@ -150,5 +151,37 @@ public interface IAPIController {
      */
     void updateCompaniesBatchAsync(final List<CompanyModel> body,
     		final APICallBack<HttpResponse> callBack) throws JsonProcessingException;
+
+    /**
+     * Update a Single Subscription
+     * @param    body    The subscriptuon to update
+     * @throws Throwable on error creating event
+     */
+    void updateSubscription(final SubscriptionModel body) throws Throwable;
+
+    /**
+     * Update a Single Subscription async
+     * @param    body    The subscription to update
+     * @param    callBack Called after the HTTP response is received
+     * @throws JsonProcessingException on error creating event
+     */
+    void updateSubscriptionAsync(final SubscriptionModel body,
+                         final APICallBack<HttpResponse> callBack) throws JsonProcessingException;
+    
+    /**
+     * Update multiple Subscriptions in a single batch
+     * @param    body    The list of subscriptions to update
+     * @throws Throwable on error creating event
+     */
+    void updateSubscriptionsBatch(final List<SubscriptionModel> body) throws Throwable;
+
+    /**
+     * Update multiple Subscriptions in a single batch async
+     * @param    body    The list of subscriptions to update
+     * @param    callBack Called after the HTTP response is received
+     * @throws JsonProcessingException on error creating event
+     */
+    void updateSubscriptionsBatchAsync(final List<SubscriptionModel> body,
+                               final APICallBack<HttpResponse> callBack) throws JsonProcessingException;
 
 }

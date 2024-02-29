@@ -286,6 +286,72 @@ public class APIController extends BaseController implements IAPIController {
     }
 
     /**
+     * Update a Single Subscription
+     * @param    body    The subscriptuon to update
+     * @throws Throwable on error creating event
+     */
+    public void updateSubscription(
+            final SubscriptionModel body
+    ) throws Throwable {
+        APICallBackCatcher<HttpResponse> callback = new APICallBackCatcher<HttpResponse>();
+        updateSubscriptionAsync(body, callback);
+        if(!callback.isSuccess())
+            throw callback.getError();
+        callback.getResult();
+    }
+
+    /**
+     * Update a Single Subscription async
+     * @param    body    The subscription to update
+     * @param    callBack Called after the HTTP response is received
+     * @throws JsonProcessingException on error creating event
+     */
+    public void updateSubscriptionAsync(
+            final SubscriptionModel body,
+            final APICallBack<HttpResponse> callBack
+    ) throws JsonProcessingException {
+        QueryInfo qInfo = getQueryInfo("/v1/subscriptions");
+
+        //prepare and invoke the API call request to fetch the response
+        final HttpRequest _request = getClientInstance().postBody(qInfo._queryUrl, qInfo._headers, APIHelper.serialize(body));
+
+        executeRequestAsync(_request, callBack);
+    }
+
+    /**
+     * Update multiple Subscriptions in a single batch
+     * @param    body    The list of subscriptions to update
+     * @throws Throwable on error creating event
+     */
+    public void updateSubscriptionsBatch(
+            final List<SubscriptionModel> body
+    ) throws Throwable {
+        APICallBackCatcher<HttpResponse> callback = new APICallBackCatcher<HttpResponse>();
+        updateSubscriptionsBatchAsync(body, callback);
+        if(!callback.isSuccess())
+            throw callback.getError();
+        callback.getResult();
+    }   
+
+    /**
+     * Update multiple Subscriptions in a single batch async
+     * @param    body    The list of subscriptions to update
+     * @param    callBack Called after the HTTP response is received
+     * @throws JsonProcessingException on error creating event
+     */
+    public void updateSubscriptionsBatchAsync(
+            final List<SubscriptionModel> body,
+            final APICallBack<HttpResponse> callBack
+    ) throws JsonProcessingException {
+        QueryInfo qInfo = getQueryInfo("/v1/subscriptions/batch");
+
+        //prepare and invoke the API call request to fetch the response
+        final HttpRequest _request = getClientInstance().postBody(qInfo._queryUrl, qInfo._headers, APIHelper.serialize(body));
+
+        executeRequestAsync(_request, callBack);
+    }
+
+    /**
      * Get the Application config
      * @throws Throwable on error getting app config
      */
