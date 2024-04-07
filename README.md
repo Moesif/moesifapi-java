@@ -637,11 +637,11 @@ mvn test
 ```
 
 [ico-built-for]: https://img.shields.io/badge/built%20for-java-blue.svg
-[ico-version]: https://api.bintray.com/packages/moesif/maven/moesifapi/images/download.svg
+[ico-version]: https://img.shields.io/maven-central/v/com.moesif.api/moesifapi
 [ico-license]: https://img.shields.io/badge/License-Apache%202.0-green.svg
 [ico-source]: https://img.shields.io/github/last-commit/moesif/moesifapi-java.svg?style=social
 
 [link-built-for]: https://www.java.com/en/
-[link-package]: https://bintray.com/moesif/maven/moesifapi/_latestVersion
+[link-package]: https://search.maven.org/artifact/com.moesif.api/moesifapi
 [link-license]: https://raw.githubusercontent.com/Moesif/moesifapi-java/master/LICENSE
 [link-source]: https://github.com/moesif/moesifapi-java
