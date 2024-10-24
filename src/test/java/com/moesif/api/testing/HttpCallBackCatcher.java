@@ -48,8 +48,8 @@ public class HttpCallBackCatcher extends SynchronousBase implements HttpCallBack
      * Set the HTTP Request object associated with this API call
      * @param request
      */
-    private void setRequest(HttpRequest prequest) {
-        this.request = prequest;
+    private void setRequest(HttpRequest request) {
+        this.request = request;
     }
 
     /**
