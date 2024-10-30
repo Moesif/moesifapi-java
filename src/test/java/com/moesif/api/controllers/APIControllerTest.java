@@ -510,6 +510,148 @@ public class APIControllerTest extends ControllerTestBase {
     }
 
     /**
+     * Test creating a single Action synchronously.
+     * @throws Throwable
+     */
+    @Test
+    public void testCreateAction() throws Throwable {
+        ActionRequestModel requestContext = new ActionRequestModel.Builder("https://acmeinc.com/pricing")
+                .setUserAgentString("Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
+                .build();
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put("button_label", "Get Started");
+        metadata.put("sign_up_method", "Google SSO");
+        ActionModel action = new ActionModel.Builder("Clicked Sign Up", requestContext)
+                .setUserId("12345")
+                .setCompanyId("67890")
+                .setTransactionId("a3765025-46ec-45dd-bc83-b136c8d1d257")
+                .setMetadata(metadata)
+                .build();
+
+        controller.setHttpCallBack(httpResponse);
+        controller.createAction(action);
+
+        assertEquals("Status is not 201",
+                201, httpResponse.getResponse().getStatusCode());
+    }
+
+    /**
+     * Test creating a single Action asynchronously.
+     * @throws Throwable
+     */
+    @Test
+    public void testCreateActionAsync() throws Throwable {
+        final CountDownLatch lock = new CountDownLatch(1);
+
+        ActionRequestModel requestContext = new ActionRequestModel.Builder("https://acmeinc.com/pricing")
+                .setUserAgentString("Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
+                .build();
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put("button_label", "Get Started");
+        metadata.put("sign_up_method", "Google SSO");
+        ActionModel action = new ActionModel.Builder("Clicked Sign Up", requestContext)
+                .setUserId("12345")
+                .setCompanyId("67890")
+                .setTransactionId("a3765025-46ec-45dd-bc83-b136c8d1d257")
+                .setMetadata(metadata)
+                .build();
+
+        APICallBack<HttpResponse> callBack = new APICallBack<HttpResponse>() {
+            public void onSuccess(HttpContext context, HttpResponse response) {
+                assertEquals("Status is not 201",
+                        201, context.getResponse().getStatusCode());
+                lock.countDown();
+            }
+
+            public void onFailure(HttpContext context, Throwable error) {
+                fail("Asynchronous call failed: " + error.getMessage());
+            }
+        };
+
+        controller.createActionAsync(action, callBack);
+        assertTrue("Async call did not complete in time", lock.await(10000, TimeUnit.MILLISECONDS));
+    }
+
+    /**
+     * Test creating multiple Actions in a batch synchronously.
+     * @throws Throwable
+     */
+    @Test
+    public void testCreateActionsBatch() throws Throwable {
+        // Create multiple ActionModels
+        List<ActionModel> actions = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            ActionRequestModel requestContext = new ActionRequestModel.Builder("https://acmeinc.com/pricing")
+                    .setUserAgentString("Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
+                    .build();
+
+            Map<String, Object> metadata = new HashMap<>();
+            metadata.put("button_label", "Get Started " + i);
+            metadata.put("sign_up_method", "Google SSO");
+
+            ActionModel action = new ActionModel.Builder("Clicked Sign Up", requestContext)
+                    .setUserId("user_" + i)
+                    .setCompanyId("company_" + i)
+                    .setTransactionId(UUID.randomUUID().toString())
+                    .setMetadata(metadata)
+                    .build();
+
+            actions.add(action);
+        }
+
+        controller.setHttpCallBack(httpResponse);
+        controller.createActionsBatch(actions);
+
+        assertEquals("Status is not 201",
+                201, httpResponse.getResponse().getStatusCode());
+    }
+
+    /**
+     * Test creating multiple Actions in a batch asynchronously.
+     * @throws Throwable
+     */
+    @Test
+    public void testCreateActionsBatchAsync() throws Throwable {
+        final CountDownLatch lock = new CountDownLatch(1);
+
+        // Create multiple ActionModels
+        List<ActionModel> actions = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            ActionRequestModel requestContext = new ActionRequestModel.Builder("https://acmeinc.com/pricing")
+                    .setUserAgentString("Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
+                    .build();
+
+            Map<String, Object> metadata = new HashMap<>();
+            metadata.put("button_label", "Get Started " + i);
+            metadata.put("sign_up_method", "Google SSO");
+
+            ActionModel action = new ActionModel.Builder("Clicked Sign Up", requestContext)
+                    .setUserId("user_" + i)
+                    .setCompanyId("company_" + i)
+                    .setTransactionId(UUID.randomUUID().toString())
+                    .setMetadata(metadata)
+                    .build();
+
+            actions.add(action);
+        }
+
+        APICallBack<HttpResponse> callBack = new APICallBack<HttpResponse>() {
+            public void onSuccess(HttpContext context, HttpResponse response) {
+                assertEquals("Status is not 201",
+                        201, context.getResponse().getStatusCode());
+                lock.countDown();
+            }
+
+            public void onFailure(HttpContext context, Throwable error) {
+                fail("Asynchronous batch call failed: " + error.getMessage());
+            }
+        };
+
+        controller.createActionsBatchAsync(actions, callBack);
+        assertTrue("Async batch call did not complete in time", lock.await(10000, TimeUnit.MILLISECONDS));
+    }
+
+    /**
      * Update Single User via Injestion API
      * @throws Throwable
      */
