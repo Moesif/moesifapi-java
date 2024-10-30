@@ -152,6 +152,82 @@ public class APIController extends BaseController implements IAPIController {
     }
 
     /**
+     * Send a single custom action to the API.
+     *
+     * @param body The ActionModel object to send.
+     * @throws Throwable if an error occurs during the API call.
+     */
+    public void createAction(final ActionModel body) throws Throwable {
+        APICallBackCatcher<HttpResponse> callback = new APICallBackCatcher<HttpResponse>();
+        createActionAsync(body, callback);
+        if (!callback.isSuccess())
+            throw callback.getError();
+        callback.getResult();
+    }
+
+    /**
+     * Send a single custom action to the API asynchronously.
+     *
+     * @param body     The ActionModel object to send.
+     * @param callBack Called after the HTTP response is received.
+     * @throws JsonProcessingException if an error occurs during serialization.
+     */
+    public void createActionAsync(
+            final ActionModel body,
+            final APICallBack<HttpResponse> callBack
+    ) throws JsonProcessingException {
+
+        QueryInfo qInfo = getQueryInfo("/v1/actions");
+
+        // Prepare and invoke the API call request to fetch the response
+        final HttpRequest _request = getClientInstance().postBody(
+                qInfo._queryUrl,
+                qInfo._headers,
+                APIHelper.serialize(body)
+        );
+
+        executeRequestAsync(_request, callBack);
+    }
+
+    /**
+     * Send multiple custom actions to the API in a single batch.
+     *
+     * @param body The list of ActionModel objects to send.
+     * @throws Throwable if an error occurs during the API call.
+     */
+    public void createActionsBatch(final List<ActionModel> body) throws Throwable {
+        APICallBackCatcher<HttpResponse> callback = new APICallBackCatcher<HttpResponse>();
+        createActionsBatchAsync(body, callback);
+        if (!callback.isSuccess())
+            throw callback.getError();
+        callback.getResult();
+    }
+
+    /**
+     * Send multiple custom actions to the API in a single batch asynchronously.
+     *
+     * @param body     The list of ActionModel objects to send.
+     * @param callBack Called after the HTTP response is received.
+     * @throws JsonProcessingException if an error occurs during serialization.
+     */
+    public void createActionsBatchAsync(
+            final List<ActionModel> body,
+            final APICallBack<HttpResponse> callBack
+    ) throws JsonProcessingException {
+
+        QueryInfo qInfo = getQueryInfo("/v1/actions/batch");
+
+        // Prepare and invoke the API call request to fetch the response
+        final HttpRequest _request = getClientInstance().postBody(
+                qInfo._queryUrl,
+                qInfo._headers,
+                APIHelper.serialize(body)
+        );
+
+        executeRequestAsync(_request, callBack);
+    }
+
+    /**
      * Update a Single User
      * @param    body    The user to update
      * @throws Throwable on error updating user
