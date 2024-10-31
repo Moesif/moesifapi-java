@@ -1,5 +1,9 @@
 # MoesifApi Lib for Java
 
+Base Java Lib to send API events, users, companies, and subscription data to Moesif API Observability service.
+
+> For logging API traffic at scale, most customers should integrate with one of Moesif's API monitoring agents which instrument your API automatically and handle batching.
+
 [![Built For][ico-built-for]][link-built-for]
 [![Latest Version][ico-version]][link-package]
 [![Software License][ico-license]][link-license]
@@ -17,7 +21,7 @@ Add this dependency to your project's POM:
 <dependency>
     <groupId>com.moesif.api</groupId>
     <artifactId>moesifapi</artifactId>
-    <version>1.7.7</version>
+    <version>1.8.3</version>
 </dependency>
 ```
 
@@ -26,7 +30,7 @@ Add this dependency to your project's POM:
 Add this dependency to your project's build file:
 
 ```gradle
-compile 'com.moesif.api:moesifapi:1.7.7'
+compile 'com.moesif.api:moesifapi:1.8.3'
 ```
 
 ## How to Use:
@@ -40,96 +44,83 @@ There are two ways to create an event: _synchronously_ or _asynchronously_ on a 
 #### 1. Generate the event model
 
 ```java
+String reqBody = "{" +
+  "\"items\": [" +
+    "{" +
+      "\"type\": 1," +
+      "\"id\": \"hello\"" +,
+    "}" +
+  "]" +
+  "}";
+
+String rspBody = "{" +
+    "\"Error\": \"InvalidArgumentException\"," +
+    "\"Message\": \"Missing field field_a\"" +
+  "}";
+
+// Generate the event
 Map<String, String> reqHeaders = new HashMap<String, String>();
 reqHeaders.put("Host", "api.acmeinc.com");
-reqHeaders.put("Accept", "*/*");
-reqHeaders.put("Connection", "Keep-Alive");
-reqHeaders.put("User-Agent", "Dalvik/2.1.0 (Linux; U; Android 5.0.2; C6906 Build/14.5.A.0.242)");
 reqHeaders.put("Content-Type", "application/json");
-reqHeaders.put("Content-Length", "126");
 reqHeaders.put("Accept-Encoding", "gzip");
 
-Object reqBody = APIHelper.deserialize("{" +
-	"\"items\": [" +
-		"{" +
-			"\"type\": 1," +
-			"\"id\": \"fwfrf\"" +
-		"}," +
-		"{" +
-			"\"type\": 2," +
-			 "\"id\": \"d43d3f\"" +
-		 "}" +
-	"]" +
-	"}");
-
 Map<String, String> rspHeaders = new HashMap<String, String>();
-rspHeaders.put("Date", "Tue, 23 Feb 2019 23:46:49 GMT");
-rspHeaders.put("Vary", "Accept-Encoding");
-rspHeaders.put("Pragma", "no-cache");
-rspHeaders.put("Expires", "-1");
 rspHeaders.put("Content-Type", "application/json; charset=utf-8");
-rspHeaders.put("Cache-Control","no-cache");
 
-Object rspBody = APIHelper.deserialize("{" +
-		"\"Error\": \"InvalidArgumentException\"," +
-		"\"Message\": \"Missing field field_a\"" +
-	"}");
-
+BodyParser.BodyWrapper reqBodyWrapper = BodyParser.parseBody(reqHeaders, reqBody);
+BodyParser.BodyWrapper rspBodyWrapper = BodyParser.parseBody(rspHeaders, rspBody);
 
 EventRequestModel eventReq = new EventRequestBuilder()
-				.time(new Date())
-				.uri("https://api.acmeinc.com/items/reviews/")
-				.verb("PATCH")
-				.apiVersion("1.1.0")
-				.ipAddress("61.48.220.123")
-				.headers(reqHeaders)
-				.body(reqBody)
-				.build();
-
+        .time(new Date())
+        .uri("https://api.acmeinc.com/items/reviews/")
+        .verb("PATCH")
+        .apiVersion("1.1.0")
+        .ipAddress("61.48.220.123")
+        .headers(reqHeaders)
+        .body(reqBodyWrapper.body)
+        .transferEncoding(reqBodyWrapper.transferEncoding);
+        .build();
 
 EventResponseModel eventRsp = new EventResponseBuilder()
-				.time(new Date(System.currentTimeMillis() + 1000))
-				.status(500)
-				.headers(rspHeaders)
-				.body(rspBody)
-				.build();
+        .time(new Date(System.currentTimeMillis() + 1000))
+        .status(500)
+        .headers(rspHeaders)
+        .body(rspBodyWrapper.body)
+        .transferEncoding(rspBodyWrapper.transferEncoding);
+        .build();
 
 EventModel eventModel = new EventBuilder()
-				.request(eventReq)
-				.response(eventRsp)
-				.userId("my_user_id")
-				.companyId("my_company_id")
-				.sessionToken("23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f")
-				.build();
+        .request(eventReq)
+        .response(eventRsp)
+        .userId("12345")
+        .companyId("67890")
+        .build();
 ```
 #### 2.a Send the event asynchronously
 
 ```java
-MoesifAPIClient client = new MoesifAPIClient("your_moesif_application_id");
-APIController api = client.getAPI();
+MoesifAPIClient client = new MoesifAPIClient("YOUR_COLLECTOR_APPLICATION_ID");
 
 APICallBack<Object> callBack = new APICallBack<Object>() {
     public void onSuccess(HttpContext context, Object response) {
         assertEquals("Status is not 201",
                 201, context.getResponse().getStatusCode());
-        lock.countDown();
+        // Sent successfully!
     }
 
     public void onFailure(HttpContext context, Throwable error) {
-        fail();
+        // Log there was a failure
     }
 };
 
-api.createEventAsync(eventModel, callBack);
+client.getAPI().createEventAsync(eventModel, callBack);
 ```
 
 #### 2.b Send the event synchronously
 
 ```java
-MoesifAPIClient client = new MoesifAPIClient("your_moesif_application_id");
-APIController api = client.getAPI();
-
-api.createEvent(eventModel, callBack);
+MoesifAPIClient client = new MoesifAPIClient("YOUR_COLLECTOR_APPLICATION_ID");
+client.getAPI().createEvent(eventModel);
 ```
 
 ### Create a batch of API events
@@ -140,103 +131,88 @@ Similar to the single event API, there are two ways to create an event: _synchro
 #### 1. Generate the list of events
 
 ```java
+String reqBody = "{" +
+  "\"items\": [" +
+    "{" +
+      "\"type\": 1," +
+      "\"id\": \"hello\"" +,
+    "}" +
+  "]" +
+  "}";
+
+String rspBody = "{" +
+    "\"Error\": \"InvalidArgumentException\"," +
+    "\"Message\": \"Missing field field_a\"" +
+  "}";
+
+// Generate the event
 Map<String, String> reqHeaders = new HashMap<String, String>();
 reqHeaders.put("Host", "api.acmeinc.com");
-reqHeaders.put("Accept", "*/*");
-reqHeaders.put("Connection", "Keep-Alive");
-reqHeaders.put("User-Agent", "Dalvik/2.1.0 (Linux; U; Android 5.0.2; C6906 Build/14.5.A.0.242)");
 reqHeaders.put("Content-Type", "application/json");
-reqHeaders.put("Content-Length", "126");
 reqHeaders.put("Accept-Encoding", "gzip");
 
-Object reqBody = APIHelper.deserialize("{" +
-	"\"items\": [" +
-		"{" +
-			"\"type\": 1," +
-			"\"id\": \"fwfrf\"" +
-		"}," +
-		"{" +
-			"\"type\": 2," +
-			"\"id\": \"d43d3f\"" +
-		"}" +
-	"]" +
-	"}");
-
 Map<String, String> rspHeaders = new HashMap<String, String>();
-rspHeaders.put("Date", "Tue, 23 Feb 2019 23:46:49 GMT");
-rspHeaders.put("Vary", "Accept-Encoding");
-rspHeaders.put("Pragma", "no-cache");
-rspHeaders.put("Expires", "-1");
 rspHeaders.put("Content-Type", "application/json; charset=utf-8");
-rspHeaders.put("Cache-Control","no-cache");
 
-Object rspBody = APIHelper.deserialize("{" +
-		"\"Error\": \"InvalidArgumentException\"," +
-		"\"Message\": \"Missing field field_a\"" +
-	"}");
-
+BodyParser.BodyWrapper reqBodyWrapper = BodyParser.parseBody(reqHeaders, reqBody);
+BodyParser.BodyWrapper rspBodyWrapper = BodyParser.parseBody(rspHeaders, rspBody);
 
 EventRequestModel eventReq = new EventRequestBuilder()
-				.time(new Date())
-				.uri("https://api.acmeinc.com/items/reviews/")
-				.verb("PATCH")
-				.apiVersion("1.1.0")
-				.ipAddress("61.48.220.123")
-				.headers(reqHeaders)
-				.body(reqBody)
-				.build();
-
+        .time(new Date())
+        .uri("https://api.acmeinc.com/items/reviews/")
+        .verb("PATCH")
+        .apiVersion("1.1.0")
+        .ipAddress("61.48.220.123")
+        .headers(reqHeaders)
+        .body(reqBodyWrapper.body)
+        .transferEncoding(reqBodyWrapper.transferEncoding);
+        .build();
 
 EventResponseModel eventRsp = new EventResponseBuilder()
-				.time(new Date(System.currentTimeMillis() + 1000))
-				.status(500)
-				.headers(rspHeaders)
-				.body(rspBody)
-				.build();
+        .time(new Date(System.currentTimeMillis() + 1000))
+        .status(500)
+        .headers(rspHeaders)
+        .body(rspBodyWrapper.body)
+        .transferEncoding(rspBodyWrapper.transferEncoding);
+        .build();
 
 EventModel eventModel = new EventBuilder()
-				.request(eventReq)
-				.response(eventRsp)
-				.userId("12345")
-				.companyId("67890")
-				.sessionToken("23jdf0owekfmcn4u3qypxg09w4d8ayrcdx8nu2ng]s98y18cx98q3yhwmnhcfx43f")
-				.build();
+        .request(eventReq)
+        .response(eventRsp)
+        .userId("12345")
+        .companyId("67890")
+        .build();
 
+// Create a batch of events
 List<EventModel> events = new ArrayList<EventModel>();
-events.add(eventModel);
-events.add(eventModel);
-events.add(eventModel);
 events.add(eventModel);
 ```
 
 #### 2.a Send the events batch asynchronously
 
 ```java
-MoesifAPIClient client = new MoesifAPIClient("your_moesif_application_id");
-APIController api = client.getAPI();
+MoesifAPIClient client = new MoesifAPIClient("YOUR_COLLECTOR_APPLICATION_ID");
 
 APICallBack<Object> callBack = new APICallBack<Object>() {
     public void onSuccess(HttpContext context, Object response) {
         assertEquals("Status is not 201",
                 201, context.getResponse().getStatusCode());
-        lock.countDown();
+        // Sent successfully!
     }
 
     public void onFailure(HttpContext context, Throwable error) {
-        fail();
+        // Log there was a failure
     }
 };
 
-api.createEventsBatchAsync(events, callBack);
+client.getAPI().createEventsBatchAsync(events, callBack);
 ```
 
 #### 2.b Send the events batch synchronously
 
 ```java
-MoesifAPIClient client = new MoesifAPIClient("your_moesif_application_id");
-APIController api = getClient().getAPI();
-
-api.createEventsBatch(events, callBack);
+MoesifAPIClient client = new MoesifAPIClient("YOUR_COLLECTOR_APPLICATION_ID");
+client.getAPI().createEventsBatch(events);
 ```
 
 ## Update a Single User
@@ -247,24 +223,11 @@ Only the `userId` field is required.
 For details, visit the [Java API Reference](https://www.moesif.com/docs/api?java#update-a-user).
 
 ```java
-MoesifAPIClient apiClient = new MoesifAPIClient("YOUR_COLLECTOR_APPLICATION_ID");
-
-// Campaign object is optional, but useful if you want to track ROI of acquisition channels
-// See https://www.moesif.com/docs/api#users for campaign schema
-CampaignModel campaign = new CampaignBuilder()
-        .utmSource("google")
-        .utmCampaign("cpc")
-        .utmMedium("adwords")
-        .utmTerm("api+tooling")
-        .utmContent("landing")
-        .build();
-
 // Only userId is required
 // metadata can be any custom object
 UserModel user = new UserBuilder()
     .userId("12345")
     .companyId("67890") // If set, associate user with a company object
-    .campaign(campaign)
     .metadata(APIHelper.deserialize("{" +
         "\"email\": \"johndoe@acmeinc.com\"," +
         "\"first_name\": \"John\"," +
@@ -282,6 +245,8 @@ UserModel user = new UserBuilder()
 ### Update the user asynchronously
 
 ```java
+MoesifAPIClient client = new MoesifAPIClient("YOUR_COLLECTOR_APPLICATION_ID");
+
 APICallBack<Object> callBack = new APICallBack<Object>() {
     public void onSuccess(HttpContext context, Object response) {
       // Do something
@@ -292,13 +257,14 @@ APICallBack<Object> callBack = new APICallBack<Object>() {
     }
 };
 
-apiClient.updateUserAsync(user, callBack);
+client.getAPI().updateUserAsync(user, callBack);
 ```
 
 ### Update the user synchronously
 
 ```java
-apiClient.updateUser(user);
+MoesifAPIClient client = new MoesifAPIClient("YOUR_COLLECTOR_APPLICATION_ID");
+client.getAPI().updateUser(user);
 ```
 
 ## Update Users in Batch
@@ -310,14 +276,11 @@ For details, visit the [Java API Reference](https://www.moesif.com/docs/api?java
 You can update users _synchronously_ or _asynchronously_ on a background thread. Unless you require synchronous behavior, we recommend the async versions.
 
 ```java
-MoesifAPIClient apiClient = new MoesifAPIClient("YOUR_COLLECTOR_APPLICATION_ID");
-
 List<UserModel> users = new ArrayList<UserModel>();
 
 UserModel userA = new UserBuilder()
         .userId("12345")
         .companyId("67890")
-        .campaign(campaign)
         .metadata(APIHelper.deserialize("{" +
             "\"email\": \"johndoe@acmeinc.com\"," +
             "\"first_name\": \"John\"," +
@@ -329,13 +292,12 @@ UserModel userA = new UserBuilder()
                 "\"account_owner\": \"mary@contoso.com\"" +
               "}" +
             "}"))
-        .build();
+		.build();
 users.add(userA);
 
 UserModel userB = new UserBuilder()
         .userId("54321")
         .companyId("67890")
-        .campaign(campaign)
         .metadata(APIHelper.deserialize("{" +
             "\"email\": \"johndoe@acmeinc.com\"," +
             "\"first_name\": \"John\"," +
@@ -347,7 +309,7 @@ UserModel userB = new UserBuilder()
                 "\"account_owner\": \"mary@contoso.com\"" +
               "}" +
             "}"))
-        .build();
+		.build();
 users.add(userB);
 ```
 
@@ -355,6 +317,8 @@ users.add(userB);
 
 
 ```java
+MoesifAPIClient client = new MoesifAPIClient("YOUR_COLLECTOR_APPLICATION_ID");
+
 APICallBack<Object> callBack = new APICallBack<Object>() {
     public void onSuccess(HttpContext context, Object response) {
       // Do something
@@ -366,14 +330,15 @@ APICallBack<Object> callBack = new APICallBack<Object>() {
 };
 
 // Asynchronous call to update users
-apiClient.updateUsersBatchAsync(users, callBack);
+client.getAPI().updateUsersBatchAsync(users, callBack);
 
 ```
 
 ### Update the users synchronously
 
 ```java
-apiClient.updateUsersBatch(users, callBack);
+MoesifAPIClient client = new MoesifAPIClient("YOUR_COLLECTOR_APPLICATION_ID");
+client.getAPI().updateUsersBatch(users, callBack);
 ```
 
 ## Update a Single Company
@@ -384,24 +349,11 @@ Only the `companyId` field is required.
 For details, visit the [Java API Reference](https://www.moesif.com/docs/api?java#update-a-company).
 
 ```java
-MoesifAPIClient apiClient = new MoesifAPIClient("YOUR_COLLECTOR_APPLICATION_ID").Api;
-
-// Campaign object is optional, but useful if you want to track ROI of acquisition channels
-// See https://www.moesif.com/docs/api#update-a-company for campaign schema
-CampaignModel campaign = new CampaignBuilder()
-        .utmSource("google")
-        .utmCampaign("cpc")
-        .utmMedium("adwords")
-        .utmTerm("api+tooling")
-        .utmContent("landing")
-        .build();
-
 // Only companyId is required
 // metadata can be any custom object
 CompanyModel company = new CompanyBuilder()
     .companyId("67890")
     .companyDomain("acmeinc.com") // If set, Moesif will enrich your profiles with publicly available info 
-    .campaign(campaign) 
     .metadata(APIHelper.deserialize("{" +
         "\"org_name\": \"Acme, Inc\"," +
         "\"plan_name\": \"Free\"," +
@@ -418,7 +370,7 @@ CompanyModel company = new CompanyBuilder()
 ### Update the company asynchronously
 
 ```java
-MoesifAPIClient client = new MoesifAPIClient("your_moesif_application_id");
+MoesifAPIClient client = new MoesifAPIClient("YOUR_COLLECTOR_APPLICATION_ID");
 APIController api = client.getAPI();
 
 APICallBack<Object> callBack = new APICallBack<Object>() {
@@ -431,13 +383,14 @@ APICallBack<Object> callBack = new APICallBack<Object>() {
     }
 };
 
-apiClient.updateCompanyAsync(company, callBack);
+client.getAPI().updateCompanyAsync(company, callBack);
 ```
 
 ### Update the company synchronously
 
 ```java
-apiClient.updateCompany(company);
+MoesifAPIClient client = new MoesifAPIClient("YOUR_COLLECTOR_APPLICATION_ID");
+client.getAPI().updateCompany(company);
 ```
 
 ## Update Companies in Batch
@@ -450,24 +403,11 @@ For details, visit the [Java API Reference](https://www.moesif.com/docs/api?java
 You can update users _synchronously_ or _asynchronously_ on a background thread. Unless you require synchronous behavior, we recommend the async versions.
 
 ```java
-MoesifAPIClient apiClient = new MoesifAPIClient("YOUR_COLLECTOR_APPLICATION_ID").Api;
-
-// Campaign object is optional, but useful if you want to track ROI of acquisition channels
-// See https://www.moesif.com/docs/api#update-a-company for campaign schema
-CampaignModel campaign = new CampaignBuilder()
-        .utmSource("google")
-        .utmCampaign("cpc")
-        .utmMedium("adwords")
-        .utmTerm("api+tooling")
-        .utmContent("landing")
-        .build();
-
 // Only companyId is required
 // metadata can be any custom object
 CompanyModel company = new CompanyBuilder()
     .companyId("67890")
     .companyDomain("acmeinc.com") // If set, Moesif will enrich your profiles with publicly available info 
-    .campaign(campaign) 
     .metadata(APIHelper.deserialize("{" +
         "\"org_name\": \"Acme, Inc\"," +
         "\"plan_name\": \"Free\"," +
@@ -479,11 +419,17 @@ CompanyModel company = new CompanyBuilder()
           "}" +
         "}"))
     .build();
+
+// Create a batch of companies
+List<EventModel> events = new ArrayList<CompanyModel>();
+events.add(company);
 ```
 
 ### Update the companies asynchronously
 
 ```java
+MoesifAPIClient client = new MoesifAPIClient("YOUR_COLLECTOR_APPLICATION_ID");
+
 APICallBack<Object> callBack = new APICallBack<Object>() {
     public void onSuccess(HttpContext context, Object response) {
       // Do something
@@ -494,13 +440,14 @@ APICallBack<Object> callBack = new APICallBack<Object>() {
     }
 };
 
-apiClient.updateCompaniesBatchAsync(companies, callBack);
+client.getAPI().updateCompaniesBatchAsync(companies, callBack);
 ```
 
 ### Update the companies synchronously
 
 ```java
-apiClient.updateCompaniesBatch(companies);
+MoesifAPIClient client = new MoesifAPIClient("YOUR_COLLECTOR_APPLICATION_ID");
+client.getAPI().updateCompaniesBatch(companies);
 ```
 
 ## Update a Single Subscription
@@ -508,8 +455,6 @@ apiClient.updateCompaniesBatch(companies);
 Create or update a subscription in Moesif. The metadata field can store any subscription-related information you want to keep. The `subscriptionId`, `companyId`, and `status` fields are required. For more details, visit the [Java API Reference](https://www.moesif.com/docs/api?java#update-a-subscription).
 
 ```java
-MoesifAPIClient apiClient = new MoesifAPIClient("YOUR_COLLECTOR_APPLICATION_ID").Api;
-
 // Create a subscription model with required and optional fields
 SubscriptionModel subscription = new SubscriptionBuilder()
     .subscriptionId("sub_12345")
@@ -532,6 +477,8 @@ SubscriptionModel subscription = new SubscriptionBuilder()
 ### Update the Subscription Asynchronously
 
 ```java
+MoesifAPIClient client = new MoesifAPIClient("YOUR_COLLECTOR_APPLICATION_ID");
+
 APICallBack<HttpResponse> callBack = new APICallBack<HttpResponse>() {
     public void onSuccess(HttpContext context, HttpResponse response) {
         // Handle success
@@ -542,13 +489,14 @@ APICallBack<HttpResponse> callBack = new APICallBack<HttpResponse>() {
     }
 };
 
-apiClient.updateSubscriptionAsync(subscription, callBack);
+client.getAPI().updateSubscriptionAsync(subscription, callBack);
 ```
 
 ### Update the Subscription Synchronously
 
 ```java
-apiClient.updateSubscription(subscription);
+MoesifAPIClient client = new MoesifAPIClient("YOUR_COLLECTOR_APPLICATION_ID");
+client.getAPI().updateSubscription(subscription);
 ```
 
 ## Update Subscriptions in Batch
@@ -558,6 +506,8 @@ Similar to updating a single subscription, but used to update a list of subscrip
 ### Update the Subscriptions Asynchronously
 
 ```java
+MoesifAPIClient client = new MoesifAPIClient("YOUR_COLLECTOR_APPLICATION_ID");
+
 List<SubscriptionModel> subscriptions = new ArrayList<>();
 subscriptions.add(subscription); // Assuming 'subscription' is previously defined
 
@@ -571,13 +521,14 @@ APICallBack<HttpResponse> callBack = new APICallBack<HttpResponse>() {
     }
 };
 
-apiClient.updateSubscriptionsBatchAsync(subscriptions, callBack);
+client.getAPI().updateSubscriptionsBatchAsync(subscriptions, callBack);
 ```
 
 ### Update the Subscriptions Synchronously
 
 ```java
-apiClient.updateSubscriptionsBatch(subscriptions);
+MoesifAPIClient client = new MoesifAPIClient("YOUR_COLLECTOR_APPLICATION_ID");
+client.getAPI().updateSubscriptionsBatch(subscriptions);
 ```
 
 ## How to build and install manually (Advanced users):
