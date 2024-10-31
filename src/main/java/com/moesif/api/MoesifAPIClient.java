@@ -49,7 +49,7 @@ public class MoesifAPIClient {
      * @param applicationId The Application Id for authentication
      */
     public MoesifAPIClient(String applicationId) {
-        this(applicationId, Configuration.BaseUri);
+        this(applicationId, Configuration.DefaultBaseUri);
     }
 
     /**
