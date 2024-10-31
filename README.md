@@ -30,7 +30,7 @@ Add this dependency to your project's POM:
 Add this dependency to your project's build file:
 
 ```gradle
-compile 'com.moesif.api:moesifapi:1.8.3'
+implementation 'com.moesif.api:moesifapi:1.8.3'
 ```
 
 ## How to Use:
