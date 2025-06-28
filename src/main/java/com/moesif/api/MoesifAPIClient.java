@@ -43,6 +43,15 @@ public class MoesifAPIClient {
         BaseController.setClientInstance(httpClient);
     }
 
+    /**
+     * Set a custom User-Agent string for HTTP requests
+     * @param userAgent The custom User-Agent string to use
+     */
+    public void setUserAgent(String userAgent) {
+        config.userAgent = userAgent;
+        com.moesif.api.http.client.UnirestClient.setUserAgent(userAgent);
+    }
+
 
     /**
      * Client initialization constructor
