@@ -25,7 +25,10 @@ public class HealthController extends BaseController implements IHealthControlle
 
     public HealthController(Configuration config) {
         this.config = config;
-
+        // Set custom user agent if provided
+        if (config.userAgent != null && !config.userAgent.trim().isEmpty()) {
+            com.moesif.api.http.client.UnirestClient.setUserAgent(config.userAgent);
+        }
     }
     /**
      * Health Probe

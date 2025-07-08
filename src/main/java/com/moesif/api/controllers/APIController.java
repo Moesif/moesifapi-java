@@ -54,6 +54,10 @@ public class APIController extends BaseController implements IAPIController {
 
     public APIController(Configuration config) {
         this.config = config;
+        // Set custom user agent if provided
+        if (config.userAgent != null && !config.userAgent.trim().isEmpty()) {
+            com.moesif.api.http.client.UnirestClient.setUserAgent(config.userAgent);
+        }
         getInitAppConfigModel();
         getGovernanceRulesModel();
     }

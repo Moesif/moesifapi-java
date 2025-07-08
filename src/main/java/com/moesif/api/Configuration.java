@@ -21,7 +21,13 @@ public class Configuration {
     public String baseUri;
 
     /***
-     * Set to true to print debug logs if you’re having integration issues.
+     * Set to true to print debug logs if you're having integration issues.
      */
     public boolean debug = false;
+
+    /***
+     * Custom User-Agent string for HTTP requests. 
+     * If null or empty, defaults to "moesifapi-java/{version}"
+     */
+    public String userAgent;
 }
