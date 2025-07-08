@@ -317,10 +317,17 @@ public class UnirestClient implements HttpClient {
         //set request headers        
         uniRequest.headers(request.getHeaders());
 
-        String userAgent = (customUserAgent != null && !customUserAgent.trim().isEmpty()) 
-            ? customUserAgent 
-            : "moesifapi-java/" + UnirestClient.version;
+        // Always include the library identifier as the primary user-agent and
+        // optionally append a secondary identifier supplied by the consumer.
+        String baseUserAgent = "moesifapi-java/" + UnirestClient.version;
+        String userAgent = (customUserAgent != null && !customUserAgent.trim().isEmpty())
+                ? baseUserAgent + " " + customUserAgent.trim()
+                : baseUserAgent;
         uniRequest.header("User-Agent", userAgent);
+        // For test callbacks that inspect HttpRequest headers and down stream extension
+        if (request.getHeaders() != null) {
+            request.getHeaders().put("User-Agent", userAgent);
+        }
 
         //set json header if needed
         if(request instanceof HttpBodyRequest) {
