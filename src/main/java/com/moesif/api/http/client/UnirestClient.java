@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 public class UnirestClient implements HttpClient {
-    private static final Logger logger = Logger.getLogger(UnirestClient.class.toString());
+    private static final Logger logger = Logger.getLogger(UnirestClient.class.getName());
 
     static ObjectMapper objectMapper = new ObjectMapper().disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 

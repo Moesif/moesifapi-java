@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 
 public class APIController extends BaseController implements IAPIController {
     //private static variables for the singleton pattern
-    private static final Logger logger = Logger.getLogger(APIController.class.toString());
+    private static final Logger logger = Logger.getLogger(APIController.class.getName());
 
     private static final String APP_CONFIG_ETAG_HEADER = "x-moesif-config-etag";
 
@@ -446,7 +446,9 @@ public class APIController extends BaseController implements IAPIController {
         {
             getHttpCallBack().OnBeforeRequest(_request);
         }
-        
+        if (config.debug)
+            logger.info("Begin fetch App Config Sync: " + qInfo._queryUrl);
+
         // make the API call
         HttpResponse _response = getClientInstance().executeAsString(_request);
         
@@ -516,6 +518,8 @@ public class APIController extends BaseController implements IAPIController {
     ) throws JsonProcessingException {
         QueryInfo qInfo = getQueryInfo("/v1/config");
 
+        if (config.debug)
+            logger.info("Begin fetch App Config Async: " + qInfo._queryUrl);
         //prepare and invoke the API call request to fetch the response
         final HttpRequest _request = getClientInstance().get(qInfo._queryUrl, qInfo._headers, null);
 
@@ -737,7 +741,6 @@ public class APIController extends BaseController implements IAPIController {
                             }
 
                             appConfigEtag = newAppConfigEtag;
-                            lastAppConfigFetch = new Date().getTime();
                         }
                     }
                     else {
@@ -754,9 +757,8 @@ public class APIController extends BaseController implements IAPIController {
                         }
 
                         appConfigEtag = response.getHeaders().get(APP_CONFIG_ETAG_HEADER);
-                        lastAppConfigFetch = new Date().getTime();
-
                     }
+                    lastAppConfigFetch = new Date().getTime();
                 }
 
                 public void onFailure(HttpContext context, Throwable error) {
